@@ -1,0 +1,2354 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>도윤이의 모험</title>
+<style>:root{color-scheme:light}body{margin:0;padding:0}</style>
+</head>
+<body>
+<title>도윤이의 모험</title>
+<style>
+  :root {
+    --sky-top: #eaf7ff;
+    --sky-bottom: #bfeaf9;
+    --sea-foam: #d9f5e6;
+    --panel: #ffffff;
+    --panel-tint: #eaf8fb;
+    --accent-sun: #ffcb47;
+    --accent-coral: #ff8a65;
+    --accent-mint: #2ec4a6;
+    --value: #1f7a99;
+    --ink: #2b3a55;
+    --ink-muted: #6b8098;
+    --danger-text: #d9482e;
+    --radius-lg: 28px;
+    --radius-md: 16px;
+  }
+
+  * { box-sizing: border-box; }
+
+  .kbd-focus {
+    outline: none !important;
+    transform: translateY(-4px) scale(1.04) !important;
+    box-shadow: 0 12px 22px rgba(31,122,153,0.4), 0 0 0 3px var(--accent-mint) !important;
+    position: relative;
+    z-index: 4;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+  }
+
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--sky-top);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", ui-rounded, "Pretendard", "Noto Sans KR", sans-serif;
+    overflow-x: hidden;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 14px;
+    background:
+      radial-gradient(circle at 15% 12%, rgba(255,255,255,0.65), transparent 40%),
+      radial-gradient(circle at 85% 18%, rgba(255,255,255,0.55), transparent 38%),
+      radial-gradient(circle at 50% 100%, rgba(46,196,166,0.18), transparent 55%),
+      linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 55%, var(--sea-foam) 100%);
+  }
+
+  #app { width: 100%; display: flex; justify-content: center; }
+
+  .screen { display: none; width: 100%; justify-content: center; }
+  .screen.active { display: flex; animation: fade-in 0.5s ease; }
+
+  @keyframes fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .stage-card {
+    width: 100%;
+    max-width: 640px;
+    background: var(--panel);
+    border-radius: var(--radius-lg);
+    padding: 36px 32px 32px;
+    box-shadow: 0 20px 45px rgba(31,122,153,0.18), 0 1px 0 rgba(255,255,255,0.8) inset;
+    position: relative;
+    text-align: center;
+  }
+
+  .splash-wrap {
+    width: 100%;
+    max-width: 640px;
+    min-height: 340px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(160deg, #0d1b2a, #1b3a4b);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.35);
+    cursor: pointer;
+    animation: splash-fade 2.2s ease forwards;
+  }
+  .splash-logo {
+    font-size: clamp(34px, 9vw, 54px);
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    background: linear-gradient(120deg, #ffcb47, #6df0d4, #ffcb47);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: splash-shine 2.2s ease infinite;
+  }
+  .splash-sub {
+    font-size: 14px;
+    letter-spacing: 0.5em;
+    color: rgba(255,255,255,0.65);
+    font-weight: 700;
+    margin-left: 0.5em;
+  }
+  @keyframes splash-shine {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+  @keyframes splash-fade {
+    0% { opacity: 0; transform: scale(0.92); }
+    18% { opacity: 1; transform: scale(1); }
+    85% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  .game-title {
+    font-size: clamp(32px, 8vw, 46px);
+    font-weight: 900;
+    color: var(--value);
+    text-shadow: 0 3px 0 rgba(31,122,153,0.15);
+    margin: 8px 0 32px;
+    text-wrap: balance;
+  }
+  .title-menu { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+  .title-btn {
+    width: 100%;
+    max-width: 320px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+  }
+  .title-btn:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 3px; }
+  .title-btn-start {
+    padding: 26px;
+    font-size: 26px;
+    background: linear-gradient(180deg, #ffe08a, var(--accent-sun));
+    color: #4a3200;
+    box-shadow: 0 8px 0 #d9a520, 0 12px 20px rgba(31,122,153,0.2);
+  }
+  .title-btn-start:active { transform: translateY(6px); box-shadow: 0 2px 0 #d9a520, 0 4px 10px rgba(31,122,153,0.18); }
+  .title-btn-options {
+    padding: 15px;
+    font-size: 17px;
+    background: var(--panel-tint);
+    color: var(--ink);
+    box-shadow: 0 6px 0 rgba(31,122,153,0.15), 0 10px 16px rgba(31,122,153,0.12);
+  }
+  .title-btn-options:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(31,122,153,0.15), 0 4px 10px rgba(31,122,153,0.1); }
+  .fullscreen-btn { margin-top: 18px; }
+
+  .brand {
+    font-size: clamp(26px, 6vw, 38px);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    margin: 4px 0 8px;
+    color: var(--value);
+    text-shadow: 0 2px 0 rgba(31,122,153,0.12);
+    text-wrap: balance;
+  }
+  .brand.small { font-size: clamp(24px, 5vw, 32px); }
+
+  .tagline, .desc {
+    color: var(--ink-muted);
+    font-size: 18px;
+    line-height: 1.6;
+    margin: 0 0 24px;
+  }
+
+
+  .option-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--panel-tint);
+    border-radius: var(--radius-md);
+    padding: 14px 20px;
+    margin-bottom: 20px;
+  }
+  .option-label { font-size: 15px; font-weight: 700; color: var(--ink); }
+  .stepper { display: flex; align-items: center; gap: 14px; }
+  .stepper-btn {
+    width: 36px; height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: var(--panel);
+    box-shadow: 0 2px 6px rgba(31,122,153,0.2);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--value);
+    cursor: pointer;
+  }
+  .stepper-btn:active { transform: translateY(1px); }
+  .stepper-btn:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
+  .stepper-btn:disabled { opacity: 0.35; cursor: default; }
+  .stepper-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--value);
+    min-width: 24px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    background: var(--panel-tint);
+    border-radius: var(--radius-md);
+    padding: 18px 16px;
+    margin-bottom: 22px;
+  }
+  .stats-grid .stat { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+  .stats-grid .stat-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--value);
+    font-variant-numeric: tabular-nums;
+  }
+  .stats-grid .stat-label { font-size: 12px; color: var(--ink-muted); letter-spacing: 0.05em; }
+
+  #lock-form { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+
+  #lock-input {
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    font-size: 26px;
+    letter-spacing: 0.4em;
+    padding: 18px 12px;
+    border-radius: var(--radius-md);
+    border: 2px solid rgba(31,122,153,0.25);
+    background: var(--panel-tint);
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  #lock-input::placeholder { color: rgba(43,58,85,0.3); letter-spacing: 0.4em; }
+  #lock-input:focus-visible {
+    outline: none;
+    border-color: var(--accent-sun);
+    box-shadow: 0 0 0 4px rgba(255,203,71,0.3);
+  }
+
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: 320px;
+  }
+  .keypad button {
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 14px 0;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--panel-tint);
+    box-shadow: inset 0 -3px 0 rgba(31,122,153,0.15);
+    cursor: pointer;
+  }
+  .keypad button:active { transform: translateY(2px); box-shadow: inset 0 -1px 0 rgba(31,122,153,0.15); }
+  .keypad button:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
+  .keypad .key-wide { font-size: 15px; }
+  .keypad .key-enter {
+    background: linear-gradient(180deg, #ffe08a, var(--accent-sun));
+    color: #4a3200;
+    box-shadow: inset 0 -3px 0 #d9a520;
+  }
+
+  #player-form { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+  #player-name-input {
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    font-size: 22px;
+    padding: 16px 14px;
+    border-radius: var(--radius-md);
+    border: 2px solid rgba(31,122,153,0.25);
+    background: var(--panel-tint);
+    color: var(--ink);
+  }
+  #player-name-input::placeholder { color: rgba(43,58,85,0.35); }
+  #player-name-input:focus-visible {
+    outline: none;
+    border-color: var(--accent-sun);
+    box-shadow: 0 0 0 4px rgba(255,203,71,0.3);
+  }
+
+  .slot-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; }
+  .slot-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    border: 2px solid rgba(31,122,153,0.2);
+    border-radius: var(--radius-md);
+    background: var(--panel-tint);
+    padding: 16px 20px;
+    cursor: pointer;
+    text-align: left;
+    color: var(--ink);
+    transition: border-color 0.15s ease, transform 0.08s ease;
+  }
+  .slot-card:hover, .slot-card:focus-visible { border-color: var(--accent-sun); outline: none; }
+  .slot-card:active { transform: translateY(2px); }
+  .slot-card.empty { border-style: dashed; border-color: rgba(107,128,152,0.4); background: transparent; }
+  .slot-label { font-size: 12px; letter-spacing: 0.08em; color: var(--ink-muted); }
+  .slot-name { font-size: 20px; font-weight: 800; color: var(--value); margin: 2px 0; }
+  .slot-card.empty .slot-name { color: var(--ink-muted); font-weight: 700; }
+  .slot-meta { font-size: 13px; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+  .slot-species { font-size: 13px; font-weight: 600; color: var(--ink-muted); }
+  .slot-action { font-size: 14px; font-weight: 700; color: var(--accent-mint); white-space: nowrap; }
+
+  .btn-primary {
+    border: none;
+    border-radius: 999px;
+    padding: 17px 38px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #4a3200;
+    background: linear-gradient(180deg, #ffe08a, var(--accent-sun));
+    cursor: pointer;
+    box-shadow: 0 8px 0 #d9a520, 0 12px 20px rgba(31,122,153,0.2);
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+  }
+  .btn-primary:active { transform: translateY(6px); box-shadow: 0 2px 0 #d9a520, 0 4px 10px rgba(31,122,153,0.18); }
+  .btn-primary:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 3px; }
+  .btn-large { font-size: 23px; padding: 20px 48px; }
+
+  .btn-secondary {
+    border: 2px solid rgba(46,196,166,0.5);
+    border-radius: 999px;
+    padding: 12px 26px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a8a72;
+    background: rgba(46,196,166,0.1);
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.15s ease;
+  }
+  .btn-secondary:active { transform: translateY(3px); }
+  .btn-secondary:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 3px; }
+  .btn-secondary.small { padding: 9px 20px; font-size: 13px; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 14px; }
+  .btn-stack { display: flex; flex-direction: column; gap: 10px; align-items: center; margin-top: 16px; }
+  .btn-stack .btn-secondary { width: 100%; max-width: 260px; }
+
+  .mode-stack { display: flex; flex-direction: column; gap: 14px; align-items: center; margin-bottom: 8px; }
+  .mode-btn { width: 100%; max-width: 380px; }
+  .mode-stage {
+    background: linear-gradient(180deg, #5cd0ef, var(--value));
+    color: #fff;
+    box-shadow: 0 8px 0 #145066, 0 12px 20px rgba(31,122,153,0.25);
+  }
+  .mode-stage:active { box-shadow: 0 2px 0 #145066, 0 4px 10px rgba(31,122,153,0.2); }
+  .mode-infinite {
+    background: linear-gradient(180deg, #ffab8f, var(--accent-coral));
+    color: #4a1608;
+    box-shadow: 0 8px 0 #c85a3a, 0 12px 20px rgba(31,122,153,0.2);
+  }
+  .mode-infinite:active { box-shadow: 0 2px 0 #c85a3a, 0 4px 10px rgba(31,122,153,0.18); }
+  .mode-hint { font-size: 13px; color: var(--ink-muted); margin: 6px 0 0; }
+
+  .char-select { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 28px; }
+  .char-slot {
+    border: 2px solid rgba(31,122,153,0.18);
+    border-radius: var(--radius-md);
+    background: var(--panel-tint);
+    padding: 10px;
+    width: 118px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: border-color 0.15s ease, transform 0.08s ease, box-shadow 0.15s ease;
+  }
+  .char-slot:hover, .char-slot:focus-visible { border-color: rgba(255,203,71,0.7); outline: none; }
+  .char-slot.selected { border-color: var(--accent-sun); box-shadow: 0 0 0 3px rgba(255,203,71,0.3); }
+  .char-slot:active { transform: translateY(2px); }
+  .char-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .mini-stage {
+    position: relative;
+    width: 100%;
+    height: 104px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #dff3fb 0%, #eef9e9 60%, #fbf1d6 100%);
+  }
+  .explorer.mini { animation: none; transform: scale(0.62); transform-origin: 50% 100%; }
+
+  .error {
+    min-height: 24px;
+    color: var(--danger-text);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 4px 0 0;
+  }
+
+  .shake { animation: shake 0.4s ease; }
+  @keyframes shake {
+    10%, 90% { transform: translateX(-2px); }
+    20%, 80% { transform: translateX(4px); }
+    30%, 50%, 70% { transform: translateX(-8px); }
+    40%, 60% { transform: translateX(8px); }
+  }
+
+  /* ---------- HUD ---------- */
+  .hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--panel-tint);
+    border-radius: var(--radius-md);
+    padding: 14px 20px;
+    margin-bottom: 16px;
+  }
+  .hud-item { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 76px; }
+  .hud-label { font-size: 13px; color: var(--ink-muted); letter-spacing: 0.06em; }
+  .hud-value {
+    font-size: 25px;
+    font-weight: 800;
+    color: var(--value);
+    font-variant-numeric: tabular-nums;
+  }
+  .lives { flex-direction: row; gap: 4px; font-size: 24px; flex-wrap: wrap; justify-content: center; max-width: 160px; }
+
+  .mute-btn {
+    position: absolute;
+    top: 18px; right: 20px;
+    width: 42px; height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: var(--panel-tint);
+    color: var(--ink);
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 2;
+  }
+  .mute-btn:focus-visible { outline: 2px solid var(--accent-mint); outline-offset: 2px; }
+  .pause-btn { left: 20px; right: auto; }
+  .back-btn { left: 20px; right: auto; font-size: 22px; }
+
+  .pause-overlay {
+    position: absolute;
+    inset: 10px;
+    border-radius: calc(var(--radius-lg) - 8px);
+    background: rgb(15, 30, 46);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 5;
+  }
+  .pause-overlay.show { opacity: 1; pointer-events: auto; }
+  .pause-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent-sun);
+    margin-bottom: 20px;
+    transition: font-size 0.15s ease;
+  }
+  .pause-title.counting {
+    font-size: 64px;
+    margin-bottom: 0;
+  }
+  .pause-menu-row { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+  .pause-secondary {
+    border: 2px solid rgba(255,255,255,0.35);
+    color: #fff3da;
+    background: rgba(255,255,255,0.08);
+  }
+  .pause-secondary:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 3px; }
+
+  .memory-panel { max-width: 440px; width: 100%; }
+  .memory-sub { color: #cfe8ff; font-size: 14px; margin: 0 0 10px; }
+  .memory-attempts { color: var(--accent-sun); font-weight: 800; font-size: 20px; margin-bottom: 12px; font-variant-numeric: tabular-nums; }
+  .memory-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .memory-card {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    cursor: pointer;
+    perspective: 600px;
+  }
+  .memory-card-inner {
+    position: relative;
+    width: 100%; height: 100%;
+    transition: transform 0.4s;
+    transform-style: preserve-3d;
+  }
+  .memory-card.flipped .memory-card-inner,
+  .memory-card.matched .memory-card-inner {
+    transform: rotateY(180deg);
+  }
+  .memory-card-face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    backface-visibility: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    overflow: hidden;
+  }
+  .memory-card-back { background: linear-gradient(180deg, #6df0d4, var(--accent-mint)); font-size: clamp(20px, 5vw, 28px); }
+  .memory-card-front {
+    background: #fff;
+    transform: rotateY(180deg);
+    font-size: clamp(34px, 9vw, 54px);
+    line-height: 1;
+  }
+  .memory-card.matched .memory-card-front { background: linear-gradient(180deg, #ffe08a, var(--accent-sun)); }
+  .memory-status { color: #fff3da; font-weight: 700; margin-bottom: 14px; }
+  .stage-clear-next {
+    font-size: 18px;
+    color: #6ee8d0;
+    font-weight: 700;
+  }
+  .balloon { transition: opacity 0.3s ease, filter 0.3s ease; display: inline-block; }
+  .balloon.popped { opacity: 0.15; filter: grayscale(1); transform: scale(0.8); }
+  .balloon.popping { animation: pop 0.4s ease; }
+  @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.5); } 100% { transform: scale(0.8); opacity: 0.15; filter: grayscale(1); } }
+  .balloon.gained { animation: heart-gain 0.6s ease; }
+  @keyframes heart-gain {
+    0% { transform: scale(0); filter: drop-shadow(0 0 0 rgba(255,203,71,0)); }
+    40% { transform: scale(1.4); filter: drop-shadow(0 0 10px rgba(255,203,71,0.9)); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(255,203,71,0)); }
+  }
+
+  /* ---------- Ring / beach scene ---------- */
+  .ring {
+    position: relative;
+    height: 270px;
+    margin: 6px 0 14px;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background: linear-gradient(180deg, #cdeffb 0%, #eaf7e8 55%, #f6ecc9 100%);
+  }
+  .spotlight {
+    position: absolute;
+    left: 50%; top: -60px;
+    width: 200px; height: 200px;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(255,214,90,0.55), transparent 70%);
+    pointer-events: none;
+  }
+
+  .beat-flash {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 60%, rgba(255,255,255,0.55), transparent 65%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+  }
+  .beat-flash.accent { background: radial-gradient(circle at 50% 60%, rgba(255,203,71,0.65), transparent 65%); }
+  .beat-flash.on { opacity: 1; transition: none; }
+
+  .ring.paused .ball,
+  .ring.paused .explorer {
+    animation-play-state: paused;
+  }
+
+  .ball {
+    position: absolute;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    left: 50%; top: 150px;
+    margin-left: -19px;
+    box-shadow: 0 6px 10px rgba(31,60,70,0.25), inset -4px -4px 8px rgba(0,0,0,0.1), inset 3px 3px 6px rgba(255,255,255,0.7);
+    animation-name: toss;
+    animation-duration: var(--cycle, 2.4s);
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+  .ball-a {
+    background: conic-gradient(#fff 0 12.5%, #ff6b6b 0 25%, #fff 0 37.5%, #ffd166 0 50%, #fff 0 62.5%, #4ecdc4 0 75%, #fff 0 87.5%, #6c8ff0 0 100%);
+    animation-delay: 0s;
+  }
+  .ball-b {
+    background: conic-gradient(#fff 0 12.5%, #6c8ff0 0 25%, #fff 0 37.5%, #ff6b6b 0 50%, #fff 0 62.5%, #ffd166 0 75%, #fff 0 87.5%, #4ecdc4 0 100%);
+    animation-delay: calc(var(--cycle, 2.4s) * -0.5);
+  }
+
+  @keyframes toss {
+    0%   { transform: translate(-58px, 2px) scale(0.85) rotate(0deg); }
+    25%  { transform: translate(-22px, -116px) scale(1.05) rotate(150deg); }
+    50%  { transform: translate(58px, 2px) scale(0.85) rotate(300deg); }
+    75%  { transform: translate(22px, -116px) scale(1.05) rotate(450deg); }
+    100% { transform: translate(-58px, 2px) scale(0.85) rotate(600deg); }
+  }
+
+  /* ---------- Sea-creature character (SVG illustration) ---------- */
+  .explorer {
+    position: absolute;
+    left: 50%; bottom: 2px;
+    width: 132px; height: 152px;
+    margin-left: -66px;
+    animation: explorer-bob var(--cycle, 2.4s) ease-in-out infinite;
+    filter: drop-shadow(0 8px 6px rgba(31,60,70,0.25));
+  }
+  @keyframes explorer-bob {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50% { transform: translateY(-3px) rotate(1.5deg); }
+  }
+  .ex-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+  .drop-ball {
+    position: absolute;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    left: 50%; top: 50px;
+    margin-left: -21px;
+    background: conic-gradient(#fff 0 12.5%, #ff6b6b 0 25%, #fff 0 37.5%, #ffd166 0 50%, #fff 0 62.5%, #4ecdc4 0 75%, #fff 0 87.5%, #6c8ff0 0 100%);
+    box-shadow: 0 6px 10px rgba(31,60,70,0.25), inset -4px -4px 8px rgba(0,0,0,0.1), inset 3px 3px 6px rgba(255,255,255,0.7);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .drop-ball.falling {
+    opacity: 1;
+    animation: drop-fall 0.9s cubic-bezier(.55,0,1,.45) forwards;
+  }
+  @keyframes drop-fall {
+    0% { top: 50px; transform: translateX(0) rotate(0deg); opacity: 1; }
+    70% { top: 255px; transform: translateX(8px) rotate(200deg); opacity: 1; }
+    85% { top: 220px; transform: translateX(-6px) rotate(260deg); }
+    100% { top: 255px; transform: translateX(0) rotate(320deg); opacity: 0; }
+  }
+
+  .burst {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 10px; height: 10px;
+    pointer-events: none;
+  }
+
+  .shake-screen { animation: screen-shake 0.35s ease; }
+  @keyframes screen-shake {
+    10%, 90% { transform: translateX(-3px); }
+    20%, 80% { transform: translateX(5px); }
+    30%, 50%, 70% { transform: translateX(-7px); }
+    40%, 60% { transform: translateX(7px); }
+  }
+
+  /* ---------- Ticket / question ---------- */
+  .ticket {
+    background: var(--panel-tint);
+    border-radius: var(--radius-md);
+    padding: 20px 22px 18px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .ticket.pulse { animation: ticket-pulse 0.5s ease; }
+  @keyframes ticket-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(46,196,166,0.5); }
+    100% { box-shadow: 0 0 0 14px rgba(46,196,166,0); }
+  }
+
+  .combo-badge {
+    position: absolute;
+    top: 8px; left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    background: linear-gradient(180deg, #ffb35c, var(--accent-coral));
+    color: #4a1608;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    box-shadow: 0 6px 14px rgba(31,60,70,0.25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease, font-size 0.2s ease, padding 0.2s ease;
+    z-index: 3;
+  }
+  .combo-badge.show {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  .combo-badge.bump {
+    animation: combo-pop 0.35s ease;
+  }
+  @keyframes combo-pop {
+    0% { transform: translateX(-50%) scale(0.7); }
+    60% { transform: translateX(-50%) scale(1.25); }
+    100% { transform: translateX(-50%) scale(1); }
+  }
+  .combo-badge.tier2 {
+    background: linear-gradient(180deg, #ffe08a, #ff8a3d);
+    color: #4a2400;
+    font-size: 16px;
+    padding: 7px 18px;
+    box-shadow: 0 6px 16px rgba(255,138,61,0.5);
+  }
+  .combo-badge.tier3 {
+    background: linear-gradient(135deg, #ff5c9e, #ff8a3d, #ffd166);
+    color: #400020;
+    font-size: 18px;
+    padding: 8px 20px;
+    box-shadow: 0 0 18px rgba(255,92,158,0.7);
+    animation: combo-glow 1s ease-in-out infinite;
+  }
+  .combo-badge.tier4 {
+    background: linear-gradient(120deg, #ffd166, #ff5c9e, #6df0d4, #ffd166);
+    background-size: 300% auto;
+    color: #2b0033;
+    font-size: 22px;
+    padding: 10px 24px;
+    box-shadow: 0 0 24px rgba(255,209,102,0.8);
+    animation: combo-shine 1.4s linear infinite, combo-glow 0.8s ease-in-out infinite;
+  }
+  @keyframes combo-glow {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.3); }
+  }
+  @keyframes combo-shine {
+    0% { background-position: 0% center; }
+    100% { background-position: 300% center; }
+  }
+
+  .question {
+    font-size: clamp(32px, 8vw, 44px);
+    font-weight: 800;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    margin-bottom: 14px;
+  }
+
+  .bulbs { display: flex; gap: 7px; justify-content: center; }
+  .bulb {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent-sun);
+    box-shadow: 0 0 6px 2px rgba(255,203,71,0.6);
+    transition: background 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
+  }
+  .bulb.off {
+    background: #d7e6ea;
+    box-shadow: none;
+    opacity: 0.6;
+    transform: scale(0.55);
+  }
+
+  .choices {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .choice-btn {
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 24px 6px;
+    font-size: 32px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    background: linear-gradient(180deg, #ffffff, #eaf7fb);
+    box-shadow: inset 0 -4px 0 rgba(31,122,153,0.1), 0 6px 14px rgba(31,122,153,0.18);
+    cursor: pointer;
+    transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease, color 0.15s ease;
+  }
+  .choice-btn .choice-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgba(43,58,85,0.4);
+    margin-bottom: 6px;
+  }
+  .choice-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: inset 0 -1px 0 rgba(31,122,153,0.1), 0 2px 6px rgba(31,122,153,0.15); }
+  .choice-btn:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
+  .choice-btn:disabled { cursor: default; }
+  .choice-btn.correct {
+    background: linear-gradient(180deg, #5be8c9, var(--accent-mint));
+    color: #04352c;
+  }
+  .choice-btn.wrong {
+    background: linear-gradient(180deg, #ffab8f, var(--accent-coral));
+    color: #4a1608;
+  }
+
+  .headline-stat {
+    background: linear-gradient(180deg, rgba(255,203,71,0.22), rgba(255,203,71,0.05));
+    border: 2px solid rgba(255,203,71,0.5);
+    border-radius: var(--radius-md);
+    padding: 20px 10px 18px;
+    margin-bottom: 18px;
+  }
+  .headline-stat .hud-label { font-size: 15px; letter-spacing: 0.08em; }
+  .headline-stat .hud-value {
+    font-size: 56px;
+    color: var(--value);
+    line-height: 1.2;
+  }
+
+  .record-banner {
+    background: linear-gradient(180deg, rgba(255,203,71,0.3), rgba(255,203,71,0.06));
+    border: 2px solid var(--accent-sun);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 16px;
+    font-weight: 800;
+    color: #a3720a;
+    font-size: 16px;
+    animation: banner-pop 0.5s ease;
+  }
+  @keyframes banner-pop {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .hof-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 22px;
+    max-height: 380px;
+    overflow-y: auto;
+    text-align: left;
+  }
+  .hof-row {
+    display: grid;
+    grid-template-columns: 34px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    background: var(--panel-tint);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 15px;
+  }
+  .hof-row.mine { border: 2px solid var(--accent-mint); }
+  .hof-rank { font-weight: 800; color: var(--value); text-align: center; }
+  .hof-name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hof-meta { text-align: right; }
+  .hof-score { display: block; font-weight: 800; color: #1a8a72; font-variant-numeric: tabular-nums; }
+  .hof-sub { display: block; color: var(--ink-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .hof-empty { color: var(--ink-muted); padding: 20px; text-align: center; }
+
+  .result-grid {
+    display: flex;
+    justify-content: space-around;
+    background: var(--panel-tint);
+    border-radius: var(--radius-md);
+    padding: 18px 10px;
+    margin-bottom: 24px;
+  }
+  .result-grid > div { display: flex; flex-direction: column; gap: 4px; }
+
+  .toast {
+    position: fixed;
+    top: 18px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent-sun);
+    color: #4a3200;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    box-shadow: 0 8px 20px rgba(31,122,153,0.3);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .toast.show { animation: toast-in 1.6s ease forwards; }
+  @keyframes toast-in {
+    0% { opacity: 0; transform: translate(-50%, -8px); }
+    15% { opacity: 1; transform: translate(-50%, 0); }
+    80% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, -8px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ball, .explorer, .screen.active, .toast.show, .drop-ball.falling, .balloon.popping, .balloon.gained, .ticket.pulse {
+      animation: none !important;
+    }
+  }
+</style>
+
+<div id="app">
+
+  <section id="splash-screen" class="screen active">
+    <div class="splash-wrap" id="splash-wrap">
+      <div class="splash-logo">JUN SOFT</div>
+      <div class="splash-sub">PRESENTS</div>
+    </div>
+  </section>
+
+  <section id="title-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="game-title">도윤이의 모험</h1>
+      <div class="title-menu">
+        <button type="button" id="title-start-btn" class="title-btn title-btn-start">시작</button>
+        <button type="button" id="title-options-btn" class="title-btn title-btn-options">옵션</button>
+      </div>
+      <button type="button" id="fullscreen-btn" class="btn-secondary small fullscreen-btn">전체화면</button>
+    </div>
+  </section>
+
+  <section id="lock-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand">도윤이의 모험</h1>
+      <p class="tagline">입장하려면 비밀번호를 입력하세요</p>
+      <form id="lock-form" autocomplete="off">
+        <input id="lock-input" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" placeholder="••••••" aria-label="비밀번호" readonly />
+        <div class="keypad" id="lock-keypad">
+          <button type="button" data-key="1">1</button>
+          <button type="button" data-key="2">2</button>
+          <button type="button" data-key="3">3</button>
+          <button type="button" data-key="4">4</button>
+          <button type="button" data-key="5">5</button>
+          <button type="button" data-key="6">6</button>
+          <button type="button" data-key="7">7</button>
+          <button type="button" data-key="8">8</button>
+          <button type="button" data-key="9">9</button>
+          <button type="button" data-key="back" class="key-wide">지우기</button>
+          <button type="button" data-key="0">0</button>
+          <button type="submit" class="key-wide key-enter">입장</button>
+        </div>
+      </form>
+      <p id="lock-error" class="error" role="alert" aria-live="polite">&nbsp;</p>
+    </div>
+  </section>
+
+  <section id="player-screen" class="screen">
+    <div class="stage-card">
+      <div class="slot-grid" id="slot-grid"></div>
+
+      <div id="slot-name-form-wrap" style="display:none;">
+        <form id="player-form" autocomplete="off">
+          <input id="player-name-input" maxlength="12" placeholder="이름을 입력하세요" aria-label="플레이어 이름" />
+          <button type="submit" class="btn-primary btn-large">시작하기</button>
+        </form>
+        <p id="player-error" class="error" role="alert" aria-live="polite">&nbsp;</p>
+        <button type="button" id="slot-back-btn" class="btn-secondary">← 슬롯 다시 고르기</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="start-screen" class="screen">
+    <div class="stage-card">
+      <button type="button" id="dash-back-btn" class="mute-btn back-btn" aria-label="슬롯 선택으로 돌아가기">↩</button>
+      <h1 class="brand"><span id="dash-name">도윤</span>님, 환영합니다!</h1>
+      <div class="stats-grid">
+        <div class="stat"><span class="stat-value" id="stat-games">0</span><span class="stat-label">누적 판수</span></div>
+        <div class="stat"><span class="stat-value" id="stat-playtime">0초</span><span class="stat-label">플레이타임</span></div>
+        <div class="stat"><span class="stat-value" id="stat-total-score">0</span><span class="stat-label">총점수</span></div>
+        <div class="stat"><span class="stat-value" id="stat-best-score">0</span><span class="stat-label">최고 점수 (<span id="stat-best-stage">1단</span>)</span></div>
+      </div>
+      <div class="mode-stack">
+        <button type="button" id="start-record-btn" class="btn-primary btn-large mode-btn mode-stage">스테이지모드</button>
+        <button type="button" id="start-infinite-btn" class="btn-primary btn-large mode-infinite mode-btn">도전모드</button>
+      </div>
+      <div class="btn-stack">
+        <button type="button" id="character-btn" class="btn-secondary small">바다 친구 선택</button>
+        <button type="button" id="options-btn" class="btn-secondary small">옵션</button>
+        <button type="button" id="hof-btn" class="btn-secondary small">명예의 전당</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="character-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand small">바다 친구 선택</h1>
+      <div class="char-select" id="char-select"></div>
+      <button type="button" id="character-back-btn" class="btn-primary btn-large">뒤로가기</button>
+    </div>
+  </section>
+
+  <section id="options-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand small">옵션</h1>
+      <div class="option-row">
+        <span class="option-label">목숨 개수</span>
+        <div class="stepper">
+          <button type="button" id="lives-minus" class="stepper-btn" aria-label="목숨 줄이기">−</button>
+          <span class="stepper-value" id="lives-value">3</span>
+          <button type="button" id="lives-plus" class="stepper-btn" aria-label="목숨 늘리기">+</button>
+        </div>
+      </div>
+      <button type="button" id="options-back-btn" class="btn-primary btn-large">뒤로가기</button>
+    </div>
+  </section>
+
+  <section id="game-screen" class="screen">
+    <div class="stage-card game-card" id="game-card">
+      <button type="button" id="pause-btn" class="mute-btn pause-btn" aria-label="일시정지">⏸</button>
+      <button type="button" id="mute-btn" class="mute-btn" aria-label="효과음 켜기/끄기">🔊</button>
+      <div class="hud">
+        <div class="hud-item">
+          <span class="hud-label">STAGE</span>
+          <span id="hud-stage" class="hud-value">1단</span>
+        </div>
+        <div class="hud-item lives" id="hud-lives" aria-label="남은 목숨"></div>
+        <div class="hud-item">
+          <span class="hud-label">SCORE</span>
+          <span id="hud-score" class="hud-value">0</span>
+        </div>
+      </div>
+
+      <div class="ring" id="ring">
+        <div class="spotlight"></div>
+        <div class="beat-flash" id="beat-flash"></div>
+        <div class="ball ball-a"></div>
+        <div class="ball ball-b"></div>
+        <div class="explorer" id="explorer" aria-hidden="true"></div>
+        <div id="drop-ball" class="drop-ball"></div>
+        <div class="combo-badge" id="combo-badge"></div>
+      </div>
+
+      <div class="ticket" id="ticket">
+        <div id="question" class="question">? × ? =</div>
+        <div class="bulbs" id="bulbs"></div>
+      </div>
+
+      <div class="choices" id="choices">
+        <button type="button" class="choice-btn" data-idx="0"><span class="choice-label">1</span><span class="choice-value">-</span></button>
+        <button type="button" class="choice-btn" data-idx="1"><span class="choice-label">2</span><span class="choice-value">-</span></button>
+        <button type="button" class="choice-btn" data-idx="2"><span class="choice-label">3</span><span class="choice-value">-</span></button>
+      </div>
+
+      <div class="pause-overlay" id="pause-overlay">
+        <div class="pause-panel">
+          <div class="pause-title" id="pause-title">일시정지</div>
+          <button type="button" id="resume-btn" class="btn-primary btn-large">이어하기</button>
+          <div class="pause-menu-row" id="pause-menu-row">
+            <button type="button" id="pause-restart-btn" class="btn-secondary pause-secondary">재시작</button>
+            <button type="button" id="pause-home-btn" class="btn-secondary pause-secondary">나가기</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pause-overlay" id="stage-clear-overlay">
+        <div class="pause-panel">
+          <div class="pause-title" id="stage-clear-title">1단 클리어!</div>
+          <div class="stage-clear-next" id="stage-clear-next">다음 스테이지 → 2단</div>
+        </div>
+      </div>
+
+      <div class="pause-overlay" id="memory-overlay">
+        <div class="pause-panel memory-panel">
+          <div class="pause-title">보너스 미니게임!</div>
+          <p class="memory-sub">같은 국기 카드 두 장을 찾아 짝을 맞춰보세요!</p>
+          <div class="memory-attempts" id="memory-attempts">기회 5번</div>
+          <div class="memory-grid" id="memory-grid"></div>
+          <div class="memory-status" id="memory-status">맞춘 짝: 0 / 5</div>
+          <button type="button" id="memory-skip-btn" class="btn-secondary pause-secondary">건너뛰기</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gameover-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand small">오늘도 즐거웠어요!</h1>
+      <p class="desc" id="gameover-msg">바다 친구가 비치볼을 놓쳤어요.</p>
+      <div id="record-banner" class="record-banner" style="display:none;"></div>
+      <div class="headline-stat">
+        <span class="hud-label">도달 단계</span><br />
+        <span id="final-stage" class="hud-value">1단</span>
+      </div>
+      <div class="result-grid">
+        <div><span class="hud-label">최종 점수</span><span id="final-score" class="hud-value">0</span></div>
+        <div><span class="hud-label">최고 점수</span><span id="best-score" class="hud-value">0</span></div>
+      </div>
+      <button id="retry-btn" class="btn-primary btn-large">다시 도전하기</button>
+      <div class="btn-row">
+        <button type="button" id="hof-btn2" class="btn-secondary">명예의 전당</button>
+        <button type="button" id="switch-player-btn2" class="btn-secondary">슬롯 선택으로 돌아가기</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="hof-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand small">명예의 전당</h1>
+      <p class="desc">역대 최고 점수 TOP 10</p>
+      <div class="hof-list" id="hof-list"></div>
+      <button type="button" id="hof-back-btn" class="btn-primary btn-large">뒤로가기</button>
+    </div>
+  </section>
+
+  <div id="toast" class="toast"></div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var PASSWORD = "191129";
+  var BEATS_PER_QUESTION = 8;   // 8 beats = 2 measures of 4/4
+  var TOTAL_BULBS = BEATS_PER_QUESTION;
+  var CORRECT_PER_STAGE = 8;
+  var MAX_LIVES = 3;
+  var LIVES_MIN = 1;
+  var LIVES_MAX = 9;
+  var COMBO_BONUS_STEP = 3;
+  var COMBO_BONUS_CAP = 10;
+  var BASE_BPM = 70;
+  var BPM_STEP = 9;
+  var MAX_BPM = 200;
+  var CHAR_OPTIONS = [
+    { species: "seal", label: "물개" },
+    { species: "dolphin", label: "돌고래" },
+    { species: "orca", label: "범고래" }
+  ];
+  var SLOTS_KEY = "jugglemath_slots_v1";
+  var SLOT_COUNT = 3;
+  var HOF_KEY = "jugglemath_hall_of_fame_v1";
+  var HOF_MAX = 10;
+  var MEMORY_EVERY_N_STAGES = 3;
+  var MEMORY_PAIRS = 5;
+  var MEMORY_ATTEMPTS = 5;
+  var FLAG_POOL = ["🇰🇷", "🇺🇸", "🇯🇵", "🇫🇷", "🇩🇪", "🇧🇷", "🇮🇳", "🇨🇳", "🇬🇧", "🇮🇹", "🇨🇦", "🇦🇺", "🇪🇸", "🇲🇽", "🇷🇺"];
+
+  var screens = {
+    splash: document.getElementById("splash-screen"),
+    title: document.getElementById("title-screen"),
+    lock: document.getElementById("lock-screen"),
+    player: document.getElementById("player-screen"),
+    start: document.getElementById("start-screen"),
+    character: document.getElementById("character-screen"),
+    options: document.getElementById("options-screen"),
+    game: document.getElementById("game-screen"),
+    over: document.getElementById("gameover-screen"),
+    hof: document.getElementById("hof-screen")
+  };
+
+  function showScreen(name) {
+    Object.keys(screens).forEach(function (key) {
+      screens[key].classList.toggle("active", key === name);
+    });
+  }
+
+  // ---------- Arrow-key + Enter menu navigation (all screens) ----------
+  function getActiveFocusScope() {
+    var activeScreen = null;
+    Object.keys(screens).forEach(function (key) {
+      if (screens[key].classList.contains("active")) { activeScreen = screens[key]; }
+    });
+    if (!activeScreen) return null;
+    var overlays = activeScreen.querySelectorAll(".pause-overlay.show");
+    if (overlays.length) { return overlays[overlays.length - 1]; }
+    return activeScreen;
+  }
+
+  function getFocusableInScope(scope) {
+    var list = scope.querySelectorAll('button:not([disabled]), input:not([disabled])');
+    return Array.prototype.filter.call(list, function (el) { return el.offsetParent !== null; });
+  }
+
+  var ROW_GROUP_SELECTOR = ".char-select, .keypad, .memory-grid, .stepper, .btn-row, .pause-menu-row";
+
+  function buildNavRows(focusables) {
+    var rows = [];
+    var lastGroup = null;
+    focusables.forEach(function (el) {
+      var group = el.closest(ROW_GROUP_SELECTOR);
+      if (group && group === lastGroup) {
+        rows[rows.length - 1].push(el);
+      } else {
+        rows.push([el]);
+        lastGroup = group;
+      }
+    });
+    return rows;
+  }
+
+  function findRowCol(rows, el) {
+    for (var i = 0; i < rows.length; i++) {
+      var ci = rows[i].indexOf(el);
+      if (ci !== -1) { return [i, ci]; }
+    }
+    return [0, 0];
+  }
+
+  window.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    var scope = getActiveFocusScope();
+    if (!scope) return;
+    var focusables = getFocusableInScope(scope);
+    if (!focusables.length) return;
+    e.preventDefault();
+
+    var rows = buildNavRows(focusables);
+    var pos = findRowCol(rows, document.activeElement);
+    var r = pos[0];
+    var c = pos[1];
+    var next;
+
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+      var row = rows[r];
+      c = e.key === "ArrowRight" ? (c + 1) % row.length : (c - 1 + row.length) % row.length;
+      next = row[c];
+    } else {
+      var nr = e.key === "ArrowDown" ? (r + 1) % rows.length : (r - 1 + rows.length) % rows.length;
+      var targetRow = rows[nr];
+      next = targetRow[Math.min(c, targetRow.length - 1)];
+    }
+    setKbdFocus(next);
+  });
+
+  var lastKbdFocusEl = null;
+  function setKbdFocus(el) {
+    if (lastKbdFocusEl && lastKbdFocusEl !== el) { lastKbdFocusEl.classList.remove("kbd-focus"); }
+    el.classList.add("kbd-focus");
+    el.focus();
+    lastKbdFocusEl = el;
+  }
+  window.addEventListener("focusin", function (e) {
+    if (lastKbdFocusEl && e.target !== lastKbdFocusEl) {
+      lastKbdFocusEl.classList.remove("kbd-focus");
+      lastKbdFocusEl = null;
+    }
+  });
+
+  // ---------- Fullscreen (mobile) ----------
+  function isMobileDevice() {
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
+  function requestAppFullscreen() {
+    var el = document.documentElement;
+    var req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if (!req) return;
+    try {
+      var result = req.call(el);
+      if (result && result.catch) { result.catch(function () {}); }
+    } catch (err) {}
+  }
+  function toggleAppFullscreen() {
+    var isFs = document.fullscreenElement || document.webkitFullscreenElement;
+    if (isFs) {
+      var exit = document.exitFullscreen || document.webkitExitFullscreen;
+      if (exit) { exit.call(document); }
+    } else {
+      requestAppFullscreen();
+    }
+  }
+  var fullscreenBtn = document.getElementById("fullscreen-btn");
+  if (fullscreenBtn) { fullscreenBtn.addEventListener("click", toggleAppFullscreen); }
+
+  // ---------- Splash / title ----------
+  var splashWrap = document.getElementById("splash-wrap");
+  function goToLockScreen() {
+    showScreen("lock");
+    lockInput.focus();
+  }
+  var splashTimeoutId = setTimeout(goToLockScreen, 2200);
+  splashWrap.addEventListener("click", function () {
+    clearTimeout(splashTimeoutId);
+    if (isMobileDevice()) { requestAppFullscreen(); }
+    goToLockScreen();
+  });
+
+  document.getElementById("title-start-btn").addEventListener("click", function () {
+    if (isMobileDevice()) { requestAppFullscreen(); }
+    goToPlayerScreen();
+  });
+  document.getElementById("title-options-btn").addEventListener("click", function () {
+    state.optionsFrom = "title";
+    showScreen("options");
+  });
+  document.getElementById("options-btn").addEventListener("click", function () {
+    state.optionsFrom = "start";
+    showScreen("options");
+  });
+  document.getElementById("character-btn").addEventListener("click", function () {
+    showScreen("character");
+  });
+  document.getElementById("character-back-btn").addEventListener("click", function () {
+    showScreen("start");
+  });
+  document.getElementById("options-back-btn").addEventListener("click", function () {
+    showScreen(state.optionsFrom || "start");
+  });
+
+  // ---------- Lock screen ----------
+  var lockForm = document.getElementById("lock-form");
+  var lockInput = document.getElementById("lock-input");
+  var lockError = document.getElementById("lock-error");
+
+  document.getElementById("lock-keypad").addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-key]");
+    if (!btn) return;
+    var key = btn.getAttribute("data-key");
+    if (key === "back") {
+      lockInput.value = lockInput.value.slice(0, -1);
+    } else if (lockInput.value.length < 10) {
+      lockInput.value += key;
+    }
+    lockInput.focus();
+  });
+
+  window.addEventListener("keydown", function (e) {
+    if (!screens.lock.classList.contains("active")) return;
+    if (e.key >= "0" && e.key <= "9") {
+      if (lockInput.value.length < 10) { lockInput.value += e.key; }
+    } else if (e.key === "Backspace") {
+      lockInput.value = lockInput.value.slice(0, -1);
+      e.preventDefault();
+    } else if (e.key === "Enter") {
+      lockForm.dispatchEvent(new Event("submit", { cancelable: true }));
+    }
+  });
+
+  lockForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (lockInput.value === PASSWORD) {
+      lockError.textContent = " ";
+      showScreen("title");
+    } else {
+      lockError.textContent = "비밀번호가 달라요. 다시 입력해 주세요.";
+      lockInput.classList.remove("shake");
+      void lockInput.offsetWidth;
+      lockInput.classList.add("shake");
+      lockInput.value = "";
+      lockInput.focus();
+    }
+  });
+
+  // ---------- Game state ----------
+  var state = {
+    stage: 1,
+    score: 0,
+    lives: MAX_LIVES,
+    livesSetting: MAX_LIVES,
+    combo: 0,
+    memoryCards: [],
+    memoryFlipped: [],
+    memoryMatches: 0,
+    memoryAttemptsLeft: 0,
+    memoryBusy: false,
+    memoryActive: false,
+    memoryOnDone: null,
+    correctInStage: 0,
+    a: 0, b: 0, answer: 0,
+    lastA: -1, lastB: -1,
+    beatIndex: 0,
+    beatTimeoutId: null,
+    flowTimeoutId: null,
+    beatScheduledAt: 0,
+    beatIntervalMs: 0,
+    beatRemainingMs: 0,
+    resumeIntervalId: null,
+    playing: false,
+    answered: false,
+    muted: false,
+    paused: false,
+    counting: false,
+    mode: "record",
+    currentPlayer: null,
+    currentSlot: null,
+    pendingSlot: null,
+    selectedSpecies: "seal",
+    sessionStartTime: 0,
+    optionsFrom: "start"
+  };
+
+  var ring = document.getElementById("ring");
+  var questionEl = document.getElementById("question");
+  var bulbsEl = document.getElementById("bulbs");
+  var choicesEl = document.getElementById("choices");
+  var choiceBtns = choicesEl.querySelectorAll(".choice-btn");
+  var hudStage = document.getElementById("hud-stage");
+  var hudScore = document.getElementById("hud-score");
+  var hudLivesEl = document.getElementById("hud-lives");
+  var livesEls = document.querySelectorAll("#hud-lives .balloon");
+  var livesMinusBtn = document.getElementById("lives-minus");
+  var livesPlusBtn = document.getElementById("lives-plus");
+  var livesValueEl = document.getElementById("lives-value");
+  var comboBadge = document.getElementById("combo-badge");
+  var memoryOverlay = document.getElementById("memory-overlay");
+  var memoryGridEl = document.getElementById("memory-grid");
+  var memoryStatusEl = document.getElementById("memory-status");
+  var memorySkipBtn = document.getElementById("memory-skip-btn");
+  var memoryAttemptsEl = document.getElementById("memory-attempts");
+  var dropBall = document.getElementById("drop-ball");
+  var ticket = document.getElementById("ticket");
+  var gameCard = document.getElementById("game-card");
+  var toast = document.getElementById("toast");
+  var beatFlash = document.getElementById("beat-flash");
+  var muteBtn = document.getElementById("mute-btn");
+  var pauseBtn = document.getElementById("pause-btn");
+  var pauseOverlay = document.getElementById("pause-overlay");
+  var pauseTitle = document.getElementById("pause-title");
+  var resumeBtn = document.getElementById("resume-btn");
+  var pauseMenuRow = document.getElementById("pause-menu-row");
+  var explorerEl = document.getElementById("explorer");
+  var stageClearOverlay = document.getElementById("stage-clear-overlay");
+  var stageClearTitle = document.getElementById("stage-clear-title");
+  var stageClearNext = document.getElementById("stage-clear-next");
+  var recordBanner = document.getElementById("record-banner");
+
+  var playerForm = document.getElementById("player-form");
+  var playerNameInput = document.getElementById("player-name-input");
+  var playerError = document.getElementById("player-error");
+  var slotGridEl = document.getElementById("slot-grid");
+  var slotNameFormWrap = document.getElementById("slot-name-form-wrap");
+  var dashName = document.getElementById("dash-name");
+  var statGames = document.getElementById("stat-games");
+  var statPlaytime = document.getElementById("stat-playtime");
+  var statTotalScore = document.getElementById("stat-total-score");
+  var statBestScore = document.getElementById("stat-best-score");
+  var statBestStage = document.getElementById("stat-best-stage");
+  var hofListEl = document.getElementById("hof-list");
+  var charSelectEl = document.getElementById("char-select");
+
+  // ---------- Save slots (localStorage, no server) ----------
+  function loadSlots() {
+    var slots;
+    try { slots = JSON.parse(localStorage.getItem(SLOTS_KEY) || "null"); } catch (e) { slots = null; }
+    if (!Array.isArray(slots)) { slots = []; }
+    while (slots.length < SLOT_COUNT) { slots.push(null); }
+    return slots.slice(0, SLOT_COUNT);
+  }
+  function saveSlots(slots) {
+    try { localStorage.setItem(SLOTS_KEY, JSON.stringify(slots)); } catch (e) {}
+  }
+  function loadHOF() {
+    try { return JSON.parse(localStorage.getItem(HOF_KEY) || "[]"); } catch (e) { return []; }
+  }
+  function saveHOF(list) {
+    try { localStorage.setItem(HOF_KEY, JSON.stringify(list)); } catch (e) {}
+  }
+  function formatDuration(ms) {
+    var totalSec = Math.floor(ms / 1000);
+    var h = Math.floor(totalSec / 3600);
+    var m = Math.floor((totalSec % 3600) / 60);
+    var s = totalSec % 60;
+    if (h > 0) { return h + "시간 " + m + "분"; }
+    if (m > 0) { return m + "분 " + s + "초"; }
+    return s + "초";
+  }
+  function renderSlotGrid() {
+    var slots = loadSlots();
+    slotGridEl.innerHTML = "";
+    slots.forEach(function (p, idx) {
+      var card = document.createElement("button");
+      card.type = "button";
+      card.className = "slot-card" + (p ? "" : " empty");
+      if (p) {
+        var speciesKey = p.character || "seal";
+        var speciesTag = (SPECIES_EMOJI[speciesKey] || "🦭") + " " + (SPECIES_LABEL[speciesKey] || "물개");
+        card.innerHTML =
+          "<div><div class=\"slot-label\">SLOT " + (idx + 1) + "</div>" +
+          "<div class=\"slot-name\">" + p.name + " <span class=\"slot-species\">" + speciesTag + "</span></div>" +
+          "<div class=\"slot-meta\">최고 " + p.bestScore + "점 · " + p.bestStage + "단 · " + p.gamesPlayed + "판</div></div>" +
+          "<div class=\"slot-action\">이어하기 →</div>";
+        card.addEventListener("click", function () { continueSlot(idx); });
+      } else {
+        card.innerHTML =
+          "<div><div class=\"slot-label\">SLOT " + (idx + 1) + "</div>" +
+          "<div class=\"slot-name\">빈 슬롯</div></div>" +
+          "<div class=\"slot-action\">새로 시작 →</div>";
+        card.addEventListener("click", function () { showNameForm(idx); });
+      }
+      slotGridEl.appendChild(card);
+    });
+  }
+  function showNameForm(slotIndex) {
+    state.pendingSlot = slotIndex;
+    slotGridEl.style.display = "none";
+    slotNameFormWrap.style.display = "";
+    playerNameInput.value = "";
+    playerError.textContent = " ";
+    playerNameInput.focus();
+  }
+  function showSlotGrid() {
+    state.pendingSlot = null;
+    slotNameFormWrap.style.display = "none";
+    slotGridEl.style.display = "";
+    renderSlotGrid();
+  }
+  function renderDashboard() {
+    var p = state.currentPlayer;
+    if (!p) { return; }
+    dashName.textContent = p.name;
+    statGames.textContent = p.gamesPlayed;
+    statPlaytime.textContent = formatDuration(p.totalPlayTimeMs);
+    statTotalScore.textContent = p.totalScore;
+    statBestScore.textContent = p.bestScore;
+    statBestStage.textContent = p.bestStage + "단";
+  }
+  function continueSlot(slotIndex) {
+    var slots = loadSlots();
+    var p = slots[slotIndex];
+    if (!p) { return; }
+    state.currentPlayer = p;
+    state.currentSlot = slotIndex;
+    state.selectedSpecies = p.character || "seal";
+    state.livesSetting = p.livesSetting || MAX_LIVES;
+    renderDashboard();
+    renderCharSelect();
+    updateLivesOption();
+    showScreen("start");
+  }
+  function goToPlayerScreen() {
+    showSlotGrid();
+    showScreen("player");
+  }
+
+  playerForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = playerNameInput.value.trim().slice(0, 12);
+    if (!name) {
+      playerError.textContent = "이름을 입력해 주세요.";
+      return;
+    }
+    var slots = loadSlots();
+    var idx = state.pendingSlot;
+    var p = { name: name, gamesPlayed: 0, totalPlayTimeMs: 0, totalScore: 0, bestScore: 0, bestStage: 1, character: "seal", livesSetting: MAX_LIVES };
+    slots[idx] = p;
+    saveSlots(slots);
+    state.currentPlayer = p;
+    state.currentSlot = idx;
+    state.selectedSpecies = "seal";
+    state.livesSetting = MAX_LIVES;
+    playerError.textContent = " ";
+    renderDashboard();
+    renderCharSelect();
+    updateLivesOption();
+    showScreen("start");
+  });
+
+  document.getElementById("slot-back-btn").addEventListener("click", showSlotGrid);
+  document.getElementById("dash-back-btn").addEventListener("click", goToPlayerScreen);
+  document.getElementById("switch-player-btn2").addEventListener("click", goToPlayerScreen);
+
+  var SPECIES_EMOJI = { seal: "🦭", dolphin: "🐬", orca: "🐋", walrus: "🦣" };
+  var SPECIES_LABEL = { seal: "물개", dolphin: "돌고래", orca: "범고래", walrus: "바다코끼리" };
+
+  function renderHallOfFame() {
+    var list = loadHOF();
+    hofListEl.innerHTML = "";
+    if (!list.length) {
+      hofListEl.innerHTML = "<div class=\"hof-empty\">아직 기록이 없어요. 첫 번째 명예의 전당 주인공이 되어보세요!</div>";
+      return;
+    }
+    list.forEach(function (entry, idx) {
+      var row = document.createElement("div");
+      var mine = state.currentPlayer && entry.name === state.currentPlayer.name;
+      row.className = "hof-row" + (mine ? " mine" : "");
+      var medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : String(idx + 1);
+      var modeLabel = entry.mode === "infinite" ? "도전모드" : "스테이지모드";
+      var speciesKey = entry.character || "seal";
+      var speciesTag = (SPECIES_EMOJI[speciesKey] || "🦭") + " " + (SPECIES_LABEL[speciesKey] || "물개");
+      row.innerHTML =
+        "<span class=\"hof-rank\">" + medal + "</span>" +
+        "<span class=\"hof-name\">" + entry.name + "</span>" +
+        "<span class=\"hof-meta\"><span class=\"hof-score\">" + entry.score + "점</span>" +
+        "<span class=\"hof-sub\">" + entry.stage + "단 · " + modeLabel + " · " + speciesTag + "</span></span>";
+      hofListEl.appendChild(row);
+    });
+  }
+  document.getElementById("hof-btn").addEventListener("click", function () { renderHallOfFame(); showScreen("hof"); });
+  document.getElementById("hof-btn2").addEventListener("click", function () { renderHallOfFame(); showScreen("hof"); });
+  document.getElementById("hof-back-btn").addEventListener("click", function () {
+    if (state.currentPlayer) { renderDashboard(); showScreen("start"); } else { goToPlayerScreen(); }
+  });
+
+  function characterSVG(species) {
+    var palettes = {
+      seal: { dark: "#93aec2", light: "#cfe0ec", belly: "#eef4f8" },
+      dolphin: { dark: "#5fa8c7", light: "#b7e2f0", belly: "#e3f6fb" },
+      orca: { dark: "#1c1c24", light: "#3a3a46", belly: "#ffffff" },
+      walrus: { dark: "#b98a55", light: "#e0bd8d", belly: "#f6e9d1" }
+    };
+    var pal = palettes[species] || palettes.seal;
+    var parts = [];
+
+    if (species === "dolphin" || species === "orca") {
+      parts.push('<path d="M70 32 Q80 4 90 32 Z" fill="' + pal.dark + '"/>');
+    }
+    parts.push('<ellipse cx="22" cy="110" rx="14" ry="30" fill="' + pal.dark + '" transform="rotate(-25 22 110)"/>');
+    parts.push('<ellipse cx="138" cy="110" rx="14" ry="30" fill="' + pal.dark + '" transform="rotate(25 138 110)"/>');
+    parts.push('<path d="M60 158 Q80 178 100 158 Q80 167 60 158 Z" fill="' + pal.dark + '"/>');
+    parts.push('<ellipse cx="80" cy="98" rx="54" ry="64" fill="' + pal.dark + '"/>');
+    parts.push('<ellipse cx="80" cy="88" rx="50" ry="56" fill="' + pal.light + '"/>');
+    parts.push('<ellipse cx="80" cy="124" rx="30" ry="38" fill="' + pal.belly + '"/>');
+    if (species === "orca") {
+      parts.push('<ellipse cx="56" cy="76" rx="10" ry="7" fill="#fff" transform="rotate(-18 56 76)"/>');
+      parts.push('<ellipse cx="104" cy="76" rx="10" ry="7" fill="#fff" transform="rotate(18 104 76)"/>');
+    }
+    parts.push('<ellipse cx="61" cy="80" rx="11" ry="12" fill="#fff"/>');
+    parts.push('<ellipse cx="99" cy="80" rx="11" ry="12" fill="#fff"/>');
+    parts.push('<circle cx="63" cy="83" r="7" fill="#2b3a55"/>');
+    parts.push('<circle cx="101" cy="83" r="7" fill="#2b3a55"/>');
+    parts.push('<circle cx="60.5" cy="80" r="2.4" fill="#fff"/>');
+    parts.push('<circle cx="98.5" cy="80" r="2.4" fill="#fff"/>');
+    if (species === "seal" || species === "walrus") {
+      parts.push('<ellipse cx="46" cy="100" rx="9" ry="6" fill="#ff9d94" opacity="0.5"/>');
+      parts.push('<ellipse cx="114" cy="100" rx="9" ry="6" fill="#ff9d94" opacity="0.5"/>');
+    }
+    if (species === "dolphin") {
+      parts.push('<path d="M62 100 Q80 122 98 100 Q80 111 62 100 Z" fill="' + pal.light + '"/>');
+      parts.push('<path d="M74 112 Q80 116 86 112" stroke="#2b3a55" stroke-width="2.4" fill="none" stroke-linecap="round"/>');
+    } else if (species === "orca") {
+      parts.push('<path d="M68 106 Q80 113 92 106" stroke="#2b3a55" stroke-width="2.6" fill="none" stroke-linecap="round"/>');
+    } else {
+      parts.push('<circle cx="80" cy="98" r="3.5" fill="#2b3a55"/>');
+      parts.push('<path d="M70 108 Q80 114 90 108" stroke="#2b3a55" stroke-width="2.6" fill="none" stroke-linecap="round"/>');
+    }
+    if (species === "seal") {
+      parts.push('<g stroke="#2b3a55" stroke-width="1.4" opacity="0.45">' +
+        '<line x1="46" y1="88" x2="26" y2="84"/><line x1="46" y1="94" x2="24" y2="94"/>' +
+        '<line x1="114" y1="88" x2="134" y2="84"/><line x1="114" y1="94" x2="136" y2="94"/></g>');
+    }
+    if (species === "walrus") {
+      parts.push('<rect x="70" y="110" width="7" height="22" rx="3.5" fill="#fffdf2"/>');
+      parts.push('<rect x="83" y="110" width="7" height="22" rx="3.5" fill="#fffdf2"/>');
+    }
+    return '<svg viewBox="0 0 160 180" class="ex-svg" aria-hidden="true">' + parts.join("") + '</svg>';
+  }
+
+  function applyCharacter() {
+    var species = state.selectedSpecies || "seal";
+    explorerEl.innerHTML = characterSVG(species);
+  }
+
+  function renderCharSelect() {
+    charSelectEl.innerHTML = "";
+    CHAR_OPTIONS.forEach(function (opt) {
+      var slot = document.createElement("button");
+      slot.type = "button";
+      slot.className = "char-slot" + (state.selectedSpecies === opt.species ? " selected" : "");
+      slot.dataset.species = opt.species;
+      slot.innerHTML =
+        '<div class="mini-stage"><div class="explorer mini">' + characterSVG(opt.species) + "</div></div>" +
+        '<span class="char-name">' + opt.label + "</span>";
+      slot.addEventListener("click", function () {
+        state.selectedSpecies = opt.species;
+        if (state.currentPlayer && state.currentSlot !== null) {
+          state.currentPlayer.character = opt.species;
+          var slots = loadSlots();
+          slots[state.currentSlot] = state.currentPlayer;
+          saveSlots(slots);
+        }
+        renderCharSelect();
+        var newSlot = charSelectEl.querySelector('.char-slot[data-species="' + opt.species + '"]');
+        if (newSlot) { setKbdFocus(newSlot); }
+      });
+      charSelectEl.appendChild(slot);
+    });
+  }
+
+  for (var i = 0; i < TOTAL_BULBS; i++) {
+    var b = document.createElement("span");
+    b.className = "bulb";
+    bulbsEl.appendChild(b);
+  }
+  var bulbEls = bulbsEl.querySelectorAll(".bulb");
+
+  function bpmForStage(stage) {
+    return Math.min(MAX_BPM, BASE_BPM + (stage - 1) * BPM_STEP);
+  }
+  function beatSeconds(stage) {
+    return 60 / bpmForStage(stage);
+  }
+  function applyCycle() {
+    // ball speed tracks the stage tempo directly, so it visibly speeds up with BPM
+    var cycle = beatSeconds(state.stage) * 2.5;
+    ring.style.setProperty("--cycle", cycle + "s");
+  }
+
+  // ---------- Audio (Web Audio metronome click, no external files) ----------
+  var audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) {
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch (e) { audioCtx = null; }
+    }
+    if (audioCtx && audioCtx.state === "suspended") { audioCtx.resume(); }
+  }
+  function playClick(accent) {
+    if (!audioCtx || state.muted) return;
+    var t = audioCtx.currentTime;
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = accent ? 1046.5 : 698.46;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(accent ? 0.32 : 0.18, t + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + (accent ? 0.15 : 0.09));
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(t);
+    osc.stop(t + 0.18);
+  }
+  muteBtn.addEventListener("click", function () {
+    state.muted = !state.muted;
+    muteBtn.textContent = state.muted ? "🔇" : "🔊";
+  });
+
+  function flashBeat(accent) {
+    beatFlash.classList.toggle("accent", accent);
+    beatFlash.classList.remove("on");
+    void beatFlash.offsetWidth;
+    beatFlash.classList.add("on");
+  }
+
+  function updateHUD() {
+    hudStage.textContent = state.stage + "단";
+    hudScore.textContent = state.score;
+  }
+
+  function renderLivesHUD() {
+    hudLivesEl.innerHTML = "";
+    for (var i = 0; i < state.livesSetting; i++) {
+      var span = document.createElement("span");
+      span.className = "balloon";
+      span.setAttribute("data-life", i);
+      span.textContent = "❤️";
+      hudLivesEl.appendChild(span);
+    }
+    livesEls = hudLivesEl.querySelectorAll(".balloon");
+  }
+
+  function updateLivesOption() {
+    livesValueEl.textContent = state.livesSetting;
+    livesMinusBtn.disabled = state.livesSetting <= LIVES_MIN;
+    livesPlusBtn.disabled = state.livesSetting >= LIVES_MAX;
+  }
+
+  function saveLivesSetting() {
+    if (state.currentPlayer && state.currentSlot !== null) {
+      state.currentPlayer.livesSetting = state.livesSetting;
+      var slots = loadSlots();
+      slots[state.currentSlot] = state.currentPlayer;
+      saveSlots(slots);
+    }
+  }
+
+  livesMinusBtn.addEventListener("click", function () {
+    if (state.livesSetting > LIVES_MIN) {
+      state.livesSetting -= 1;
+      saveLivesSetting();
+      updateLivesOption();
+    }
+  });
+  livesPlusBtn.addEventListener("click", function () {
+    if (state.livesSetting < LIVES_MAX) {
+      state.livesSetting += 1;
+      saveLivesSetting();
+      updateLivesOption();
+    }
+  });
+
+  function setLives(n) {
+    for (var i = 0; i < livesEls.length; i++) {
+      livesEls[i].classList.toggle("popped", i >= n);
+    }
+  }
+
+  function showCombo(n) {
+    comboBadge.textContent = n + " COMBO!";
+    comboBadge.classList.remove("tier2", "tier3", "tier4");
+    if (n >= 10) { comboBadge.classList.add("tier4"); }
+    else if (n >= 7) { comboBadge.classList.add("tier3"); }
+    else if (n >= 4) { comboBadge.classList.add("tier2"); }
+    comboBadge.classList.add("show");
+    comboBadge.classList.remove("bump");
+    void comboBadge.offsetWidth;
+    comboBadge.classList.add("bump");
+  }
+
+  function restoreOneHeart() {
+    var idx = state.lives;
+    state.lives += 1;
+    if (livesEls[idx]) {
+      livesEls[idx].classList.remove("popped", "popping");
+      livesEls[idx].classList.add("gained");
+      setTimeout(function () { livesEls[idx].classList.remove("gained"); }, 650);
+    }
+  }
+
+  function addBonusHeart() {
+    state.lives += 1;
+    var span = document.createElement("span");
+    span.className = "balloon gained";
+    span.textContent = "❤️";
+    hudLivesEl.appendChild(span);
+    livesEls = hudLivesEl.querySelectorAll(".balloon");
+    setTimeout(function () { span.classList.remove("gained"); }, 650);
+  }
+
+  function awardBonusLife() {
+    if (state.lives < state.livesSetting) {
+      restoreOneHeart();
+    } else {
+      addBonusHeart();
+    }
+    showToast("보너스 목숨 획득! 현재 " + state.lives + "개");
+  }
+
+  function updateMemoryStatus() {
+    memoryStatusEl.textContent = "맞춘 짝: " + state.memoryMatches + " / " + MEMORY_PAIRS;
+  }
+
+  function updateMemoryAttempts() {
+    memoryAttemptsEl.textContent = "기회 " + Math.max(0, state.memoryAttemptsLeft) + "번";
+  }
+
+  function renderMemoryGrid() {
+    memoryGridEl.innerHTML = "";
+    state.memoryCards.forEach(function (card, idx) {
+      var el = document.createElement("div");
+      el.className = "memory-card" + (card.matched ? " matched flipped" : "");
+      el.innerHTML =
+        '<div class="memory-card-inner">' +
+          '<div class="memory-card-face memory-card-back">🌊</div>' +
+          '<div class="memory-card-face memory-card-front">' + card.flag + '</div>' +
+        '</div>';
+      el.addEventListener("click", function () { flipMemoryCard(idx); });
+      memoryGridEl.appendChild(el);
+    });
+  }
+
+  function flipMemoryCard(idx) {
+    if (state.memoryBusy) { return; }
+    if (state.memoryMatches >= MEMORY_PAIRS || state.memoryAttemptsLeft <= 0) { return; }
+    var card = state.memoryCards[idx];
+    if (!card || card.matched) { return; }
+    if (state.memoryFlipped.indexOf(idx) !== -1) { return; }
+    if (state.memoryFlipped.length >= 2) { return; }
+
+    state.memoryFlipped.push(idx);
+    var cardEls = memoryGridEl.children;
+    cardEls[idx].classList.add("flipped");
+
+    if (state.memoryFlipped.length < 2) { return; }
+
+    state.memoryBusy = true;
+    state.memoryAttemptsLeft -= 1;
+    updateMemoryAttempts();
+
+    var a = state.memoryFlipped[0];
+    var b = state.memoryFlipped[1];
+
+    if (state.memoryCards[a].flag === state.memoryCards[b].flag) {
+      state.memoryCards[a].matched = true;
+      state.memoryCards[b].matched = true;
+      cardEls[a].classList.add("matched");
+      cardEls[b].classList.add("matched");
+      state.memoryMatches += 1;
+      state.memoryFlipped = [];
+      state.memoryBusy = false;
+      updateMemoryStatus();
+
+      if (state.memoryMatches % 2 === 0) { awardBonusLife(); }
+
+      if (state.memoryMatches >= MEMORY_PAIRS) {
+        finishMiniGame();
+      } else if (state.memoryAttemptsLeft <= 0) {
+        finishMiniGameByAttempts();
+      }
+    } else {
+      setTimeout(function () {
+        cardEls[a].classList.remove("flipped");
+        cardEls[b].classList.remove("flipped");
+        state.memoryFlipped = [];
+        state.memoryBusy = false;
+        if (state.memoryAttemptsLeft <= 0) { finishMiniGameByAttempts(); }
+      }, 800);
+    }
+  }
+
+  function launchMiniGame(clearedStage, nextStage) {
+    var pool = shuffle(FLAG_POOL.slice()).slice(0, MEMORY_PAIRS);
+    var cards = shuffle(pool.concat(pool)).map(function (flag) { return { flag: flag, matched: false }; });
+    state.memoryCards = cards;
+    state.memoryFlipped = [];
+    state.memoryMatches = 0;
+    state.memoryAttemptsLeft = MEMORY_ATTEMPTS;
+    state.memoryBusy = false;
+    state.memoryActive = true;
+    state.memoryOnDone = function () { afterStageAdvance(clearedStage, nextStage); };
+    renderMemoryGrid();
+    updateMemoryStatus();
+    updateMemoryAttempts();
+
+    memoryAttemptsEl.style.display = "none";
+    memoryGridEl.style.display = "none";
+    memoryStatusEl.style.display = "none";
+    memorySkipBtn.style.display = "none";
+    memoryOverlay.classList.add("show");
+
+    scheduleFlow(function () {
+      memoryAttemptsEl.style.display = "";
+      memoryGridEl.style.display = "";
+      memoryStatusEl.style.display = "";
+      memorySkipBtn.style.display = "";
+    }, 2800);
+  }
+
+  function endMiniGame() {
+    state.memoryActive = false;
+    memoryOverlay.classList.remove("show");
+    var cb = state.memoryOnDone;
+    state.memoryOnDone = null;
+    if (cb) { cb(); }
+  }
+
+  function finishMiniGame() {
+    memoryStatusEl.textContent = "모두 맞췄어요!";
+    scheduleFlow(endMiniGame, 1200);
+  }
+
+  function finishMiniGameByAttempts() {
+    memoryStatusEl.textContent = "기회를 다 썼어요! (" + state.memoryMatches + " / " + MEMORY_PAIRS + " 짝 맞춤)";
+    scheduleFlow(endMiniGame, 1200);
+  }
+
+  memorySkipBtn.addEventListener("click", function () {
+    if (state.flowTimeoutId) { clearTimeout(state.flowTimeoutId); state.flowTimeoutId = null; }
+    endMiniGame();
+  });
+
+  function popOneBalloon() {
+    var idx = state.lives;
+    if (livesEls[idx]) {
+      livesEls[idx].classList.add("popping");
+      setTimeout(function () {
+        livesEls[idx].classList.remove("popping");
+        livesEls[idx].classList.add("popped");
+      }, 380);
+    }
+  }
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.remove("show");
+    void toast.offsetWidth;
+    toast.classList.add("show");
+  }
+
+  function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function newQuestion() {
+    if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
+
+    var a, bb;
+    do {
+      a = randInt(1, 9);
+      bb = randInt(1, 9);
+    } while (a === state.lastA && bb === state.lastB);
+    state.lastA = a; state.lastB = bb;
+    state.a = a; state.b = bb;
+    state.answer = a * bb;
+
+    questionEl.textContent = a + " × " + bb + " = ?";
+    state.answered = false;
+    var choices = generateChoices(a, bb, state.answer);
+    for (var ci = 0; ci < choiceBtns.length; ci++) {
+      choiceBtns[ci].querySelector(".choice-value").textContent = choices[ci];
+      choiceBtns[ci].dataset.value = choices[ci];
+      choiceBtns[ci].disabled = false;
+      choiceBtns[ci].classList.remove("correct", "wrong");
+    }
+
+    for (var i = 0; i < bulbEls.length; i++) {
+      bulbEls[i].classList.remove("off");
+    }
+
+    dropBall.classList.remove("falling");
+    dropBall.style.opacity = "0";
+
+    state.beatIndex = 0;
+    scheduleBeat(0);
+  }
+
+  function scheduleBeat(delayMs) {
+    state.beatScheduledAt = Date.now();
+    state.beatIntervalMs = delayMs;
+    state.beatTimeoutId = setTimeout(beatStep, delayMs);
+  }
+
+  function beatStep() {
+    var i = state.beatIndex;
+    if (i >= BEATS_PER_QUESTION) {
+      state.beatTimeoutId = null;
+      onMiss(true);
+      return;
+    }
+    var accent = (i % 4 === 0);
+    playClick(accent);
+    flashBeat(accent);
+    bulbEls[i].classList.add("off");
+
+    state.beatIndex = i + 1;
+    scheduleBeat(beatSeconds(state.stage) * 1000);
+  }
+
+  function shuffle(arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+
+  function generateChoices(a, bb, correct) {
+    var candidates = [
+      a * (bb + 1), a * (bb - 1), (a + 1) * bb, (a - 1) * bb,
+      correct + a, correct - a, correct + bb, correct - bb,
+      correct + 1, correct - 1, correct + 2, correct - 2
+    ].filter(function (v) { return v > 0 && v <= 100 && v !== correct; });
+    shuffle(candidates);
+
+    var set = [correct];
+    for (var i2 = 0; i2 < candidates.length && set.length < 3; i2++) {
+      if (set.indexOf(candidates[i2]) === -1) { set.push(candidates[i2]); }
+    }
+    while (set.length < 3) {
+      var rv = randInt(1, 81);
+      if (set.indexOf(rv) === -1) { set.push(rv); }
+    }
+    return shuffle(set);
+  }
+
+  function revealAnswer() {
+    for (var i = 0; i < choiceBtns.length; i++) {
+      if (Number(choiceBtns[i].dataset.value) === state.answer) { choiceBtns[i].classList.add("correct"); }
+    }
+  }
+
+  function scheduleFlow(fn, delay) {
+    if (state.flowTimeoutId) { clearTimeout(state.flowTimeoutId); }
+    state.flowTimeoutId = setTimeout(function () {
+      state.flowTimeoutId = null;
+      fn();
+    }, delay);
+  }
+
+  function onMiss(isTimeout) {
+    if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
+    state.answered = true;
+    for (var ai = 0; ai < choiceBtns.length; ai++) { choiceBtns[ai].disabled = true; }
+    revealAnswer();
+
+    state.combo = 0;
+    comboBadge.classList.remove("show", "tier2", "tier3", "tier4");
+    state.lives -= 1;
+    popOneBalloon();
+
+    dropBall.style.opacity = "1";
+    dropBall.classList.remove("falling");
+    void dropBall.offsetWidth;
+    dropBall.classList.add("falling");
+
+    gameCard.classList.remove("shake-screen");
+    void gameCard.offsetWidth;
+    gameCard.classList.add("shake-screen");
+
+    if (state.lives <= 0) {
+      scheduleFlow(function () { endGame(isTimeout); }, 900);
+    } else {
+      scheduleFlow(function () { newQuestion(); }, 1300);
+    }
+  }
+
+  function showStageClear(clearedStage, nextStage) {
+    stageClearTitle.textContent = clearedStage + "단 클리어!";
+    stageClearNext.textContent = "다음 스테이지 → " + nextStage + "단";
+    stageClearOverlay.classList.add("show");
+    scheduleFlow(function () {
+      stageClearOverlay.classList.remove("show");
+      newQuestion();
+    }, 1800);
+  }
+
+  function onCorrect() {
+    if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
+
+    state.combo += 1;
+    var comboBonus = 0;
+    if (state.combo >= 2) {
+      comboBonus = Math.min(state.combo - 1, COMBO_BONUS_CAP) * COMBO_BONUS_STEP;
+      showCombo(state.combo);
+    }
+    state.score += 10 + (state.stage - 1) * 2 + comboBonus;
+    state.correctInStage += 1;
+
+    ticket.classList.remove("pulse");
+    void ticket.offsetWidth;
+    ticket.classList.add("pulse");
+
+    if (state.correctInStage >= CORRECT_PER_STAGE) {
+      var clearedStage = state.stage;
+      state.correctInStage = 0;
+      state.stage += 1;
+      applyCycle();
+      updateHUD();
+      if (clearedStage % MEMORY_EVERY_N_STAGES === 0) {
+        launchMiniGame(clearedStage, state.stage);
+      } else {
+        afterStageAdvance(clearedStage, state.stage);
+      }
+      return;
+    }
+
+    updateHUD();
+    scheduleFlow(function () { newQuestion(); }, 550);
+  }
+
+  function afterStageAdvance(clearedStage, nextStage) {
+    if (state.mode === "record") {
+      showStageClear(clearedStage, nextStage);
+    } else {
+      showToast(nextStage + "단 진입! 점점 빨라져요");
+      scheduleFlow(function () { newQuestion(); }, 550);
+    }
+  }
+
+  function selectChoice(btn) {
+    if (!state.playing || state.answered || state.paused) return;
+    state.answered = true;
+    if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
+
+    var val = Number(btn.dataset.value);
+    for (var bi = 0; bi < choiceBtns.length; bi++) { choiceBtns[bi].disabled = true; }
+
+    if (val === state.answer) {
+      btn.classList.add("correct");
+      onCorrect();
+    } else {
+      btn.classList.add("wrong");
+      onMiss(false);
+    }
+  }
+
+  choicesEl.addEventListener("click", function (e) {
+    var btn = e.target.closest(".choice-btn");
+    if (!btn || btn.disabled) return;
+    selectChoice(btn);
+  });
+
+  window.addEventListener("keydown", function (e) {
+    if (!state.playing) return;
+    if ((e.key === " " || e.code === "Space") && !state.counting && !state.memoryActive) {
+      e.preventDefault();
+      togglePause();
+      return;
+    }
+    if (state.answered || state.paused) return;
+    if (e.key === "1" || e.key === "2" || e.key === "3") {
+      var idx = Number(e.key) - 1;
+      var btn = choiceBtns[idx];
+      if (btn && !btn.disabled) { selectChoice(btn); }
+    }
+  });
+
+  function runCountdown(onDone) {
+    if (state.resumeIntervalId) { clearInterval(state.resumeIntervalId); state.resumeIntervalId = null; }
+    state.counting = true;
+    pauseTitle.classList.add("counting");
+    var n = 3;
+    pauseTitle.textContent = String(n);
+    pauseOverlay.classList.add("show");
+    state.resumeIntervalId = setInterval(function () {
+      n -= 1;
+      if (n <= 0) {
+        clearInterval(state.resumeIntervalId);
+        state.resumeIntervalId = null;
+        pauseTitle.textContent = "GO!";
+        setTimeout(function () {
+          state.counting = false;
+          pauseOverlay.classList.remove("show");
+          pauseTitle.classList.remove("counting");
+          onDone();
+        }, 450);
+      } else {
+        pauseTitle.textContent = String(n);
+      }
+    }, 700);
+  }
+
+  function pauseGame() {
+    if (!state.playing || state.paused) return;
+    state.paused = true;
+    if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
+    var elapsed = Date.now() - state.beatScheduledAt;
+    state.beatRemainingMs = Math.max(0, state.beatIntervalMs - elapsed);
+
+    ring.classList.add("paused");
+    if (!state.answered) {
+      for (var i = 0; i < choiceBtns.length; i++) { choiceBtns[i].disabled = true; }
+    }
+    pauseBtn.textContent = "▶";
+    pauseBtn.setAttribute("aria-label", "이어하기");
+    pauseTitle.textContent = "일시정지";
+    pauseTitle.classList.remove("counting");
+    resumeBtn.style.display = "";
+    pauseMenuRow.style.display = "";
+    pauseOverlay.classList.add("show");
+  }
+
+  function resumeGame() {
+    if (!state.playing || !state.paused || state.counting) return;
+    resumeBtn.style.display = "none";
+    pauseMenuRow.style.display = "none";
+    pauseBtn.textContent = "⏸";
+    pauseBtn.setAttribute("aria-label", "일시정지");
+    runCountdown(function () {
+      state.paused = false;
+      ring.classList.remove("paused");
+      if (!state.answered) {
+        for (var i = 0; i < choiceBtns.length; i++) { choiceBtns[i].disabled = false; }
+      }
+      scheduleBeat(state.beatRemainingMs);
+    });
+  }
+
+  function togglePause() {
+    if (state.paused) { resumeGame(); } else { pauseGame(); }
+  }
+
+  pauseBtn.addEventListener("click", function () {
+    if (state.counting) return;
+    togglePause();
+  });
+  resumeBtn.addEventListener("click", resumeGame);
+
+  function quitToDashboard() {
+    state.playing = false;
+    if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
+    if (state.flowTimeoutId) { clearTimeout(state.flowTimeoutId); state.flowTimeoutId = null; }
+    if (state.resumeIntervalId) { clearInterval(state.resumeIntervalId); state.resumeIntervalId = null; }
+    state.counting = false;
+    pauseOverlay.classList.remove("show");
+    stageClearOverlay.classList.remove("show");
+    memoryOverlay.classList.remove("show");
+    state.memoryActive = false;
+    state.memoryOnDone = null;
+    ring.classList.remove("paused");
+    renderDashboard();
+    showScreen("start");
+  }
+  document.getElementById("pause-restart-btn").addEventListener("click", function () { startGame(state.mode); });
+  document.getElementById("pause-home-btn").addEventListener("click", quitToDashboard);
+
+  function startGame(mode) {
+    if (!state.currentPlayer) { return; }
+    ensureAudio();
+    if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
+    if (state.flowTimeoutId) { clearTimeout(state.flowTimeoutId); state.flowTimeoutId = null; }
+    if (state.resumeIntervalId) { clearInterval(state.resumeIntervalId); state.resumeIntervalId = null; }
+    state.mode = mode || state.mode || "record";
+    state.stage = 1;
+    state.score = 0;
+    state.combo = 0;
+    comboBadge.classList.remove("show", "tier2", "tier3", "tier4");
+    state.lives = state.livesSetting;
+    state.correctInStage = 0;
+    state.lastA = -1; state.lastB = -1;
+    state.paused = false;
+    state.counting = false;
+    state.sessionStartTime = Date.now();
+    ring.classList.remove("paused");
+    pauseOverlay.classList.remove("show");
+    stageClearOverlay.classList.remove("show");
+    memoryOverlay.classList.remove("show");
+    state.memoryActive = false;
+    state.memoryOnDone = null;
+    pauseTitle.classList.remove("counting");
+    resumeBtn.style.display = "none";
+    pauseMenuRow.style.display = "none";
+    pauseBtn.textContent = "⏸";
+    pauseBtn.setAttribute("aria-label", "일시정지");
+    renderLivesHUD();
+    setLives(state.livesSetting);
+    updateHUD();
+    applyCharacter();
+    applyCycle();
+    state.playing = true;
+    showScreen("game");
+    runCountdown(newQuestion);
+  }
+
+  function endGame(isTimeout) {
+    state.playing = false;
+    if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
+
+    var sessionMs = Date.now() - state.sessionStartTime;
+    var p = state.currentPlayer;
+    var prevBest = p.bestScore;
+    p.gamesPlayed += 1;
+    p.totalPlayTimeMs += sessionMs;
+    p.totalScore += state.score;
+    var isPersonalBest = state.score > prevBest;
+    if (state.score > p.bestScore) { p.bestScore = state.score; }
+    if (state.stage > p.bestStage) { p.bestStage = state.stage; }
+    var slots = loadSlots();
+    slots[state.currentSlot] = p;
+    saveSlots(slots);
+
+    var hof = loadHOF();
+    var qualifies = state.score > 0 && (hof.length < HOF_MAX || state.score > hof[hof.length - 1].score);
+    if (qualifies) {
+      hof.push({ name: p.name, score: state.score, stage: state.stage, mode: state.mode, character: state.selectedSpecies, date: new Date().toLocaleDateString("ko-KR") });
+      hof.sort(function (a, b) { return b.score - a.score; });
+      hof = hof.slice(0, HOF_MAX);
+      saveHOF(hof);
+    }
+
+    document.getElementById("gameover-msg").textContent = isTimeout
+      ? "박자 안에 답을 못 골라서 비치볼을 놓쳤어요."
+      : "바다 친구가 비치볼을 놓쳤어요.";
+    document.getElementById("final-stage").textContent = state.stage + "단";
+    document.getElementById("final-score").textContent = state.score;
+    document.getElementById("best-score").textContent = p.bestScore;
+
+    if (qualifies) {
+      recordBanner.textContent = "명예의 전당 등극! 상위 " + HOF_MAX + "위 안에 들었어요!";
+      recordBanner.style.display = "";
+    } else if (isPersonalBest) {
+      recordBanner.textContent = "개인 최고 기록 경신!";
+      recordBanner.style.display = "";
+    } else {
+      recordBanner.style.display = "none";
+    }
+
+    renderDashboard();
+    showScreen("over");
+  }
+
+  document.getElementById("start-record-btn").addEventListener("click", function () { startGame("record"); });
+  document.getElementById("start-infinite-btn").addEventListener("click", function () { startGame("infinite"); });
+  document.getElementById("retry-btn").addEventListener("click", function () { startGame(state.mode); });
+})();
+</script>
+
+</body></html>
