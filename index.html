@@ -359,6 +359,12 @@
 
   .mode-stack { display: flex; flex-direction: column; gap: 14px; align-items: center; margin-bottom: 8px; }
   .mode-btn { width: 100%; max-width: 380px; }
+  .mode-easy {
+    background: linear-gradient(180deg, #8bf0c9, var(--accent-mint));
+    color: #04352c;
+    box-shadow: 0 8px 0 #1a8a72, 0 12px 20px rgba(31,122,153,0.2);
+  }
+  .mode-easy:active { box-shadow: 0 2px 0 #1a8a72, 0 4px 10px rgba(31,122,153,0.18); }
   .mode-stage {
     background: linear-gradient(180deg, #5cd0ef, var(--value));
     color: #fff;
@@ -792,6 +798,11 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
   }
+  .choices.two-choice {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 420px;
+    margin: 0 auto;
+  }
   .choice-btn {
     border: none;
     border-radius: var(--radius-md);
@@ -993,7 +1004,9 @@
         <div class="stat"><span class="stat-value" id="stat-best-score">0</span><span class="stat-label">최고 점수 (<span id="stat-best-stage">1단</span>)</span></div>
       </div>
       <div class="mode-stack">
-        <button type="button" id="start-record-btn" class="btn-primary btn-large mode-btn mode-stage">스테이지모드</button>
+        <button type="button" id="start-easy-btn" class="btn-primary btn-large mode-easy mode-btn">이지모드</button>
+        <p class="mode-hint">보기 2개 · 시간 1.5배</p>
+        <button type="button" id="start-record-btn" class="btn-primary btn-large mode-btn mode-stage">노멀모드</button>
         <button type="button" id="start-infinite-btn" class="btn-primary btn-large mode-infinite mode-btn">도전모드</button>
       </div>
       <div class="btn-stack">
@@ -1145,6 +1158,9 @@
   var BASE_BPM = 70;
   var BPM_STEP = 9;
   var MAX_BPM = 200;
+  var EASY_TIME_MULTIPLIER = 1.5;
+  var EASY_CHOICE_COUNT = 2;
+  var NORMAL_CHOICE_COUNT = 3;
   var CHAR_OPTIONS = [
     { species: "seal", label: "물개" },
     { species: "dolphin", label: "돌고래" },
@@ -1589,7 +1605,7 @@
       var mine = state.currentPlayer && entry.name === state.currentPlayer.name;
       row.className = "hof-row" + (mine ? " mine" : "");
       var medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : String(idx + 1);
-      var modeLabel = entry.mode === "infinite" ? "도전모드" : "스테이지모드";
+      var modeLabel = entry.mode === "infinite" ? "도전모드" : (entry.mode === "easy" ? "이지모드" : "노멀모드");
       var speciesKey = entry.character || "seal";
       var speciesTag = (SPECIES_EMOJI[speciesKey] || "🦭") + " " + (SPECIES_LABEL[speciesKey] || "물개");
       row.innerHTML =
@@ -1704,9 +1720,16 @@
   function beatSeconds(stage) {
     return 60 / bpmForStage(stage);
   }
+  function isEasyMode() {
+    return state.mode === "easy";
+  }
+  function currentBeatSeconds() {
+    var base = beatSeconds(state.stage);
+    return isEasyMode() ? base * EASY_TIME_MULTIPLIER : base;
+  }
   function applyCycle() {
     // ball speed tracks the stage tempo directly, so it visibly speeds up with BPM
-    var cycle = beatSeconds(state.stage) * 2.5;
+    var cycle = currentBeatSeconds() * 2.5;
     ring.style.setProperty("--cycle", cycle + "s");
   }
 
@@ -2015,13 +2038,21 @@
 
     questionEl.textContent = a + " × " + bb + " = ?";
     state.answered = false;
-    var choices = generateChoices(a, bb, state.answer);
+    var choiceCount = isEasyMode() ? EASY_CHOICE_COUNT : NORMAL_CHOICE_COUNT;
+    var choices = generateChoices(a, bb, state.answer, choiceCount);
     for (var ci = 0; ci < choiceBtns.length; ci++) {
-      choiceBtns[ci].querySelector(".choice-value").textContent = choices[ci];
-      choiceBtns[ci].dataset.value = choices[ci];
-      choiceBtns[ci].disabled = false;
-      choiceBtns[ci].classList.remove("correct", "wrong");
+      if (ci < choiceCount) {
+        choiceBtns[ci].style.display = "";
+        choiceBtns[ci].querySelector(".choice-value").textContent = choices[ci];
+        choiceBtns[ci].dataset.value = choices[ci];
+        choiceBtns[ci].disabled = false;
+        choiceBtns[ci].classList.remove("correct", "wrong");
+      } else {
+        choiceBtns[ci].style.display = "none";
+        choiceBtns[ci].disabled = true;
+      }
     }
+    choicesEl.classList.toggle("two-choice", choiceCount === 2);
 
     for (var i = 0; i < bulbEls.length; i++) {
       bulbEls[i].classList.remove("off");
@@ -2053,7 +2084,7 @@
     bulbEls[i].classList.add("off");
 
     state.beatIndex = i + 1;
-    scheduleBeat(beatSeconds(state.stage) * 1000);
+    scheduleBeat(currentBeatSeconds() * 1000);
   }
 
   function shuffle(arr) {
@@ -2064,7 +2095,8 @@
     return arr;
   }
 
-  function generateChoices(a, bb, correct) {
+  function generateChoices(a, bb, correct, count) {
+    count = count || NORMAL_CHOICE_COUNT;
     var candidates = [
       a * (bb + 1), a * (bb - 1), (a + 1) * bb, (a - 1) * bb,
       correct + a, correct - a, correct + bb, correct - bb,
@@ -2073,10 +2105,10 @@
     shuffle(candidates);
 
     var set = [correct];
-    for (var i2 = 0; i2 < candidates.length && set.length < 3; i2++) {
+    for (var i2 = 0; i2 < candidates.length && set.length < count; i2++) {
       if (set.indexOf(candidates[i2]) === -1) { set.push(candidates[i2]); }
     }
-    while (set.length < 3) {
+    while (set.length < count) {
       var rv = randInt(1, 81);
       if (set.indexOf(rv) === -1) { set.push(rv); }
     }
@@ -2169,7 +2201,7 @@
   }
 
   function afterStageAdvance(clearedStage, nextStage) {
-    if (state.mode === "record") {
+    if (state.mode === "record" || state.mode === "easy") {
       showStageClear(clearedStage, nextStage);
     } else {
       showToast(nextStage + "단 진입! 점점 빨라져요");
@@ -2389,6 +2421,7 @@
     showScreen("over");
   }
 
+  document.getElementById("start-easy-btn").addEventListener("click", function () { startGame("easy"); });
   document.getElementById("start-record-btn").addEventListener("click", function () { startGame("record"); });
   document.getElementById("start-infinite-btn").addEventListener("click", function () { startGame("infinite"); });
   document.getElementById("retry-btn").addEventListener("click", function () { startGame(state.mode); });
