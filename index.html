@@ -701,9 +701,9 @@
     animation: combo-pop 0.35s ease;
   }
   @keyframes combo-pop {
-    0% { transform: translateX(-50%) scale(0.7); }
-    60% { transform: translateX(-50%) scale(1.25); }
-    100% { transform: translateX(-50%) scale(1); }
+    0% { transform: translateX(-50%) scale(0.7); font-size: 0.75em; }
+    60% { transform: translateX(-50%) scale(1.3); font-size: 1.2em; }
+    100% { transform: translateX(-50%) scale(1); font-size: 1em; }
   }
   .combo-badge.tier2 {
     background: linear-gradient(180deg, #ffe08a, #ff8a3d);
@@ -720,6 +720,9 @@
     box-shadow: 0 0 18px rgba(255,92,158,0.7);
     animation: combo-glow 1s ease-in-out infinite;
   }
+  .combo-badge.tier3.bump {
+    animation: combo-pop 0.35s ease, combo-glow 1s ease-in-out infinite;
+  }
   .combo-badge.tier4 {
     background: linear-gradient(120deg, #ffd166, #ff5c9e, #6df0d4, #ffd166);
     background-size: 300% auto;
@@ -728,6 +731,9 @@
     padding: 10px 24px;
     box-shadow: 0 0 24px rgba(255,209,102,0.8);
     animation: combo-shine 1.4s linear infinite, combo-glow 0.8s ease-in-out infinite;
+  }
+  .combo-badge.tier4.bump {
+    animation: combo-pop 0.35s ease, combo-shine 1.4s linear infinite, combo-glow 0.8s ease-in-out infinite;
   }
   @keyframes combo-glow {
     0%, 100% { filter: brightness(1); }
@@ -1349,6 +1355,7 @@
     memoryFlipped: [],
     memoryMatches: 0,
     memoryAttemptsLeft: 0,
+    memoryHeartsGained: 0,
     memoryBusy: false,
     memoryActive: false,
     memoryOnDone: null,
@@ -1809,6 +1816,7 @@
     } else {
       addBonusHeart();
     }
+    state.memoryHeartsGained += 1;
     showToast("보너스 목숨 획득! 현재 " + state.lives + "개");
   }
 
@@ -1891,6 +1899,7 @@
     state.memoryFlipped = [];
     state.memoryMatches = 0;
     state.memoryAttemptsLeft = MEMORY_ATTEMPTS;
+    state.memoryHeartsGained = 0;
     state.memoryBusy = false;
     state.memoryActive = true;
     state.memoryOnDone = function () { afterStageAdvance(clearedStage, nextStage); };
@@ -1921,13 +1930,17 @@
   }
 
   function finishMiniGame() {
-    memoryStatusEl.textContent = "모두 맞췄어요!";
-    scheduleFlow(endMiniGame, 1200);
+    memoryStatusEl.textContent = "모두 맞췄어요! 보너스 목숨 " + state.memoryHeartsGained + "개 획득! ❤️";
+    scheduleFlow(endMiniGame, 1900);
   }
 
   function finishMiniGameByAttempts() {
-    memoryStatusEl.textContent = "기회를 다 썼어요! (" + state.memoryMatches + " / " + MEMORY_PAIRS + " 짝 맞춤)";
-    scheduleFlow(endMiniGame, 1200);
+    var base = "기회를 다 썼어요! (" + state.memoryMatches + " / " + MEMORY_PAIRS + " 짝 맞춤)";
+    var heartMsg = state.memoryHeartsGained > 0
+      ? " 보너스 목숨 " + state.memoryHeartsGained + "개 획득! ❤️"
+      : " 보너스 목숨 획득 실패 😢";
+    memoryStatusEl.textContent = base + heartMsg;
+    scheduleFlow(endMiniGame, 1900);
   }
 
   memorySkipBtn.addEventListener("click", function () {
