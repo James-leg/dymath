@@ -567,6 +567,29 @@
   }
   .mode-infinite:active { box-shadow: 0 2px 0 #6b0f0f, 0 4px 12px rgba(224,57,42,0.35); }
 
+  /* Practice — playful, no-pressure, star theme */
+  .mode-practice {
+    background: linear-gradient(160deg, #c9a8ff 0%, #9b6ef0 60%, #7a4fd6 100%);
+    color: #fff;
+    font-weight: 800;
+    box-shadow: 0 8px 0 #5a34ad, 0 12px 20px rgba(122,79,214,0.3);
+  }
+  .mode-practice:active { box-shadow: 0 2px 0 #5a34ad, 0 4px 10px rgba(122,79,214,0.25); }
+
+  .points-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 auto 14px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #fff3d0, #ffe08a);
+    color: #7a5200;
+    font-weight: 800;
+    font-size: 14px;
+    width: fit-content;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .mode-easy::after, .mode-infinite::after { animation: none; }
   }
@@ -1086,6 +1109,17 @@
     font-size: 16px;
     animation: banner-pop 0.5s ease;
   }
+  .badge-banner {
+    background: linear-gradient(180deg, rgba(155,110,240,0.25), rgba(155,110,240,0.06));
+    border: 2px solid #9b6ef0;
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 16px;
+    font-weight: 800;
+    color: #6a3fc0;
+    font-size: 15px;
+    animation: banner-pop 0.5s ease;
+  }
 
   .hof-list {
     display: flex;
@@ -1114,6 +1148,90 @@
   .hof-sub { display: block; color: var(--ink-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
   .hof-empty { color: var(--ink-muted); padding: 20px; text-align: center; }
   #hof-reset-btn { margin-top: 14px; }
+
+  .points-balance {
+    background: linear-gradient(180deg, rgba(255,203,71,0.25), rgba(255,203,71,0.06));
+    border: 2px solid var(--accent-sun);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 18px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #a3720a;
+  }
+  .reward-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .reward-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--panel-tint);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    text-align: left;
+  }
+  .reward-name { font-weight: 700; color: var(--ink); font-size: 15px; }
+  .reward-cost { font-size: 13px; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+  .reward-redeem-btn {
+    border: none;
+    border-radius: 999px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #4a3200;
+    background: linear-gradient(180deg, #ffe08a, var(--accent-sun));
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .reward-redeem-btn:disabled { opacity: 0.4; cursor: default; }
+  .reward-delete-btn {
+    border: none;
+    background: transparent;
+    color: var(--danger-text);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+  .reward-empty { color: var(--ink-muted); padding: 20px; text-align: center; }
+  .reward-admin {
+    background: var(--panel-tint);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    text-align: left;
+  }
+  .reward-admin-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  .reward-admin-row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .reward-admin-row input {
+    flex: 1;
+    min-width: 0;
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid rgba(31,122,153,0.2);
+    background: var(--panel);
+    color: var(--ink);
+    font-size: 14px;
+  }
+  #shop-admin-toggle-btn { margin-bottom: 14px; }
+
+  .badge-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .badge-item {
+    background: var(--panel-tint);
+    border: 2px solid rgba(31,122,153,0.15);
+    border-radius: var(--radius-md);
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .badge-item.earned { border-color: var(--accent-sun); background: linear-gradient(180deg, rgba(255,203,71,0.2), rgba(255,203,71,0.05)); }
+  .badge-item.locked { opacity: 0.5; }
+  .badge-icon { font-size: 30px; display: block; margin-bottom: 6px; }
+  .badge-label { font-size: 12px; font-weight: 700; color: var(--ink); line-height: 1.3; }
 
   .result-grid {
     display: flex;
@@ -1402,9 +1520,13 @@
         <button type="button" id="start-easy-btn" class="btn-primary btn-large mode-easy mode-btn">🍃 EASY MODE</button>
         <button type="button" id="start-record-btn" class="btn-primary btn-large mode-btn mode-stage">NORMAL MODE</button>
         <button type="button" id="start-infinite-btn" class="btn-primary btn-large mode-infinite mode-btn">🔥 CHALLENGE MODE</button>
+        <button type="button" id="start-practice-btn" class="btn-primary btn-large mode-btn mode-practice">🌟 PRACTICE MODE</button>
       </div>
+      <div class="points-badge" id="dash-points-badge">🎁 포인트 <span id="dash-points-value">0</span></div>
       <div class="btn-stack">
         <button type="button" id="character-btn" class="btn-secondary small">바다 친구 선택</button>
+        <button type="button" id="shop-btn" class="btn-secondary small">포인트 상점</button>
+        <button type="button" id="badges-btn" class="btn-secondary small">업적</button>
         <button type="button" id="options-btn" class="btn-secondary small">옵션</button>
         <button type="button" id="hof-btn" class="btn-secondary small">명예의 전당</button>
       </div>
@@ -1464,6 +1586,10 @@
           <span id="hud-stage" class="hud-value">1단</span>
         </div>
         <div class="hud-item lives" id="hud-lives" aria-label="남은 목숨"></div>
+        <div class="hud-item" id="hud-points-item" style="display:none;">
+          <span class="hud-label">POINTS</span>
+          <span id="hud-points" class="hud-value">0</span>
+        </div>
         <div class="hud-item">
           <span class="hud-label">SCORE</span>
           <span id="hud-score" class="hud-value">0</span>
@@ -1529,6 +1655,7 @@
       <p class="desc" id="gameover-msg">바다 친구가 비치볼을 놓쳤어요.</p>
       <div id="record-banner" class="record-banner" style="display:none;"></div>
       <div id="unlock-banner" class="unlock-banner" style="display:none;"></div>
+      <div id="badge-banner" class="badge-banner" style="display:none;"></div>
       <div class="headline-stat">
         <span class="hud-label">도달 단계</span><br />
         <span id="final-stage" class="hud-value">1단</span>
@@ -1552,6 +1679,32 @@
       <div class="hof-list" id="hof-list"></div>
       <button type="button" id="hof-back-btn" class="btn-primary btn-large">뒤로가기</button>
       <button type="button" id="hof-reset-btn" class="btn-secondary small">명예의 전당 초기화 (관리자)</button>
+    </div>
+  </section>
+
+  <section id="shop-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand small">포인트 상점</h1>
+      <div class="points-balance" id="shop-points-balance">보유 포인트: 0P</div>
+      <div class="reward-list" id="reward-list"></div>
+      <div class="reward-admin" id="reward-admin" style="display:none;">
+        <div class="reward-admin-title">보상 추가 (관리자)</div>
+        <div class="reward-admin-row">
+          <input id="reward-name-input" maxlength="16" placeholder="보상 이름" />
+          <input id="reward-cost-input" type="number" min="1" max="99999" placeholder="포인트" />
+        </div>
+        <button type="button" id="reward-add-btn" class="btn-secondary small">추가하기</button>
+      </div>
+      <button type="button" id="shop-admin-toggle-btn" class="btn-secondary small">보상 관리 (관리자)</button>
+      <button type="button" id="shop-back-btn" class="btn-primary btn-large">뒤로가기</button>
+    </div>
+  </section>
+
+  <section id="badges-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand small">업적</h1>
+      <div class="badge-grid" id="badge-grid"></div>
+      <button type="button" id="badges-back-btn" class="btn-primary btn-large">뒤로가기</button>
     </div>
   </section>
 
@@ -1603,6 +1756,27 @@
   var ADD_A_MIN = 10;
   var ADD_A_MAX = 49;
   var ADD_MAX_SUM = 50;
+  var POINTS_PER_CORRECT = 10;
+  var REWARDS_KEY = "jugglemath_rewards_v1";
+  var DEFAULT_REWARDS = [{ id: "tv30", name: "TV 30분", cost: 100 }];
+  var BADGE_DEFS = [
+    { id: "score_500", category: "score", threshold: 500, icon: "🥉", label: "500점 달성" },
+    { id: "score_2000", category: "score", threshold: 2000, icon: "🥈", label: "2000점 달성" },
+    { id: "score_5000", category: "score", threshold: 5000, icon: "🥇", label: "5000점 달성" },
+    { id: "score_10000", category: "score", threshold: 10000, icon: "🏆", label: "10000점 달성" },
+    { id: "games_5", category: "games", threshold: 5, icon: "🎮", label: "5판 플레이" },
+    { id: "games_20", category: "games", threshold: 20, icon: "🎮", label: "20판 플레이" },
+    { id: "games_50", category: "games", threshold: 50, icon: "🎮", label: "50판 플레이" },
+    { id: "games_100", category: "games", threshold: 100, icon: "🎮", label: "100판 플레이" },
+    { id: "combo_5", category: "combo", threshold: 5, icon: "🔥", label: "5콤보 달성" },
+    { id: "combo_10", category: "combo", threshold: 10, icon: "🔥", label: "10콤보 달성" },
+    { id: "combo_15", category: "combo", threshold: 15, icon: "🔥", label: "15콤보 달성" },
+    { id: "combo_20", category: "combo", threshold: 20, icon: "🔥", label: "20콤보 달성" },
+    { id: "mini_1", category: "minigame", threshold: 1, icon: "🃏", label: "미니게임 첫 성공" },
+    { id: "mini_5", category: "minigame", threshold: 5, icon: "🃏", label: "미니게임 5회 성공" },
+    { id: "mini_15", category: "minigame", threshold: 15, icon: "🃏", label: "미니게임 15회 성공" },
+    { id: "mini_30", category: "minigame", threshold: 30, icon: "🃏", label: "미니게임 30회 성공" }
+  ];
   var EASY_CHOICE_COUNT = 2;
   var NORMAL_CHOICE_COUNT = 3;
   var CHAR_OPTIONS = [
@@ -1637,7 +1811,9 @@
     options: document.getElementById("options-screen"),
     game: document.getElementById("game-screen"),
     over: document.getElementById("gameover-screen"),
-    hof: document.getElementById("hof-screen")
+    hof: document.getElementById("hof-screen"),
+    shop: document.getElementById("shop-screen"),
+    badges: document.getElementById("badges-screen")
   };
 
   function showScreen(name) {
@@ -1881,6 +2057,7 @@
     counting: false,
     mode: "record",
     operation: "multiply",
+    practicePoints: 0,
     currentPlayer: null,
     currentSlot: null,
     pendingSlot: null,
@@ -1900,6 +2077,8 @@
   var hudStage = document.getElementById("hud-stage");
   var hudScore = document.getElementById("hud-score");
   var hudLivesEl = document.getElementById("hud-lives");
+  var hudPointsItem = document.getElementById("hud-points-item");
+  var hudPointsEl = document.getElementById("hud-points");
   var livesEls = document.querySelectorAll("#hud-lives .balloon");
   var livesMinusBtn = document.getElementById("lives-minus");
   var livesPlusBtn = document.getElementById("lives-plus");
@@ -1937,6 +2116,7 @@
   var stageClearNext = document.getElementById("stage-clear-next");
   var recordBanner = document.getElementById("record-banner");
   var unlockBanner = document.getElementById("unlock-banner");
+  var badgeBanner = document.getElementById("badge-banner");
 
   var playerForm = document.getElementById("player-form");
   var playerNameInput = document.getElementById("player-name-input");
@@ -1982,7 +2162,7 @@
   function pushCloudSync() {
     var code = loadSyncCode();
     if (!code) { return; }
-    var payload = { slots: loadSlots(), hof: loadHOF(), memoryAttempts: loadMemoryAttemptsSetting() };
+    var payload = { slots: loadSlots(), hof: loadHOF(), memoryAttempts: loadMemoryAttemptsSetting(), rewards: loadRewards() };
     fetch("/api/sync?code=" + encodeURIComponent(code), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -2002,6 +2182,9 @@
         }
         if (data && data.memoryAttempts >= MEMORY_ATTEMPTS_MIN && data.memoryAttempts <= MEMORY_ATTEMPTS_MAX) {
           try { localStorage.setItem(MEMORY_ATTEMPTS_KEY, String(data.memoryAttempts)); } catch (e) {}
+        }
+        if (data && Array.isArray(data.rewards)) {
+          try { localStorage.setItem(REWARDS_KEY, JSON.stringify(data.rewards)); } catch (e) {}
         }
         onDone(true);
       })
@@ -2037,6 +2220,17 @@
   }
   function saveMemoryAttemptsSetting(v) {
     try { localStorage.setItem(MEMORY_ATTEMPTS_KEY, String(v)); } catch (e) {}
+    pushCloudSync();
+  }
+  function loadRewards() {
+    try {
+      var v = JSON.parse(localStorage.getItem(REWARDS_KEY) || "null");
+      if (Array.isArray(v)) { return v; }
+    } catch (e) {}
+    return DEFAULT_REWARDS.slice();
+  }
+  function saveRewards(list) {
+    try { localStorage.setItem(REWARDS_KEY, JSON.stringify(list)); } catch (e) {}
     pushCloudSync();
   }
   function formatDuration(ms) {
@@ -2163,6 +2357,12 @@
     statTotalScore.textContent = p.totalScore;
     statBestScore.textContent = p.bestScore;
     statBestStage.textContent = p.bestStage + "단";
+    updateDashPoints();
+  }
+  function updateDashPoints() {
+    var p = state.currentPlayer;
+    var el = document.getElementById("dash-points-value");
+    if (el) { el.textContent = (p && p.totalPoints) || 0; }
   }
   function continueSlot(slotIndex) {
     var slots = loadSlots();
@@ -2274,6 +2474,136 @@
       renderHallOfFame();
       showToast("명예의 전당이 초기화됐어요");
     });
+  });
+
+  var shopPointsBalance = document.getElementById("shop-points-balance");
+  var rewardListEl = document.getElementById("reward-list");
+  var rewardAdminEl = document.getElementById("reward-admin");
+  var rewardNameInput = document.getElementById("reward-name-input");
+  var rewardCostInput = document.getElementById("reward-cost-input");
+
+  function renderShop() {
+    var p = state.currentPlayer;
+    var points = (p && p.totalPoints) || 0;
+    shopPointsBalance.textContent = "보유 포인트: " + points + "P";
+    var adminOpen = rewardAdminEl.style.display !== "none";
+    var rewards = loadRewards();
+    rewardListEl.innerHTML = "";
+    if (!rewards.length) {
+      rewardListEl.innerHTML = '<div class="reward-empty">아직 등록된 보상이 없어요</div>';
+      return;
+    }
+    rewards.forEach(function (r) {
+      var canAfford = points >= r.cost;
+      var row = document.createElement("div");
+      row.className = "reward-item";
+      row.innerHTML =
+        '<div><div class="reward-name">' + r.name + '</div><div class="reward-cost">' + r.cost + 'P</div></div>' +
+        '<div style="display:flex;align-items:center;gap:4px;">' +
+        '<button type="button" class="reward-redeem-btn"' + (canAfford ? '' : ' disabled') + '>교환하기</button>' +
+        (adminOpen ? '<button type="button" class="reward-delete-btn">삭제</button>' : '') +
+        '</div>';
+      row.querySelector(".reward-redeem-btn").addEventListener("click", function () { redeemReward(r); });
+      var delBtn = row.querySelector(".reward-delete-btn");
+      if (delBtn) {
+        delBtn.addEventListener("click", function () {
+          var list = loadRewards().filter(function (x) { return x.id !== r.id; });
+          saveRewards(list);
+          renderShop();
+        });
+      }
+      rewardListEl.appendChild(row);
+    });
+  }
+
+  function redeemReward(r) {
+    var p = state.currentPlayer;
+    if (!p || state.currentSlot === null) { return; }
+    var points = p.totalPoints || 0;
+    if (points < r.cost) { showToast("포인트가 부족해요"); return; }
+    p.totalPoints = points - r.cost;
+    p.redemptions = p.redemptions || [];
+    p.redemptions.push({ reward: r.name, cost: r.cost, date: new Date().toLocaleDateString("ko-KR") });
+    var slots = loadSlots();
+    slots[state.currentSlot] = p;
+    saveSlots(slots);
+    renderShop();
+    updateDashPoints();
+    showToast(r.name + " 교환 완료! 부모님께 보여주세요 🎉");
+  }
+
+  document.getElementById("shop-btn").addEventListener("click", function () {
+    rewardAdminEl.style.display = "none";
+    renderShop();
+    showScreen("shop");
+  });
+  document.getElementById("shop-back-btn").addEventListener("click", function () {
+    state.adminUnlocked = false;
+    renderDashboard();
+    showScreen("start");
+  });
+  document.getElementById("shop-admin-toggle-btn").addEventListener("click", function () {
+    requireAdmin(function () {
+      rewardAdminEl.style.display = rewardAdminEl.style.display === "none" ? "" : "none";
+      renderShop();
+    });
+  });
+  document.getElementById("reward-add-btn").addEventListener("click", function () {
+    var name = rewardNameInput.value.trim().slice(0, 16);
+    var cost = parseInt(rewardCostInput.value, 10);
+    if (!name || !cost || cost <= 0) {
+      showToast("이름과 포인트를 정확히 입력해 주세요");
+      return;
+    }
+    var list = loadRewards();
+    list.push({ id: "r" + Date.now() + Math.floor(Math.random() * 1000), name: name, cost: cost });
+    saveRewards(list);
+    rewardNameInput.value = "";
+    rewardCostInput.value = "";
+    renderShop();
+  });
+
+  function badgeValue(p, category) {
+    if (category === "score") { return p.bestScore || 0; }
+    if (category === "games") { return p.gamesPlayed || 0; }
+    if (category === "combo") { return p.maxCombo || 0; }
+    if (category === "minigame") { return p.miniGameWins || 0; }
+    return 0;
+  }
+  function checkAndAwardBadges(p) {
+    if (!p.badges) { p.badges = []; }
+    var newly = [];
+    BADGE_DEFS.forEach(function (b) {
+      if (p.badges.indexOf(b.id) !== -1) { return; }
+      if (badgeValue(p, b.category) >= b.threshold) {
+        p.badges.push(b.id);
+        newly.push(b);
+      }
+    });
+    return newly;
+  }
+  function renderBadges() {
+    var grid = document.getElementById("badge-grid");
+    var p = state.currentPlayer;
+    var earned = (p && p.badges) || [];
+    grid.innerHTML = "";
+    BADGE_DEFS.forEach(function (b) {
+      var isEarned = earned.indexOf(b.id) !== -1;
+      var item = document.createElement("div");
+      item.className = "badge-item " + (isEarned ? "earned" : "locked");
+      item.innerHTML =
+        '<span class="badge-icon">' + (isEarned ? b.icon : "🔒") + '</span>' +
+        '<span class="badge-label">' + b.label + '</span>';
+      grid.appendChild(item);
+    });
+  }
+  document.getElementById("badges-btn").addEventListener("click", function () {
+    renderBadges();
+    showScreen("badges");
+  });
+  document.getElementById("badges-back-btn").addEventListener("click", function () {
+    renderDashboard();
+    showScreen("start");
   });
 
   function characterSVG(species) {
@@ -2460,6 +2790,9 @@
   function isEasyMode() {
     return state.mode === "easy";
   }
+  function isPracticeMode() {
+    return state.mode === "practice";
+  }
   function currentBeatSeconds() {
     var base = beatSeconds(state.stage);
     if (isEasyMode()) { base *= EASY_TIME_MULTIPLIER; }
@@ -2588,6 +2921,7 @@
   function updateHUD() {
     hudStage.textContent = state.stage + "단";
     hudScore.textContent = state.score;
+    if (isPracticeMode()) { hudPointsEl.textContent = state.practicePoints; }
   }
 
   function renderLivesHUD() {
@@ -2864,6 +3198,9 @@
 
   function finishMiniGame() {
     memoryStatusEl.textContent = "모두 맞췄어요! 보너스 목숨 " + state.memoryHeartsGained + "개 획득! ❤️";
+    if (state.currentPlayer) {
+      state.currentPlayer.miniGameWins = (state.currentPlayer.miniGameWins || 0) + 1;
+    }
     showMiniGameResult();
   }
 
@@ -3025,7 +3362,12 @@
     dropBall.style.opacity = "0";
 
     state.beatIndex = 0;
-    scheduleBeat(0);
+    if (isPracticeMode()) {
+      bulbsEl.style.visibility = "hidden";
+    } else {
+      bulbsEl.style.visibility = "";
+      scheduleBeat(0);
+    }
   }
 
   function scheduleBeat(delayMs) {
@@ -3109,6 +3451,16 @@
 
     state.combo = 0;
     comboBadge.classList.remove("show", "tier2", "tier3", "tier4");
+
+    gameCard.classList.remove("shake-screen");
+    void gameCard.offsetWidth;
+    gameCard.classList.add("shake-screen");
+
+    if (isPracticeMode()) {
+      scheduleFlow(function () { newQuestion(); }, 1300);
+      return;
+    }
+
     state.lives -= 1;
     popOneBalloon();
 
@@ -3116,10 +3468,6 @@
     dropBall.classList.remove("falling");
     void dropBall.offsetWidth;
     dropBall.classList.add("falling");
-
-    gameCard.classList.remove("shake-screen");
-    void gameCard.offsetWidth;
-    gameCard.classList.add("shake-screen");
 
     if (state.lives <= 0) {
       scheduleFlow(function () { endGame(isTimeout); }, 900);
@@ -3143,6 +3491,9 @@
     if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
 
     state.combo += 1;
+    if (state.currentPlayer && state.combo > (state.currentPlayer.maxCombo || 0)) {
+      state.currentPlayer.maxCombo = state.combo;
+    }
     var comboBonus = 0;
     if (state.combo >= 2) {
       comboBonus = Math.min(state.combo - 1, COMBO_BONUS_CAP) * COMBO_BONUS_STEP;
@@ -3150,6 +3501,7 @@
     }
     state.score += 10 + (state.stage - 1) * 2 + comboBonus;
     state.correctInStage += 1;
+    if (isPracticeMode()) { state.practicePoints += POINTS_PER_CORRECT; }
 
     ticket.classList.remove("pulse");
     void ticket.offsetWidth;
@@ -3176,6 +3528,10 @@
   function afterStageAdvance(clearedStage, nextStage) {
     if (state.mode === "record" || state.mode === "easy") {
       showStageClear(clearedStage, nextStage);
+    } else if (isPracticeMode()) {
+      showToast("잘하고 있어요! 포인트 " + state.practicePoints + "P 모았어요 🎉");
+      playFanfare();
+      scheduleFlow(function () { newQuestion(); }, 550);
     } else {
       showToast(nextStage + "단 진입! 점점 빨라져요");
       playFanfare();
@@ -3307,6 +3663,22 @@
     state.memoryActive = false;
     state.memoryOnDone = null;
     ring.classList.remove("paused");
+    if (isPracticeMode() && state.practicePoints > 0 && state.currentPlayer && state.currentSlot !== null) {
+      var p = state.currentPlayer;
+      p.totalPoints = (p.totalPoints || 0) + state.practicePoints;
+      p.gamesPlayed += 1;
+      var newBadges = checkAndAwardBadges(p);
+      var slots = loadSlots();
+      slots[state.currentSlot] = p;
+      saveSlots(slots);
+      showToast(state.practicePoints + "P 획득! 총 " + p.totalPoints + "P 보유 중이에요 🎉");
+      state.practicePoints = 0;
+      if (newBadges.length) {
+        setTimeout(function () {
+          showToast("🏅 새 업적: " + newBadges.map(function (b) { return b.label; }).join(", "));
+        }, 1800);
+      }
+    }
     renderDashboard();
     showScreen("start");
   }
@@ -3323,6 +3695,7 @@
     state.stage = 1;
     state.score = 0;
     state.combo = 0;
+    state.practicePoints = 0;
     comboBadge.classList.remove("show", "tier2", "tier3", "tier4");
     state.lives = state.livesSetting;
     state.correctInStage = 0;
@@ -3343,6 +3716,13 @@
     pauseBtn.setAttribute("aria-label", "일시정지");
     renderLivesHUD();
     setLives(state.livesSetting);
+    if (isPracticeMode()) {
+      hudLivesEl.style.display = "none";
+      hudPointsItem.style.display = "";
+    } else {
+      hudLivesEl.style.display = "";
+      hudPointsItem.style.display = "none";
+    }
     updateHUD();
     applyCharacter();
     applyCycle();
@@ -3368,6 +3748,7 @@
     var newlyUnlocked = CHAR_OPTIONS.filter(function (o) {
       return o.unlockStage > 0 && o.unlockStage > prevBestStage && o.unlockStage <= p.bestStage;
     });
+    var newBadges = checkAndAwardBadges(p);
     var slots = loadSlots();
     slots[state.currentSlot] = p;
     saveSlots(slots);
@@ -3405,6 +3786,13 @@
       unlockBanner.style.display = "none";
     }
 
+    if (newBadges.length) {
+      badgeBanner.textContent = "🏅 새 업적 획득: " + newBadges.map(function (b) { return b.icon + " " + b.label; }).join(", ");
+      badgeBanner.style.display = "";
+    } else {
+      badgeBanner.style.display = "none";
+    }
+
     renderDashboard();
     showScreen("over");
   }
@@ -3412,6 +3800,7 @@
   document.getElementById("start-easy-btn").addEventListener("click", function () { startGame("easy"); });
   document.getElementById("start-record-btn").addEventListener("click", function () { startGame("record"); });
   document.getElementById("start-infinite-btn").addEventListener("click", function () { startGame("infinite"); });
+  document.getElementById("start-practice-btn").addEventListener("click", function () { startGame("practice"); });
   document.getElementById("retry-btn").addEventListener("click", function () { startGame(state.mode); });
 
   pullCloudSync(loadSyncCode(), function () {});
