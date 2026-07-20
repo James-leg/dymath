@@ -1119,7 +1119,7 @@
   }
 
   /* ---------- Landscape / short-viewport layout ---------- */
-  @media (orientation: landscape) and (max-height: 560px) {
+  @media (orientation: landscape) and (max-height: 850px) {
     body { padding: 12px 14px; align-items: flex-start; }
     .stage-card { padding: 34px 22px 16px; }
     .fullscreen-toggle-btn { top: auto; bottom: 12px; right: 12px; width: 34px; height: 34px; font-size: 15px; }
@@ -2126,6 +2126,50 @@
     muteBtn.textContent = state.muted ? "🔇" : "🔊";
   });
 
+  function playTone(freq, startAt, duration, peakGain, type) {
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.type = type || "triangle";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.0001, startAt);
+    gain.gain.exponentialRampToValueAtTime(peakGain, startAt + Math.min(0.02, duration * 0.2));
+    gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(startAt);
+    osc.stop(startAt + duration + 0.02);
+  }
+
+  function playFanfare() {
+    if (!audioCtx || state.muted) return;
+    var t0 = audioCtx.currentTime;
+    var run = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+    run.forEach(function (freq, i) {
+      playTone(freq, t0 + i * 0.08, 0.3, 0.26, "triangle");
+    });
+    var chordT = t0 + run.length * 0.08 + 0.04;
+    [783.99, 1046.50, 1318.51].forEach(function (freq) {
+      playTone(freq, chordT, 0.55, 0.15, "square");
+    });
+  }
+
+  function playFlip() {
+    if (!audioCtx || state.muted) return;
+    var t = audioCtx.currentTime;
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(520, t);
+    osc.frequency.exponentialRampToValueAtTime(880, t + 0.09);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.16, t + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(t);
+    osc.stop(t + 0.14);
+  }
+
   function flashBeat(accent) {
     beatFlash.classList.toggle("accent", accent);
     beatFlash.classList.remove("on");
@@ -2283,6 +2327,7 @@
     state.memoryFlipped.push(idx);
     var cardEls = memoryGridEl.children;
     cardEls[idx].classList.add("flipped");
+    playFlip();
 
     if (state.memoryFlipped.length < 2) { return; }
 
@@ -2545,6 +2590,7 @@
     stageClearTitle.textContent = clearedStage + "단 클리어!";
     stageClearNext.textContent = "다음 스테이지 → " + nextStage + "단";
     stageClearOverlay.classList.add("show");
+    playFanfare();
     scheduleFlow(function () {
       stageClearOverlay.classList.remove("show");
       newQuestion();
@@ -2590,6 +2636,7 @@
       showStageClear(clearedStage, nextStage);
     } else {
       showToast(nextStage + "단 진입! 점점 빨라져요");
+      playFanfare();
       scheduleFlow(function () { newQuestion(); }, 550);
     }
   }
