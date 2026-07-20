@@ -142,32 +142,25 @@
     color: #fff3da;
     background: rgba(255,255,255,0.08);
   }
-  .game-title {
-    position: relative;
-    z-index: 1;
-    font-size: clamp(32px, 9vw, 48px);
-    font-weight: 900;
-    font-family: Georgia, "Noto Serif KR", "Times New Roman", serif;
-    letter-spacing: 0.02em;
-    line-height: 1.05;
+  .game-title-wrap {
     margin: 10px 0 34px;
-    text-wrap: balance;
-    background: linear-gradient(180deg,
-      #ffffff 0%, #d9f2ff 16%, #8fd0f0 38%, #3a8cd0 62%, #1a5590 84%, #0d3050 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 1px #0a2340;
-    paint-order: stroke fill;
-    text-shadow: 0 3px 0 #0d3050, 0 8px 14px rgba(0,10,25,0.5);
+    text-align: center;
+  }
+  .game-title-svg {
+    display: block;
+    width: 92%;
+    max-width: 380px;
+    height: auto;
+    margin: 0 auto;
     animation: title-pulse 2.8s ease-in-out infinite;
   }
+  .game-title-text { display: none; }
   @keyframes title-pulse {
-    0%, 100% { filter: drop-shadow(0 0 8px rgba(143,208,240,0.45)); }
-    50% { filter: drop-shadow(0 0 20px rgba(190,232,255,0.8)); }
+    0%, 100% { filter: drop-shadow(0 0 6px rgba(143,208,240,0.4)); }
+    50% { filter: drop-shadow(0 0 14px rgba(190,232,255,0.75)); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .game-title { animation: none; }
+    .game-title-svg { animation: none; }
   }
   .title-menu { display: flex; flex-direction: column; gap: 14px; align-items: center; }
   .title-btn {
@@ -1083,18 +1076,14 @@
     box-shadow: 1px 1px 0 #14210f !important;
     transform: translate(3px, 3px) !important;
   }
-  .classic-mode .game-title {
+  .classic-mode .game-title-svg { display: none; }
+  .classic-mode .game-title-text {
+    display: block;
     font-family: "Press Start 2P", "Courier New", monospace;
     font-size: clamp(18px, 5.5vw, 26px);
     line-height: 1.6;
-    background: none;
-    background-size: auto;
-    -webkit-text-fill-color: #8fd0f0;
-    -webkit-text-stroke: 0;
     color: #8fd0f0;
     text-shadow: 3px 3px 0 #1a5590, 6px 6px 0 #0d3050;
-    filter: none;
-    animation: none;
     letter-spacing: 0;
   }
   .classic-mode .hud-value,
@@ -1106,8 +1095,7 @@
     font-family: "Press Start 2P", "Courier New", monospace;
   }
   .classic-mode .mode-easy::after,
-  .classic-mode .mode-infinite::after,
-  .classic-mode .game-title::after {
+  .classic-mode .mode-infinite::after {
     display: none;
   }
   .classic-mode #title-screen .stage-card::before {
@@ -1126,7 +1114,41 @@
 
   <section id="title-screen" class="screen">
     <div class="stage-card">
-      <h1 class="game-title">도윤이의 모험</h1>
+      <h1 class="game-title-wrap">
+        <svg class="game-title-svg" viewBox="0 0 360 80" role="img" aria-label="도윤이의 모험" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="dqTitleFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="16%" stop-color="#d9f2ff"/>
+              <stop offset="38%" stop-color="#8fd0f0"/>
+              <stop offset="62%" stop-color="#3a8cd0"/>
+              <stop offset="84%" stop-color="#1a5590"/>
+              <stop offset="100%" stop-color="#0d3050"/>
+            </linearGradient>
+            <filter id="dqEmboss" x="-30%" y="-80%" width="160%" height="260%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+              <feSpecularLighting in="blur" surfaceScale="4.5" specularConstant="0.9" specularExponent="16" lighting-color="#ffffff" result="spec">
+                <feDistantLight azimuth="235" elevation="55"/>
+              </feSpecularLighting>
+              <feComposite in="spec" in2="SourceAlpha" operator="in" result="specClip"/>
+              <feOffset in="SourceAlpha" dx="0" dy="3" result="shadowOffset"/>
+              <feGaussianBlur in="shadowOffset" stdDeviation="2.5" result="shadowBlur"/>
+              <feFlood flood-color="#000818" flood-opacity="0.6" result="shadowColor"/>
+              <feComposite in="shadowColor" in2="shadowBlur" operator="in" result="shadowFinal"/>
+              <feMerge>
+                <feMergeNode in="shadowFinal"/>
+                <feMergeNode in="SourceGraphic"/>
+                <feMergeNode in="specClip"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <text x="50%" y="56%" text-anchor="middle" dominant-baseline="middle"
+            font-family="Georgia, 'Noto Serif KR', 'Times New Roman', serif" font-weight="900" font-size="42"
+            fill="url(#dqTitleFill)" stroke="#0a2340" stroke-width="2.2" paint-order="stroke fill"
+            filter="url(#dqEmboss)">도윤이의 모험</text>
+        </svg>
+        <span class="game-title-text">도윤이의 모험</span>
+      </h1>
       <div class="title-menu">
         <button type="button" id="title-start-btn" class="title-btn title-btn-start">시작</button>
         <button type="button" id="title-options-btn" class="title-btn title-btn-options">옵션</button>
