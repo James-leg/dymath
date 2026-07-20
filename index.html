@@ -121,13 +121,49 @@
     100% { opacity: 0; }
   }
 
+  #title-screen .stage-card {
+    background: linear-gradient(160deg, #0d1b2a 0%, #1b3a4b 60%, #10222e 100%);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.06) inset;
+    position: relative;
+    overflow: hidden;
+  }
+  #title-screen .stage-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 3px);
+    pointer-events: none;
+  }
+  #title-screen .fullscreen-btn {
+    border-color: rgba(255,255,255,0.4);
+    color: #fff3da;
+    background: rgba(255,255,255,0.08);
+  }
   .game-title {
-    font-size: clamp(32px, 8vw, 46px);
+    position: relative;
+    z-index: 1;
+    font-size: clamp(34px, 9.5vw, 52px);
     font-weight: 900;
-    color: var(--value);
-    text-shadow: 0 3px 0 rgba(31,122,153,0.15);
-    margin: 8px 0 32px;
+    letter-spacing: 0.03em;
+    margin: 10px 0 34px;
     text-wrap: balance;
+    background: linear-gradient(180deg, #fff8dc 0%, #ffcb47 32%, #ff8a3d 64%, #ff4d6d 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow:
+      0 2px 0 #c2410c,
+      0 4px 0 #9a3412,
+      0 6px 14px rgba(0,0,0,0.55);
+    filter: drop-shadow(0 0 10px rgba(255,138,61,0.4));
+    animation: title-glow 2.6s ease-in-out infinite;
+  }
+  @keyframes title-glow {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(255,138,61,0.35)); }
+    50% { filter: drop-shadow(0 0 20px rgba(255,138,61,0.75)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .game-title { animation: none; }
   }
   .title-menu { display: flex; flex-direction: column; gap: 14px; align-items: center; }
   .title-btn {
@@ -175,6 +211,7 @@
     line-height: 1.6;
     margin: 0 0 24px;
   }
+  .lock-tagline { margin-top: 12px; }
 
 
   .option-row {
@@ -1002,8 +1039,7 @@
 
   <section id="lock-screen" class="screen">
     <div class="stage-card">
-      <h1 class="brand">도윤이의 모험</h1>
-      <p class="tagline">입장하려면 비밀번호를 입력하세요</p>
+      <p class="tagline lock-tagline">입장하려면 비밀번호를 입력하세요</p>
       <form id="lock-form" autocomplete="off">
         <input id="lock-input" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" placeholder="••••••" aria-label="비밀번호" readonly />
         <div class="keypad" id="lock-keypad">
