@@ -274,13 +274,16 @@
 
   .op-toggle {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     background: var(--panel);
-    border-radius: 999px;
-    padding: 3px;
-    gap: 3px;
+    border-radius: 18px;
+    padding: 4px;
+    gap: 4px;
     box-shadow: inset 0 1px 3px rgba(31,122,153,0.15);
     margin: 0 auto 14px;
     width: fit-content;
+    max-width: 100%;
   }
   .op-toggle-btn {
     border: none;
@@ -288,9 +291,14 @@
     color: var(--ink-muted);
     font-weight: 700;
     font-size: 14px;
-    padding: 9px 20px;
-    border-radius: 999px;
+    padding: 9px 16px;
+    border-radius: 14px;
     cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  .op-toggle-btn.active {
+    opacity: 1;
   }
   .op-toggle-btn[data-op="multiply"].active {
     background: linear-gradient(180deg, #7ec8e8, var(--value));
@@ -301,6 +309,16 @@
     background: linear-gradient(180deg, #ffab8f, var(--accent-coral));
     color: #4a1608;
     box-shadow: 0 2px 6px rgba(224,57,42,0.3);
+  }
+  .op-toggle-btn[data-op="subtract"].active {
+    background: linear-gradient(180deg, #7de8cd, var(--accent-mint));
+    color: #04352c;
+    box-shadow: 0 2px 6px rgba(46,196,166,0.3);
+  }
+  .op-toggle-btn[data-op="divide"].active {
+    background: linear-gradient(180deg, #ffe08a, var(--accent-sun));
+    color: #4a3200;
+    box-shadow: 0 2px 6px rgba(255,203,71,0.35);
   }
   .op-toggle-btn:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
 
@@ -1405,6 +1423,7 @@
     .question { font-size: clamp(22px, 5vw, 30px); margin-bottom: 8px; }
     .choices { gap: 8px; }
     .choice-btn { padding: 12px 6px; font-size: 22px; }
+    .op-toggle-btn { padding: 8px 11px; font-size: 12px; }
     .game-title-svg { max-width: 300px; }
     .title-menu { gap: 8px; }
     .title-btn-start { padding: 16px; font-size: 20px; }
@@ -1518,8 +1537,10 @@
         <div class="stat"><span class="stat-value" id="stat-best-score">0</span><span class="stat-label">최고 점수 (<span id="stat-best-stage">1단</span>)</span></div>
       </div>
       <div class="op-toggle" id="op-toggle">
-        <button type="button" class="op-toggle-btn" data-op="multiply">× 곱셈</button>
         <button type="button" class="op-toggle-btn" data-op="add">+ 덧셈</button>
+        <button type="button" class="op-toggle-btn" data-op="subtract">− 뺄셈</button>
+        <button type="button" class="op-toggle-btn" data-op="multiply">× 곱셈</button>
+        <button type="button" class="op-toggle-btn" data-op="divide">÷ 나눗셈</button>
       </div>
       <div class="mode-stack">
         <button type="button" id="start-easy-btn" class="btn-primary btn-large mode-easy mode-btn">🍃 EASY MODE</button>
@@ -1762,6 +1783,12 @@
   var ADD_A_MIN = 10;
   var ADD_A_MAX = 49;
   var ADD_MAX_SUM = 50;
+  var SUB_A_MIN = 10;
+  var SUB_A_MAX = 49;
+  var DIV_MIN = 1;
+  var DIV_MAX = 9;
+  var ALL_OPS = ["add", "subtract", "multiply", "divide"];
+  var OP_SYMBOL = { add: "+", subtract: "−", multiply: "×", divide: "÷" };
   var POINTS_PER_CORRECT = 1;
   var REWARDS_KEY = "jugglemath_rewards_v1";
   var DEFAULT_REWARDS = [{ id: "tv30", name: "TV 30분", cost: 100 }];
@@ -2049,7 +2076,7 @@
     memoryOnDone: null,
     correctInStage: 0,
     a: 0, b: 0, answer: 0,
-    lastA: -1, lastB: -1,
+    lastA: -1, lastB: -1, lastOp: null,
     beatIndex: 0,
     beatTimeoutId: null,
     flowTimeoutId: null,
@@ -2063,7 +2090,8 @@
     paused: false,
     counting: false,
     mode: "record",
-    operation: "multiply",
+    operations: ["multiply"],
+    currentOp: "multiply",
     practicePoints: 0,
     currentPlayer: null,
     currentSlot: null,
@@ -2153,6 +2181,16 @@
     try { localStorage.setItem(SLOTS_KEY, JSON.stringify(slots)); } catch (e) {}
     pushCloudSync();
   }
+  function normalizeOperations(p) {
+    if (p && Array.isArray(p.operations)) {
+      var filtered = p.operations.filter(function (o) { return ALL_OPS.indexOf(o) !== -1; });
+      if (filtered.length) { return filtered; }
+    }
+    if (p && typeof p.operation === "string" && ALL_OPS.indexOf(p.operation) !== -1) {
+      return [p.operation];
+    }
+    return ["multiply"];
+  }
   function loadHOF() {
     try { return JSON.parse(localStorage.getItem(HOF_KEY) || "[]"); } catch (e) { return []; }
   }
@@ -2206,7 +2244,7 @@
           state.currentPlayer = fresh;
           state.livesSetting = fresh.livesSetting || MAX_LIVES;
           state.selectedSpecies = fresh.character || "seal";
-          state.operation = fresh.operation === "add" ? "add" : "multiply";
+          state.operations = normalizeOperations(fresh);
         }
       }
       if (onDone) { onDone(ok); }
@@ -2379,7 +2417,7 @@
     state.currentSlot = slotIndex;
     state.selectedSpecies = p.character || "seal";
     state.livesSetting = p.livesSetting || MAX_LIVES;
-    state.operation = p.operation === "add" ? "add" : "multiply";
+    state.operations = normalizeOperations(p);
     renderDashboard();
     renderCharSelect();
     updateLivesOption();
@@ -2420,14 +2458,14 @@
       playerError.textContent = "4자리 비밀번호를 입력해 주세요.";
       return;
     }
-    var p = { name: name, pin: pin, gamesPlayed: 0, totalPlayTimeMs: 0, totalScore: 0, bestScore: 0, bestStage: 1, character: "seal", livesSetting: MAX_LIVES, operation: "multiply" };
+    var p = { name: name, pin: pin, gamesPlayed: 0, totalPlayTimeMs: 0, totalScore: 0, bestScore: 0, bestStage: 1, character: "seal", livesSetting: MAX_LIVES, operations: ["multiply"] };
     slots[idx] = p;
     saveSlots(slots);
     state.currentPlayer = p;
     state.currentSlot = idx;
     state.selectedSpecies = "seal";
     state.livesSetting = MAX_LIVES;
-    state.operation = "multiply";
+    state.operations = ["multiply"];
     playerError.textContent = " ";
     renderDashboard();
     renderCharSelect();
@@ -2803,7 +2841,8 @@
   function currentBeatSeconds() {
     var base = beatSeconds(state.stage);
     if (isEasyMode()) { base *= EASY_TIME_MULTIPLIER; }
-    if (state.operation === "add") { base *= ADD_TIME_MULTIPLIER; }
+    var op = state.currentOp || (state.operations && state.operations[0]) || "multiply";
+    if (op !== "multiply") { base *= ADD_TIME_MULTIPLIER; }
     return base;
   }
   function applyCycle() {
@@ -2952,16 +2991,24 @@
   function updateOpToggle() {
     var btns = document.querySelectorAll(".op-toggle-btn");
     for (var i = 0; i < btns.length; i++) {
-      btns[i].classList.toggle("active", btns[i].dataset.op === state.operation);
+      btns[i].classList.toggle("active", state.operations.indexOf(btns[i].dataset.op) !== -1);
     }
   }
   document.getElementById("op-toggle").addEventListener("click", function (e) {
     var btn = e.target.closest(".op-toggle-btn");
-    if (!btn || btn.dataset.op === state.operation) { return; }
-    state.operation = btn.dataset.op;
+    if (!btn) { return; }
+    var op = btn.dataset.op;
+    var idx = state.operations.indexOf(op);
+    if (idx !== -1) {
+      if (state.operations.length === 1) { showToast("최소 1개는 선택해야 해요"); return; }
+      state.operations.splice(idx, 1);
+    } else {
+      state.operations.push(op);
+    }
     updateOpToggle();
     if (state.currentPlayer && state.currentSlot !== null) {
-      state.currentPlayer.operation = state.operation;
+      state.currentPlayer.operations = state.operations.slice();
+      delete state.currentPlayer.operation;
       var slots = loadSlots();
       slots[state.currentSlot] = state.currentPlayer;
       saveSlots(slots);
@@ -3328,25 +3375,38 @@
   function newQuestion() {
     if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
 
-    var isAdd = state.operation === "add";
-    var a, bb;
+    var ops = state.operations && state.operations.length ? state.operations : ["multiply"];
+    var op = ops[randInt(0, ops.length - 1)];
+    var a, bb, answer;
     do {
-      if (isAdd) {
+      if (op === "add") {
         a = randInt(ADD_A_MIN, ADD_A_MAX);
         bb = randInt(1, Math.min(9, ADD_MAX_SUM - a));
+        answer = a + bb;
+      } else if (op === "subtract") {
+        a = randInt(SUB_A_MIN, SUB_A_MAX);
+        bb = randInt(1, 9);
+        answer = a - bb;
+      } else if (op === "divide") {
+        bb = randInt(DIV_MIN, DIV_MAX);
+        var q = randInt(DIV_MIN, DIV_MAX);
+        a = bb * q;
+        answer = q;
       } else {
         a = randInt(1, 9);
         bb = randInt(1, 9);
+        answer = a * bb;
       }
-    } while (a === state.lastA && bb === state.lastB);
-    state.lastA = a; state.lastB = bb;
+    } while (a === state.lastA && bb === state.lastB && op === state.lastOp);
+    state.lastA = a; state.lastB = bb; state.lastOp = op;
     state.a = a; state.b = bb;
-    state.answer = isAdd ? a + bb : a * bb;
+    state.answer = answer;
+    state.currentOp = op;
 
-    questionEl.textContent = a + (isAdd ? " + " : " × ") + bb + " = ?";
+    questionEl.textContent = a + " " + OP_SYMBOL[op] + " " + bb + " = ?";
     state.answered = false;
     var choiceCount = isPracticeMode() ? PRACTICE_CHOICE_COUNT : (isEasyMode() ? EASY_CHOICE_COUNT : NORMAL_CHOICE_COUNT);
-    var choices = generateChoices(a, bb, state.answer, choiceCount, isAdd);
+    var choices = generateChoices(a, bb, state.answer, choiceCount, op);
     for (var ci = 0; ci < choiceBtns.length; ci++) {
       if (ci < choiceCount) {
         choiceBtns[ci].style.display = "";
@@ -3408,20 +3468,40 @@
     return arr;
   }
 
-  function generateChoices(a, bb, correct, count, isAdd) {
+  function generateChoices(a, bb, correct, count, opType) {
     count = count || NORMAL_CHOICE_COUNT;
-    var maxVal = isAdd ? (ADD_MAX_SUM + 15) : 100;
-    var candidates = isAdd
-      ? [
-          correct + 10, correct - 10, correct + 1, correct - 1, correct + 2, correct - 2,
-          a + bb + 10, a - bb, (a + 10) + bb, (a - 10) + bb,
-          Math.floor(a / 10) * 10 + (a % 10 + bb), correct + 9, correct - 9
-        ]
-      : [
-          a * (bb + 1), a * (bb - 1), (a + 1) * bb, (a - 1) * bb,
-          correct + a, correct - a, correct + bb, correct - bb,
-          correct + 1, correct - 1, correct + 2, correct - 2
-        ];
+    var maxVal, fallbackMax, candidates;
+    if (opType === "add") {
+      maxVal = ADD_MAX_SUM + 15;
+      fallbackMax = maxVal;
+      candidates = [
+        correct + 10, correct - 10, correct + 1, correct - 1, correct + 2, correct - 2,
+        a + bb + 10, a - bb, (a + 10) + bb, (a - 10) + bb,
+        Math.floor(a / 10) * 10 + (a % 10 + bb), correct + 9, correct - 9
+      ];
+    } else if (opType === "subtract") {
+      maxVal = SUB_A_MAX;
+      fallbackMax = maxVal;
+      candidates = [
+        a + bb, correct + 1, correct - 1, correct + 2, correct - 2,
+        correct + 10, correct - 10, correct + 9, correct - 9, bb - a
+      ];
+    } else if (opType === "divide") {
+      maxVal = DIV_MAX + 10;
+      fallbackMax = maxVal;
+      candidates = [
+        correct + 1, correct - 1, correct + 2, correct - 2, correct + 3, correct - 3,
+        bb, a, correct * 2, Math.floor(correct / 2)
+      ];
+    } else {
+      maxVal = 100;
+      fallbackMax = 81;
+      candidates = [
+        a * (bb + 1), a * (bb - 1), (a + 1) * bb, (a - 1) * bb,
+        correct + a, correct - a, correct + bb, correct - bb,
+        correct + 1, correct - 1, correct + 2, correct - 2
+      ];
+    }
     candidates = candidates.filter(function (v) { return v > 0 && v <= maxVal && v !== correct; });
     shuffle(candidates);
 
@@ -3430,7 +3510,7 @@
       if (set.indexOf(candidates[i2]) === -1) { set.push(candidates[i2]); }
     }
     while (set.length < count) {
-      var rv = randInt(1, isAdd ? maxVal : 81);
+      var rv = randInt(1, fallbackMax);
       if (set.indexOf(rv) === -1) { set.push(rv); }
     }
     return shuffle(set);
