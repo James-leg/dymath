@@ -590,10 +590,18 @@
   .memory-card-front {
     background: #fff;
     transform: rotateY(180deg);
-    font-size: clamp(34px, 9vw, 54px);
     line-height: 1;
   }
   .memory-card.matched .memory-card-front { background: linear-gradient(180deg, #ffe08a, var(--accent-sun)); }
+  .flag-img {
+    width: 74%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.08);
+    display: block;
+  }
   .memory-status { color: #fff3da; font-weight: 700; margin-bottom: 14px; }
   .stage-clear-next {
     font-size: 18px;
@@ -1211,7 +1219,7 @@
   var MEMORY_EVERY_N_STAGES = 3;
   var MEMORY_PAIRS = 5;
   var MEMORY_ATTEMPTS = 5;
-  var FLAG_POOL = ["🇰🇷", "🇺🇸", "🇯🇵", "🇫🇷", "🇩🇪", "🇧🇷", "🇮🇳", "🇨🇳", "🇬🇧", "🇮🇹", "🇨🇦", "🇦🇺", "🇪🇸", "🇲🇽", "🇷🇺"];
+  var FLAG_CODE_POOL = ["kr", "us", "jp", "fr", "de", "br", "in", "cn", "gb", "it", "ca", "au", "es", "mx", "ru"];
 
   var screens = {
     splash: document.getElementById("splash-screen"),
@@ -1918,7 +1926,7 @@
       el.innerHTML =
         '<div class="memory-card-inner">' +
           '<div class="memory-card-face memory-card-back"><span>🐚</span></div>' +
-          '<div class="memory-card-face memory-card-front">' + card.flag + '</div>' +
+          '<div class="memory-card-face memory-card-front"><img class="flag-img" src="https://flagcdn.com/w80/' + card.code + '.png" alt="' + card.code.toUpperCase() + '" draggable="false"></div>' +
         '</div>';
       el.addEventListener("click", function () { flipMemoryCard(idx); });
       memoryGridEl.appendChild(el);
@@ -1946,7 +1954,7 @@
     var a = state.memoryFlipped[0];
     var b = state.memoryFlipped[1];
 
-    if (state.memoryCards[a].flag === state.memoryCards[b].flag) {
+    if (state.memoryCards[a].code === state.memoryCards[b].code) {
       state.memoryCards[a].matched = true;
       state.memoryCards[b].matched = true;
       cardEls[a].classList.add("matched");
@@ -1975,8 +1983,8 @@
   }
 
   function launchMiniGame(clearedStage, nextStage) {
-    var pool = shuffle(FLAG_POOL.slice()).slice(0, MEMORY_PAIRS);
-    var cards = shuffle(pool.concat(pool)).map(function (flag) { return { flag: flag, matched: false }; });
+    var pool = shuffle(FLAG_CODE_POOL.slice()).slice(0, MEMORY_PAIRS);
+    var cards = shuffle(pool.concat(pool)).map(function (code) { return { code: code, matched: false }; });
     state.memoryCards = cards;
     state.memoryFlipped = [];
     state.memoryMatches = 0;
