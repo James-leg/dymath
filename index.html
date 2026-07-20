@@ -1036,6 +1036,11 @@
     max-width: 420px;
     margin: 0 auto;
   }
+  .choices.four-choice {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 420px;
+    margin: 0 auto;
+  }
   .choice-btn {
     border: none;
     border-radius: var(--radius-md);
@@ -1615,6 +1620,7 @@
         <button type="button" class="choice-btn" data-idx="0"><span class="choice-label">1</span><span class="choice-value">-</span></button>
         <button type="button" class="choice-btn" data-idx="1"><span class="choice-label">2</span><span class="choice-value">-</span></button>
         <button type="button" class="choice-btn" data-idx="2"><span class="choice-label">3</span><span class="choice-value">-</span></button>
+        <button type="button" class="choice-btn" data-idx="3"><span class="choice-label">4</span><span class="choice-value">-</span></button>
       </div>
 
       <div class="pause-overlay" id="pause-overlay">
@@ -1779,6 +1785,7 @@
   ];
   var EASY_CHOICE_COUNT = 2;
   var NORMAL_CHOICE_COUNT = 3;
+  var PRACTICE_CHOICE_COUNT = 4;
   var CHAR_OPTIONS = [
     { species: "seal", label: "물개", unlockStage: 0 },
     { species: "dolphin", label: "돌고래", unlockStage: 0 },
@@ -3338,7 +3345,7 @@
 
     questionEl.textContent = a + (isAdd ? " + " : " × ") + bb + " = ?";
     state.answered = false;
-    var choiceCount = isEasyMode() ? EASY_CHOICE_COUNT : NORMAL_CHOICE_COUNT;
+    var choiceCount = isPracticeMode() ? PRACTICE_CHOICE_COUNT : (isEasyMode() ? EASY_CHOICE_COUNT : NORMAL_CHOICE_COUNT);
     var choices = generateChoices(a, bb, state.answer, choiceCount, isAdd);
     for (var ci = 0; ci < choiceBtns.length; ci++) {
       if (ci < choiceCount) {
@@ -3353,6 +3360,7 @@
       }
     }
     choicesEl.classList.toggle("two-choice", choiceCount === 2);
+    choicesEl.classList.toggle("four-choice", choiceCount === 4);
 
     for (var i = 0; i < bulbEls.length; i++) {
       bulbEls[i].classList.remove("off");
