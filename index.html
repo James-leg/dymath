@@ -292,10 +292,15 @@
     border-radius: 999px;
     cursor: pointer;
   }
-  .op-toggle-btn.active {
-    background: linear-gradient(180deg, #ffe08a, var(--accent-sun));
-    color: #4a3200;
-    box-shadow: 0 2px 6px rgba(31,122,153,0.25);
+  .op-toggle-btn[data-op="multiply"].active {
+    background: linear-gradient(180deg, #7ec8e8, var(--value));
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(31,122,153,0.35);
+  }
+  .op-toggle-btn[data-op="add"].active {
+    background: linear-gradient(180deg, #ffab8f, var(--accent-coral));
+    color: #4a1608;
+    box-shadow: 0 2px 6px rgba(224,57,42,0.3);
   }
   .op-toggle-btn:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
 
