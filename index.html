@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>도윤이의 모험</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>:root{color-scheme:light}body{margin:0;padding:0}</style>
 </head>
 <body>
@@ -142,25 +145,31 @@
   .game-title {
     position: relative;
     z-index: 1;
-    font-size: clamp(34px, 9.5vw, 52px);
+    font-size: clamp(32px, 9vw, 48px);
     font-weight: 900;
-    letter-spacing: 0.03em;
+    font-family: Georgia, "Noto Serif KR", "Times New Roman", serif;
+    letter-spacing: 0.02em;
     margin: 10px 0 34px;
     text-wrap: balance;
-    background: linear-gradient(180deg, #fff8dc 0%, #ffcb47 32%, #ff8a3d 64%, #ff4d6d 100%);
+    background: linear-gradient(100deg,
+      #a5660c 0%, #ffe9a8 12%, #ffd54a 26%, #c9720c 40%,
+      #ffe9a8 54%, #ffd54a 68%, #a5660c 82%, #ffe9a8 100%);
+    background-size: 260% auto;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow:
-      0 2px 0 #c2410c,
-      0 4px 0 #9a3412,
-      0 6px 14px rgba(0,0,0,0.55);
-    filter: drop-shadow(0 0 10px rgba(255,138,61,0.4));
-    animation: title-glow 2.6s ease-in-out infinite;
+    -webkit-text-stroke: 2.2px #2b1405;
+    paint-order: stroke fill;
+    text-shadow: 0 4px 0 #5c2e04, 0 9px 16px rgba(0,0,0,0.6);
+    animation: title-shine 3.6s linear infinite, title-pulse 2.8s ease-in-out infinite;
   }
-  @keyframes title-glow {
-    0%, 100% { filter: drop-shadow(0 0 8px rgba(255,138,61,0.35)); }
-    50% { filter: drop-shadow(0 0 20px rgba(255,138,61,0.75)); }
+  @keyframes title-shine {
+    0% { background-position: 0% center; }
+    100% { background-position: 260% center; }
+  }
+  @keyframes title-pulse {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(255,197,74,0.35)); }
+    50% { filter: drop-shadow(0 0 18px rgba(255,197,74,0.7)); }
   }
   @media (prefers-reduced-motion: reduce) {
     .game-title { animation: none; }
@@ -247,6 +256,31 @@
     text-align: center;
     font-variant-numeric: tabular-nums;
   }
+
+  .style-toggle {
+    display: flex;
+    background: var(--panel);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 3px;
+    box-shadow: inset 0 1px 3px rgba(31,122,153,0.15);
+  }
+  .style-toggle-btn {
+    border: none;
+    background: transparent;
+    color: var(--ink-muted);
+    font-weight: 700;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .style-toggle-btn.active {
+    background: linear-gradient(180deg, #ffe08a, var(--accent-sun));
+    color: #4a3200;
+    box-shadow: 0 2px 6px rgba(31,122,153,0.25);
+  }
+  .style-toggle-btn:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
 
   .stats-grid {
     display: grid;
@@ -1015,6 +1049,75 @@
       animation: none !important;
     }
   }
+
+  /* ---------- Classic (dot / pixel) graphic style ---------- */
+  #app.classic-mode {
+    --radius-lg: 4px;
+    --radius-md: 2px;
+  }
+  .classic-mode .ex-svg.pixel-char { image-rendering: pixelated; }
+  .classic-mode .stage-card,
+  .classic-mode .splash-wrap,
+  .classic-mode .ring,
+  .classic-mode .ticket,
+  .classic-mode .hud,
+  .classic-mode .stats-grid,
+  .classic-mode .option-row,
+  .classic-mode .headline-stat,
+  .classic-mode .result-grid,
+  .classic-mode .pause-panel {
+    border: 3px solid #14210f;
+    box-shadow: 5px 5px 0 rgba(20,33,15,0.35) !important;
+  }
+  .classic-mode .btn-primary,
+  .classic-mode .btn-secondary,
+  .classic-mode .title-btn,
+  .classic-mode .mode-btn,
+  .classic-mode .choice-btn,
+  .classic-mode .slot-card,
+  .classic-mode .char-slot,
+  .classic-mode .style-toggle-btn.active {
+    border: 3px solid #14210f !important;
+    box-shadow: 4px 4px 0 #14210f !important;
+    transition: none !important;
+  }
+  .classic-mode .btn-primary:active,
+  .classic-mode .choice-btn:active:not(:disabled),
+  .classic-mode .title-btn:active,
+  .classic-mode .mode-btn:active {
+    box-shadow: 1px 1px 0 #14210f !important;
+    transform: translate(3px, 3px) !important;
+  }
+  .classic-mode .game-title {
+    font-family: "Press Start 2P", "Courier New", monospace;
+    font-size: clamp(18px, 5.5vw, 26px);
+    line-height: 1.6;
+    background: none;
+    background-size: auto;
+    -webkit-text-fill-color: #ffcb47;
+    -webkit-text-stroke: 0;
+    color: #ffcb47;
+    text-shadow: 3px 3px 0 #c2410c, 6px 6px 0 #7c2d12;
+    filter: none;
+    animation: none;
+    letter-spacing: 0;
+  }
+  .classic-mode .hud-value,
+  .classic-mode .stat-value,
+  .classic-mode .question,
+  .classic-mode .choice-value,
+  .classic-mode .final-score,
+  .classic-mode .headline-stat .hud-value {
+    font-family: "Press Start 2P", "Courier New", monospace;
+  }
+  .classic-mode .mode-easy::after,
+  .classic-mode .mode-infinite::after,
+  .classic-mode .game-title::after {
+    display: none;
+  }
+  .classic-mode #title-screen .stage-card::before {
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 4px);
+  }
 </style>
 
 <div id="app">
@@ -1116,6 +1219,13 @@
           <button type="button" id="lives-minus" class="stepper-btn" aria-label="목숨 줄이기">−</button>
           <span class="stepper-value" id="lives-value">3</span>
           <button type="button" id="lives-plus" class="stepper-btn" aria-label="목숨 늘리기">+</button>
+        </div>
+      </div>
+      <div class="option-row">
+        <span class="option-label">그래픽 스타일</span>
+        <div class="style-toggle" id="style-toggle">
+          <button type="button" class="style-toggle-btn" data-style="modern">신버전</button>
+          <button type="button" class="style-toggle-btn" data-style="classic">클래식</button>
         </div>
       </div>
       <button type="button" id="options-back-btn" class="btn-primary btn-large">뒤로가기</button>
@@ -1251,11 +1361,14 @@
   var SLOTS_KEY = "jugglemath_slots_v1";
   var SLOT_COUNT = 3;
   var HOF_KEY = "jugglemath_hall_of_fame_v1";
+  var STYLE_KEY = "jugglemath_graphic_style_v1";
   var HOF_MAX = 10;
   var MEMORY_EVERY_N_STAGES = 3;
   var MEMORY_PAIRS = 5;
   var MEMORY_ATTEMPTS = 5;
   var FLAG_CODE_POOL = ["kr", "us", "jp", "fr", "de", "br", "in", "cn", "gb", "it", "ca", "au", "es", "mx", "ru"];
+
+  var appEl = document.getElementById("app");
 
   var screens = {
     splash: document.getElementById("splash-screen"),
@@ -1498,7 +1611,8 @@
     pendingSlot: null,
     selectedSpecies: "seal",
     sessionStartTime: 0,
-    optionsFrom: "start"
+    optionsFrom: "start",
+    graphicStyle: loadGraphicStyle()
   };
 
   var ring = document.getElementById("ring");
@@ -1567,6 +1681,12 @@
   }
   function saveHOF(list) {
     try { localStorage.setItem(HOF_KEY, JSON.stringify(list)); } catch (e) {}
+  }
+  function loadGraphicStyle() {
+    try { return localStorage.getItem(STYLE_KEY) === "classic" ? "classic" : "modern"; } catch (e) { return "modern"; }
+  }
+  function saveGraphicStyle(style) {
+    try { localStorage.setItem(STYLE_KEY, style); } catch (e) {}
   }
   function formatDuration(ms) {
     var totalSec = Math.floor(ms / 1000);
@@ -1705,6 +1825,60 @@
   });
 
   function characterSVG(species) {
+    return state.graphicStyle === "classic" ? characterSVGClassic(species) : characterSVGModern(species);
+  }
+
+  function characterSVGClassic(species) {
+    var palettes = {
+      seal: { dark: "#5b7186", light: "#9db6c9", belly: "#e4eef4", patch: "#ffffff" },
+      dolphin: { dark: "#2e6a86", light: "#6fb2d1", belly: "#dcf2fa", patch: "#ffffff" },
+      orca: { dark: "#0d0d12", light: "#26262f", belly: "#ffffff", patch: "#ffffff" },
+      walrus: { dark: "#8a6534", light: "#c99a5f", belly: "#f2e2be", patch: "#fffdf2" }
+    };
+    var pal = palettes[species] || palettes.seal;
+    var GRID = 16;
+    var CELL = 10;
+    var cx = 7.5, cy = 8.2;
+    var rx = 6.3, ry = 5.7;
+    var grid = [];
+    for (var y = 0; y < GRID; y++) {
+      grid.push(new Array(GRID).fill(null));
+    }
+    for (var gy = 0; gy < GRID; gy++) {
+      for (var gx = 0; gx < GRID; gx++) {
+        var dx = (gx - cx) / rx;
+        var dy = (gy - cy) / ry;
+        var d = dx * dx + dy * dy;
+        if (d > 1) { continue; }
+        var col = pal.light;
+        if (d > 0.78) { col = pal.dark; }
+        else if (gy > cy + 0.6 && Math.abs(gx - cx) < rx * 0.6) { col = pal.belly; }
+        grid[gy][gx] = col;
+      }
+    }
+    // flippers
+    [[1, 10], [2, 11], [13, 10], [14, 11]].forEach(function (p) { grid[p[1]][p[0]] = pal.dark; });
+    [[0, 10], [15, 10]].forEach(function (p) { grid[p[1]][p[0]] = pal.dark; });
+    // tail nub
+    [[6, 14], [7, 14], [8, 14], [9, 14]].forEach(function (p) { grid[p[1]][p[0]] = pal.dark; });
+    // eyes (white base + dark pupil)
+    [[5, 6], [6, 6], [9, 6], [10, 6]].forEach(function (p) { grid[p[1]][p[0]] = "#ffffff"; });
+    [[6, 7], [10, 7]].forEach(function (p) { grid[p[1]][p[0]] = "#1c2733"; });
+    if (species === "orca") {
+      [[4, 5], [5, 5], [10, 5], [11, 5]].forEach(function (p) { grid[p[1]][p[0]] = pal.patch; });
+    }
+    var rects = [];
+    for (var ry2 = 0; ry2 < GRID; ry2++) {
+      for (var rx2 = 0; rx2 < GRID; rx2++) {
+        var c = grid[ry2][rx2];
+        if (!c) { continue; }
+        rects.push('<rect x="' + (rx2 * CELL) + '" y="' + (ry2 * CELL) + '" width="' + CELL + '" height="' + CELL + '" fill="' + c + '"/>');
+      }
+    }
+    return '<svg viewBox="0 0 ' + (GRID * CELL) + ' ' + (GRID * CELL) + '" class="ex-svg pixel-char" shape-rendering="crispEdges" aria-hidden="true">' + rects.join("") + '</svg>';
+  }
+
+  function characterSVGModern(species) {
     var palettes = {
       seal: { dark: "#93aec2", light: "#cfe0ec", belly: "#eef4f8" },
       dolphin: { dark: "#5fa8c7", light: "#b7e2f0", belly: "#e3f6fb" },
@@ -1897,6 +2071,26 @@
       updateLivesOption();
     }
   });
+
+  function applyGraphicStyle() {
+    if (appEl) { appEl.classList.toggle("classic-mode", state.graphicStyle === "classic"); }
+    var toggleBtns = document.querySelectorAll(".style-toggle-btn");
+    for (var i = 0; i < toggleBtns.length; i++) {
+      toggleBtns[i].classList.toggle("active", toggleBtns[i].dataset.style === state.graphicStyle);
+    }
+    renderCharSelect();
+    if (state.playing) { applyCharacter(); }
+  }
+
+  document.getElementById("style-toggle").addEventListener("click", function (e) {
+    var btn = e.target.closest(".style-toggle-btn");
+    if (!btn || btn.dataset.style === state.graphicStyle) { return; }
+    state.graphicStyle = btn.dataset.style;
+    saveGraphicStyle(state.graphicStyle);
+    applyGraphicStyle();
+  });
+
+  applyGraphicStyle();
 
   function setLives(n) {
     for (var i = 0; i < livesEls.length; i++) {
