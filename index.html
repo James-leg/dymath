@@ -1181,6 +1181,10 @@
     box-shadow: 4px 4px 0 #14210f !important;
     transition: none !important;
   }
+  .classic-mode .char-slot.selected {
+    border: 3px solid #ffcb47 !important;
+    box-shadow: 4px 4px 0 #b8860b, 0 0 0 3px rgba(255,203,71,0.5) !important;
+  }
   .classic-mode .btn-primary:active,
   .classic-mode .choice-btn:active:not(:disabled),
   .classic-mode .title-btn:active,
@@ -1591,6 +1595,9 @@
   var MAX_BPM = 200;
   var EASY_TIME_MULTIPLIER = 1.5;
   var ADD_TIME_MULTIPLIER = 1.5;
+  var ADD_A_MIN = 10;
+  var ADD_A_MAX = 49;
+  var ADD_MAX_SUM = 50;
   var EASY_CHOICE_COUNT = 2;
   var NORMAL_CHOICE_COUNT = 3;
   var CHAR_OPTIONS = [
@@ -1775,10 +1782,12 @@
   document.getElementById("title-options-btn").addEventListener("click", function () {
     state.optionsFrom = "title";
     showScreen("options");
+    refreshLiveDataFromCloud(function () { updateLivesOption(); updateMemoryAttemptsOption(); });
   });
   document.getElementById("options-btn").addEventListener("click", function () {
     state.optionsFrom = "start";
     showScreen("options");
+    refreshLiveDataFromCloud(function () { updateLivesOption(); updateMemoryAttemptsOption(); });
   });
   document.getElementById("character-btn").addEventListener("click", function () {
     showScreen("character");
@@ -1993,6 +2002,21 @@
       })
       .catch(function () { onDone(false); });
   }
+  function refreshLiveDataFromCloud(onDone) {
+    pullCloudSync(loadSyncCode(), function (ok) {
+      if (ok && state.currentPlayer && state.currentSlot !== null) {
+        var slots = loadSlots();
+        var fresh = slots[state.currentSlot];
+        if (fresh) {
+          state.currentPlayer = fresh;
+          state.livesSetting = fresh.livesSetting || MAX_LIVES;
+          state.selectedSpecies = fresh.character || "seal";
+          state.operation = fresh.operation === "add" ? "add" : "multiply";
+        }
+      }
+      if (onDone) { onDone(ok); }
+    });
+  }
   function loadGraphicStyle() {
     try { return localStorage.getItem(STYLE_KEY) === "classic" ? "classic" : "modern"; } catch (e) { return "modern"; }
   }
@@ -2153,6 +2177,7 @@
   function goToPlayerScreen() {
     showSlotGrid();
     showScreen("player");
+    pullCloudSync(loadSyncCode(), function (ok) { if (ok) { renderSlotGrid(); } });
   }
 
   playerForm.addEventListener("submit", function (e) {
@@ -2957,8 +2982,13 @@
     var isAdd = state.operation === "add";
     var a, bb;
     do {
-      a = isAdd ? randInt(10, 99) : randInt(1, 9);
-      bb = isAdd ? randInt(1, 9) : randInt(1, 9);
+      if (isAdd) {
+        a = randInt(ADD_A_MIN, ADD_A_MAX);
+        bb = randInt(1, Math.min(9, ADD_MAX_SUM - a));
+      } else {
+        a = randInt(1, 9);
+        bb = randInt(1, 9);
+      }
     } while (a === state.lastA && bb === state.lastB);
     state.lastA = a; state.lastB = bb;
     state.a = a; state.b = bb;
@@ -3025,7 +3055,7 @@
 
   function generateChoices(a, bb, correct, count, isAdd) {
     count = count || NORMAL_CHOICE_COUNT;
-    var maxVal = isAdd ? 118 : 100;
+    var maxVal = isAdd ? (ADD_MAX_SUM + 15) : 100;
     var candidates = isAdd
       ? [
           correct + 10, correct - 10, correct + 1, correct - 1, correct + 2, correct - 2,
