@@ -368,32 +368,74 @@
     border-color: var(--accent-sun);
     box-shadow: 0 0 0 4px rgba(255,203,71,0.3);
   }
+  #player-pin-input {
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    font-size: 20px;
+    letter-spacing: 0.4em;
+    padding: 14px;
+    border-radius: var(--radius-md);
+    border: 2px solid rgba(31,122,153,0.25);
+    background: var(--panel-tint);
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  #player-pin-input::placeholder { color: rgba(43,58,85,0.3); letter-spacing: 0.15em; }
+  #player-pin-input:focus-visible {
+    outline: none;
+    border-color: var(--accent-sun);
+    box-shadow: 0 0 0 4px rgba(255,203,71,0.3);
+  }
 
   .slot-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; }
   .slot-card {
+    width: 100%;
+    border: 2px solid rgba(31,122,153,0.2);
+    border-radius: var(--radius-md);
+    background: var(--panel-tint);
+    overflow: hidden;
+    text-align: left;
+    transition: border-color 0.15s ease;
+  }
+  .slot-card:focus-within { border-color: var(--accent-sun); }
+  .slot-card.empty { border-style: dashed; border-color: rgba(107,128,152,0.4); background: transparent; }
+  .slot-main {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     width: 100%;
-    border: 2px solid rgba(31,122,153,0.2);
-    border-radius: var(--radius-md);
-    background: var(--panel-tint);
+    border: none;
+    background: transparent;
     padding: 16px 20px;
     cursor: pointer;
     text-align: left;
     color: var(--ink);
-    transition: border-color 0.15s ease, transform 0.08s ease;
+    transition: transform 0.08s ease;
   }
-  .slot-card:hover, .slot-card:focus-visible { border-color: var(--accent-sun); outline: none; }
-  .slot-card:active { transform: translateY(2px); }
-  .slot-card.empty { border-style: dashed; border-color: rgba(107,128,152,0.4); background: transparent; }
+  .slot-main:hover, .slot-main:focus-visible { outline: none; background: rgba(255,203,71,0.1); }
+  .slot-main:active { transform: translateY(2px); }
   .slot-label { font-size: 12px; letter-spacing: 0.08em; color: var(--ink-muted); }
   .slot-name { font-size: 20px; font-weight: 800; color: var(--value); margin: 2px 0; }
   .slot-card.empty .slot-name { color: var(--ink-muted); font-weight: 700; }
   .slot-meta { font-size: 13px; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
   .slot-species { font-size: 13px; font-weight: 600; color: var(--ink-muted); }
   .slot-action { font-size: 14px; font-weight: 700; color: var(--accent-mint); white-space: nowrap; }
+  .slot-actions { display: flex; border-top: 1px solid rgba(31,122,153,0.15); }
+  .slot-mini-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-muted);
+    cursor: pointer;
+  }
+  .slot-mini-btn + .slot-mini-btn { border-left: 1px solid rgba(31,122,153,0.15); }
+  .slot-mini-btn:hover, .slot-mini-btn:focus-visible { background: rgba(31,122,153,0.08); outline: none; }
+  .slot-mini-btn.danger { color: var(--danger-text); }
 
   .btn-primary {
     border: none;
@@ -446,11 +488,14 @@
     inset: -5px;
     border-radius: inherit;
     pointer-events: none;
+    box-shadow: 0 0 14px 3px rgba(125,224,196,0.45);
+    opacity: 0.4;
     animation: easy-glow 3.6s ease-in-out infinite;
+    will-change: opacity;
   }
   @keyframes easy-glow {
-    0%, 100% { box-shadow: 0 0 8px 1px rgba(125,224,196,0.25); }
-    50% { box-shadow: 0 0 18px 4px rgba(125,224,196,0.55); }
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 1; }
   }
   .mode-easy:active { box-shadow: 0 2px 6px rgba(46,196,166,0.2), 0 1px 0 rgba(255,255,255,0.9) inset; }
 
@@ -477,12 +522,16 @@
     inset: -6px;
     border-radius: inherit;
     pointer-events: none;
+    box-shadow: 0 0 0 3px rgba(255,90,40,0.45);
+    opacity: 0;
+    transform: scale(0.92);
     animation: challenge-ring 1.6s ease-out infinite;
+    will-change: transform, opacity;
   }
   @keyframes challenge-ring {
-    0% { box-shadow: 0 0 0 0 rgba(255,90,40,0.45); }
-    70% { box-shadow: 0 0 0 9px rgba(255,90,40,0); }
-    100% { box-shadow: 0 0 0 0 rgba(255,90,40,0); }
+    0% { transform: scale(0.92); opacity: 0.7; }
+    70% { transform: scale(1.1); opacity: 0; }
+    100% { transform: scale(1.1); opacity: 0; }
   }
   .mode-infinite:active { box-shadow: 0 2px 0 #6b0f0f, 0 4px 12px rgba(224,57,42,0.35); }
 
@@ -517,6 +566,15 @@
     background: linear-gradient(180deg, #dff3fb 0%, #eef9e9 60%, #fbf1d6 100%);
   }
   .explorer.mini { animation: none; transform: scale(0.62); transform-origin: 50% 100%; }
+  .char-slot.locked { cursor: pointer; opacity: 0.75; }
+  .char-slot.locked .mini-stage.locked-stage { filter: grayscale(0.85) brightness(0.75); }
+  .lock-badge {
+    position: absolute;
+    top: 6px; right: 6px;
+    font-size: 15px;
+    filter: none;
+  }
+  .char-unlock-hint { font-size: 10px; color: var(--ink-muted); line-height: 1.3; text-align: center; }
 
   .error {
     min-height: 24px;
@@ -985,6 +1043,17 @@
     0% { transform: scale(0.9); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
   }
+  .unlock-banner {
+    background: linear-gradient(180deg, rgba(46,196,166,0.25), rgba(46,196,166,0.05));
+    border: 2px solid var(--accent-mint);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 16px;
+    font-weight: 800;
+    color: #128567;
+    font-size: 16px;
+    animation: banner-pop 0.5s ease;
+  }
 
   .hof-list {
     display: flex;
@@ -1012,6 +1081,7 @@
   .hof-score { display: block; font-weight: 800; color: #1a8a72; font-variant-numeric: tabular-nums; }
   .hof-sub { display: block; color: var(--ink-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
   .hof-empty { color: var(--ink-muted); padding: 20px; text-align: center; }
+  #hof-reset-btn { margin-top: 14px; }
 
   .result-grid {
     display: flex;
@@ -1056,6 +1126,7 @@
   #app.classic-mode {
     --radius-lg: 4px;
     --radius-md: 2px;
+    font-family: "DotGothic16", "Press Start 2P", "Courier New", monospace;
   }
   .classic-mode .ex-svg.pixel-char { image-rendering: pixelated; }
   .classic-mode .stage-card,
@@ -1117,6 +1188,47 @@
   .classic-mode #title-screen .stage-card::before {
     background: repeating-linear-gradient(0deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 4px);
   }
+
+  /* ---------- Global PIN entry modal ---------- */
+  .pin-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(13, 27, 42, 0.72);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 50;
+  }
+  .pin-modal.show { opacity: 1; pointer-events: auto; }
+  .pin-modal-card {
+    width: 100%;
+    max-width: 320px;
+    background: var(--panel);
+    border-radius: var(--radius-lg);
+    padding: 28px 24px 24px;
+    text-align: center;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.35);
+  }
+  .pin-modal-title { font-size: 18px; font-weight: 800; color: var(--value); margin-bottom: 16px; }
+  .pin-modal-input {
+    width: 100%;
+    text-align: center;
+    font-size: 24px;
+    letter-spacing: 0.4em;
+    padding: 14px 10px;
+    border-radius: var(--radius-md);
+    border: 2px solid rgba(31,122,153,0.25);
+    background: var(--panel-tint);
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 14px;
+  }
+  .pin-modal-card .keypad { margin: 0 auto 8px; }
+  .pin-modal-card .btn-secondary { margin-top: 4px; }
 
   /* ---------- Landscape / short-viewport layout ---------- */
   @media (orientation: landscape) and (max-height: 850px) {
@@ -1226,7 +1338,8 @@
       <div id="slot-name-form-wrap" style="display:none;">
         <form id="player-form" autocomplete="off">
           <input id="player-name-input" maxlength="12" placeholder="이름을 입력하세요" aria-label="플레이어 이름" />
-          <button type="submit" class="btn-primary btn-large">시작하기</button>
+          <input id="player-pin-input" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="4자리 비밀번호" aria-label="슬롯 비밀번호" />
+          <button type="submit" class="btn-primary btn-large" id="player-form-submit">시작하기</button>
         </form>
         <p id="player-error" class="error" role="alert" aria-live="polite">&nbsp;</p>
         <button type="button" id="slot-back-btn" class="btn-secondary">← 슬롯 다시 고르기</button>
@@ -1275,6 +1388,14 @@
           <button type="button" id="lives-minus" class="stepper-btn" aria-label="목숨 줄이기">−</button>
           <span class="stepper-value" id="lives-value">3</span>
           <button type="button" id="lives-plus" class="stepper-btn" aria-label="목숨 늘리기">+</button>
+        </div>
+      </div>
+      <div class="option-row">
+        <span class="option-label">카드 기회 (미니게임)</span>
+        <div class="stepper">
+          <button type="button" id="memory-attempts-minus" class="stepper-btn" aria-label="카드 기회 줄이기">−</button>
+          <span class="stepper-value" id="memory-attempts-value">5</span>
+          <button type="button" id="memory-attempts-plus" class="stepper-btn" aria-label="카드 기회 늘리기">+</button>
         </div>
       </div>
       <div class="option-row">
@@ -1367,6 +1488,7 @@
       <h1 class="brand small">오늘도 즐거웠어요!</h1>
       <p class="desc" id="gameover-msg">바다 친구가 비치볼을 놓쳤어요.</p>
       <div id="record-banner" class="record-banner" style="display:none;"></div>
+      <div id="unlock-banner" class="unlock-banner" style="display:none;"></div>
       <div class="headline-stat">
         <span class="hud-label">도달 단계</span><br />
         <span id="final-stage" class="hud-value">1단</span>
@@ -1378,7 +1500,7 @@
       <button id="retry-btn" class="btn-primary btn-large">다시 도전하기</button>
       <div class="btn-row">
         <button type="button" id="hof-btn2" class="btn-secondary">명예의 전당</button>
-        <button type="button" id="switch-player-btn2" class="btn-secondary">슬롯 선택으로 돌아가기</button>
+        <button type="button" id="mode-select-btn2" class="btn-secondary">모드 선택으로 가기</button>
       </div>
     </div>
   </section>
@@ -1389,10 +1511,34 @@
       <p class="desc">역대 최고 점수 TOP 10</p>
       <div class="hof-list" id="hof-list"></div>
       <button type="button" id="hof-back-btn" class="btn-primary btn-large">뒤로가기</button>
+      <button type="button" id="hof-reset-btn" class="btn-secondary small">명예의 전당 초기화 (관리자)</button>
     </div>
   </section>
 
   <div id="toast" class="toast"></div>
+
+  <div class="pin-modal" id="pin-modal">
+    <div class="pin-modal-card">
+      <div class="pin-modal-title" id="pin-modal-title">비밀번호 입력</div>
+      <input id="pin-modal-input" class="pin-modal-input" type="password" inputmode="numeric" pattern="[0-9]*" readonly aria-label="비밀번호" />
+      <div class="keypad" id="pin-modal-keypad">
+        <button type="button" data-key="1">1</button>
+        <button type="button" data-key="2">2</button>
+        <button type="button" data-key="3">3</button>
+        <button type="button" data-key="4">4</button>
+        <button type="button" data-key="5">5</button>
+        <button type="button" data-key="6">6</button>
+        <button type="button" data-key="7">7</button>
+        <button type="button" data-key="8">8</button>
+        <button type="button" data-key="9">9</button>
+        <button type="button" data-key="back" class="key-wide">지우기</button>
+        <button type="button" data-key="0">0</button>
+        <button type="button" data-key="ok" class="key-wide key-enter">확인</button>
+      </div>
+      <p id="pin-modal-error" class="error" role="alert" aria-live="polite">&nbsp;</p>
+      <button type="button" id="pin-modal-cancel" class="btn-secondary">취소</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1400,6 +1546,7 @@
   "use strict";
 
   var PASSWORD = "191129";
+  var ADMIN_PASSWORD = "19900916";
   var BEATS_PER_QUESTION = 8;   // 8 beats = 2 measures of 4/4
   var TOTAL_BULBS = BEATS_PER_QUESTION;
   var CORRECT_PER_STAGE = 8;
@@ -1415,9 +1562,10 @@
   var EASY_CHOICE_COUNT = 2;
   var NORMAL_CHOICE_COUNT = 3;
   var CHAR_OPTIONS = [
-    { species: "seal", label: "물개" },
-    { species: "dolphin", label: "돌고래" },
-    { species: "orca", label: "범고래" }
+    { species: "seal", label: "물개", unlockStage: 0 },
+    { species: "dolphin", label: "돌고래", unlockStage: 0 },
+    { species: "orca", label: "범고래", unlockStage: 0 },
+    { species: "whale", label: "고래", unlockStage: 4 }
   ];
   var SLOTS_KEY = "jugglemath_slots_v1";
   var SLOT_COUNT = 3;
@@ -1426,7 +1574,10 @@
   var HOF_MAX = 10;
   var MEMORY_EVERY_N_STAGES = 3;
   var MEMORY_PAIRS = 5;
-  var MEMORY_ATTEMPTS = 5;
+  var MEMORY_ATTEMPTS_KEY = "jugglemath_memory_attempts_v1";
+  var MEMORY_ATTEMPTS_DEFAULT = 5;
+  var MEMORY_ATTEMPTS_MIN = 3;
+  var MEMORY_ATTEMPTS_MAX = 10;
   var FLAG_CODE_POOL = ["kr", "us", "jp", "fr", "de", "br", "in", "cn", "gb", "it", "ca", "au", "es", "mx", "ru"];
 
   var appEl = document.getElementById("app");
@@ -1603,6 +1754,7 @@
     showScreen("start");
   });
   document.getElementById("options-back-btn").addEventListener("click", function () {
+    state.adminUnlocked = false;
     showScreen(state.optionsFrom || "start");
   });
 
@@ -1684,6 +1836,8 @@
     currentPlayer: null,
     currentSlot: null,
     pendingSlot: null,
+    renameTargetSlot: null,
+    adminUnlocked: false,
     selectedSpecies: "seal",
     sessionStartTime: 0,
     optionsFrom: "start",
@@ -1702,6 +1856,9 @@
   var livesMinusBtn = document.getElementById("lives-minus");
   var livesPlusBtn = document.getElementById("lives-plus");
   var livesValueEl = document.getElementById("lives-value");
+  var memoryAttemptsMinusBtn = document.getElementById("memory-attempts-minus");
+  var memoryAttemptsPlusBtn = document.getElementById("memory-attempts-plus");
+  var memoryAttemptsValueEl = document.getElementById("memory-attempts-value");
   var comboBadge = document.getElementById("combo-badge");
   var memoryOverlay = document.getElementById("memory-overlay");
   var memoryGridEl = document.getElementById("memory-grid");
@@ -1713,6 +1870,12 @@
   var ticket = document.getElementById("ticket");
   var gameCard = document.getElementById("game-card");
   var toast = document.getElementById("toast");
+  var pinModal = document.getElementById("pin-modal");
+  var pinModalTitle = document.getElementById("pin-modal-title");
+  var pinModalInput = document.getElementById("pin-modal-input");
+  var pinModalError = document.getElementById("pin-modal-error");
+  var pinModalKeypad = document.getElementById("pin-modal-keypad");
+  var pinModalCancel = document.getElementById("pin-modal-cancel");
   var beatFlash = document.getElementById("beat-flash");
   var muteBtn = document.getElementById("mute-btn");
   var pauseBtn = document.getElementById("pause-btn");
@@ -1725,9 +1888,12 @@
   var stageClearTitle = document.getElementById("stage-clear-title");
   var stageClearNext = document.getElementById("stage-clear-next");
   var recordBanner = document.getElementById("record-banner");
+  var unlockBanner = document.getElementById("unlock-banner");
 
   var playerForm = document.getElementById("player-form");
   var playerNameInput = document.getElementById("player-name-input");
+  var playerPinInput = document.getElementById("player-pin-input");
+  var playerFormSubmit = document.getElementById("player-form-submit");
   var playerError = document.getElementById("player-error");
   var slotGridEl = document.getElementById("slot-grid");
   var slotNameFormWrap = document.getElementById("slot-name-form-wrap");
@@ -1768,7 +1934,7 @@
   function pushCloudSync() {
     var code = loadSyncCode();
     if (!code) { return; }
-    var payload = { slots: loadSlots(), hof: loadHOF() };
+    var payload = { slots: loadSlots(), hof: loadHOF(), memoryAttempts: loadMemoryAttemptsSetting() };
     fetch("/api/sync?code=" + encodeURIComponent(code), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -1786,6 +1952,9 @@
         if (data && Array.isArray(data.hof)) {
           try { localStorage.setItem(HOF_KEY, JSON.stringify(data.hof)); } catch (e) {}
         }
+        if (data && data.memoryAttempts >= MEMORY_ATTEMPTS_MIN && data.memoryAttempts <= MEMORY_ATTEMPTS_MAX) {
+          try { localStorage.setItem(MEMORY_ATTEMPTS_KEY, String(data.memoryAttempts)); } catch (e) {}
+        }
         onDone(true);
       })
       .catch(function () { onDone(false); });
@@ -1795,6 +1964,17 @@
   }
   function saveGraphicStyle(style) {
     try { localStorage.setItem(STYLE_KEY, style); } catch (e) {}
+  }
+  function loadMemoryAttemptsSetting() {
+    try {
+      var v = parseInt(localStorage.getItem(MEMORY_ATTEMPTS_KEY), 10);
+      if (v >= MEMORY_ATTEMPTS_MIN && v <= MEMORY_ATTEMPTS_MAX) { return v; }
+    } catch (e) {}
+    return MEMORY_ATTEMPTS_DEFAULT;
+  }
+  function saveMemoryAttemptsSetting(v) {
+    try { localStorage.setItem(MEMORY_ATTEMPTS_KEY, String(v)); } catch (e) {}
+    pushCloudSync();
   }
   function formatDuration(ms) {
     var totalSec = Math.floor(ms / 1000);
@@ -1809,38 +1989,104 @@
     var slots = loadSlots();
     slotGridEl.innerHTML = "";
     slots.forEach(function (p, idx) {
-      var card = document.createElement("button");
-      card.type = "button";
-      card.className = "slot-card" + (p ? "" : " empty");
+      var wrap = document.createElement("div");
+      wrap.className = "slot-card" + (p ? "" : " empty");
+      var main = document.createElement("button");
+      main.type = "button";
+      main.className = "slot-main";
       if (p) {
         var speciesKey = p.character || "seal";
         var speciesTag = (SPECIES_EMOJI[speciesKey] || "🦭") + " " + (SPECIES_LABEL[speciesKey] || "물개");
-        card.innerHTML =
+        main.innerHTML =
           "<div><div class=\"slot-label\">SLOT " + (idx + 1) + "</div>" +
           "<div class=\"slot-name\">" + p.name + " <span class=\"slot-species\">" + speciesTag + "</span></div>" +
           "<div class=\"slot-meta\">최고 " + p.bestScore + "점 · " + p.bestStage + "단 · " + p.gamesPlayed + "판</div></div>" +
           "<div class=\"slot-action\">이어하기 →</div>";
-        card.addEventListener("click", function () { continueSlot(idx); });
+        main.addEventListener("click", function () {
+          openPinModal({
+            title: p.name + "님의 비밀번호",
+            expected: p.pin || "",
+            maxLen: 4,
+            onSuccess: function () { continueSlot(idx); }
+          });
+        });
+        wrap.appendChild(main);
+
+        var actions = document.createElement("div");
+        actions.className = "slot-actions";
+        var renameBtn = document.createElement("button");
+        renameBtn.type = "button";
+        renameBtn.className = "slot-mini-btn";
+        renameBtn.textContent = "이름변경";
+        renameBtn.addEventListener("click", function () {
+          openPinModal({
+            title: p.name + "님의 비밀번호",
+            expected: p.pin || "",
+            maxLen: 4,
+            onSuccess: function () { showRenameForm(idx, p.name); }
+          });
+        });
+        var deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "slot-mini-btn danger";
+        deleteBtn.textContent = "삭제";
+        deleteBtn.addEventListener("click", function () {
+          openPinModal({
+            title: p.name + "님의 비밀번호",
+            expected: p.pin || "",
+            maxLen: 4,
+            onSuccess: function () { deleteSlot(idx); }
+          });
+        });
+        actions.appendChild(renameBtn);
+        actions.appendChild(deleteBtn);
+        wrap.appendChild(actions);
       } else {
-        card.innerHTML =
+        main.innerHTML =
           "<div><div class=\"slot-label\">SLOT " + (idx + 1) + "</div>" +
           "<div class=\"slot-name\">빈 슬롯</div></div>" +
           "<div class=\"slot-action\">새로 시작 →</div>";
-        card.addEventListener("click", function () { showNameForm(idx); });
+        main.addEventListener("click", function () { showNameForm(idx); });
+        wrap.appendChild(main);
       }
-      slotGridEl.appendChild(card);
+      slotGridEl.appendChild(wrap);
     });
+  }
+  function deleteSlot(idx) {
+    var slots = loadSlots();
+    slots[idx] = null;
+    saveSlots(slots);
+    renderSlotGrid();
+    showToast("슬롯이 삭제됐어요");
   }
   function showNameForm(slotIndex) {
     state.pendingSlot = slotIndex;
+    state.renameTargetSlot = null;
     slotGridEl.style.display = "none";
     slotNameFormWrap.style.display = "";
     playerNameInput.value = "";
+    playerPinInput.value = "";
+    playerPinInput.style.display = "";
+    playerFormSubmit.textContent = "시작하기";
     playerError.textContent = " ";
     playerNameInput.focus();
   }
+  function showRenameForm(slotIndex, currentName) {
+    state.pendingSlot = slotIndex;
+    state.renameTargetSlot = slotIndex;
+    slotGridEl.style.display = "none";
+    slotNameFormWrap.style.display = "";
+    playerNameInput.value = currentName;
+    playerPinInput.value = "";
+    playerPinInput.style.display = "none";
+    playerFormSubmit.textContent = "이름 저장";
+    playerError.textContent = " ";
+    playerNameInput.focus();
+    playerNameInput.select();
+  }
   function showSlotGrid() {
     state.pendingSlot = null;
+    state.renameTargetSlot = null;
     slotNameFormWrap.style.display = "none";
     slotGridEl.style.display = "";
     renderSlotGrid();
@@ -1882,7 +2128,26 @@
     }
     var slots = loadSlots();
     var idx = state.pendingSlot;
-    var p = { name: name, gamesPlayed: 0, totalPlayTimeMs: 0, totalScore: 0, bestScore: 0, bestStage: 1, character: "seal", livesSetting: MAX_LIVES };
+
+    if (state.renameTargetSlot !== null) {
+      var existing = slots[idx];
+      if (!existing) { showSlotGrid(); return; }
+      existing.name = name;
+      slots[idx] = existing;
+      saveSlots(slots);
+      playerError.textContent = " ";
+      state.renameTargetSlot = null;
+      showSlotGrid();
+      showToast("이름이 변경됐어요");
+      return;
+    }
+
+    var pin = playerPinInput.value.trim();
+    if (!/^[0-9]{4}$/.test(pin)) {
+      playerError.textContent = "4자리 비밀번호를 입력해 주세요.";
+      return;
+    }
+    var p = { name: name, pin: pin, gamesPlayed: 0, totalPlayTimeMs: 0, totalScore: 0, bestScore: 0, bestStage: 1, character: "seal", livesSetting: MAX_LIVES };
     slots[idx] = p;
     saveSlots(slots);
     state.currentPlayer = p;
@@ -1898,10 +2163,13 @@
 
   document.getElementById("slot-back-btn").addEventListener("click", showSlotGrid);
   document.getElementById("dash-back-btn").addEventListener("click", goToPlayerScreen);
-  document.getElementById("switch-player-btn2").addEventListener("click", goToPlayerScreen);
+  document.getElementById("mode-select-btn2").addEventListener("click", function () {
+    renderDashboard();
+    showScreen("start");
+  });
 
-  var SPECIES_EMOJI = { seal: "🦭", dolphin: "🐬", orca: "🐋", walrus: "🦣" };
-  var SPECIES_LABEL = { seal: "물개", dolphin: "돌고래", orca: "범고래", walrus: "바다코끼리" };
+  var SPECIES_EMOJI = { seal: "🦭", dolphin: "🐬", orca: "🐋", walrus: "🦣", whale: "🐳" };
+  var SPECIES_LABEL = { seal: "물개", dolphin: "돌고래", orca: "범고래", walrus: "바다코끼리", whale: "고래" };
 
   function renderHallOfFame() {
     var list = loadHOF();
@@ -1915,7 +2183,7 @@
       var mine = state.currentPlayer && entry.name === state.currentPlayer.name;
       row.className = "hof-row" + (mine ? " mine" : "");
       var medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : String(idx + 1);
-      var modeLabel = entry.mode === "infinite" ? "도전모드" : (entry.mode === "easy" ? "이지모드" : "노멀모드");
+      var modeLabel = entry.mode === "infinite" ? "CHALLENGE" : (entry.mode === "easy" ? "EASY" : "NORMAL");
       var speciesKey = entry.character || "seal";
       var speciesTag = (SPECIES_EMOJI[speciesKey] || "🦭") + " " + (SPECIES_LABEL[speciesKey] || "물개");
       row.innerHTML =
@@ -1929,7 +2197,15 @@
   document.getElementById("hof-btn").addEventListener("click", function () { renderHallOfFame(); showScreen("hof"); });
   document.getElementById("hof-btn2").addEventListener("click", function () { renderHallOfFame(); showScreen("hof"); });
   document.getElementById("hof-back-btn").addEventListener("click", function () {
+    state.adminUnlocked = false;
     if (state.currentPlayer) { renderDashboard(); showScreen("start"); } else { goToPlayerScreen(); }
+  });
+  document.getElementById("hof-reset-btn").addEventListener("click", function () {
+    requireAdmin(function () {
+      saveHOF([]);
+      renderHallOfFame();
+      showToast("명예의 전당이 초기화됐어요");
+    });
   });
 
   function characterSVG(species) {
@@ -1939,9 +2215,10 @@
   function characterSVGClassic(species) {
     var palettes = {
       seal: { dark: "#5b7186", light: "#9db6c9", belly: "#e4eef4", patch: "#ffffff" },
-      dolphin: { dark: "#2e6a86", light: "#6fb2d1", belly: "#dcf2fa", patch: "#ffffff" },
+      dolphin: { dark: "#101d38", light: "#2c4468", belly: "#c7d4e8", patch: "#ffffff" },
       orca: { dark: "#0d0d12", light: "#26262f", belly: "#ffffff", patch: "#ffffff" },
-      walrus: { dark: "#8a6534", light: "#c99a5f", belly: "#f2e2be", patch: "#fffdf2" }
+      walrus: { dark: "#8a6534", light: "#c99a5f", belly: "#f2e2be", patch: "#fffdf2" },
+      whale: { dark: "#0f3540", light: "#2c5f70", belly: "#dff3f1", patch: "#ffffff" }
     };
     var pal = palettes[species] || palettes.seal;
     var GRID = 16;
@@ -1989,14 +2266,15 @@
   function characterSVGModern(species) {
     var palettes = {
       seal: { dark: "#93aec2", light: "#cfe0ec", belly: "#eef4f8" },
-      dolphin: { dark: "#5fa8c7", light: "#b7e2f0", belly: "#e3f6fb" },
+      dolphin: { dark: "#16264a", light: "#33507e", belly: "#c7d4e8" },
       orca: { dark: "#1c1c24", light: "#3a3a46", belly: "#ffffff" },
-      walrus: { dark: "#b98a55", light: "#e0bd8d", belly: "#f6e9d1" }
+      walrus: { dark: "#b98a55", light: "#e0bd8d", belly: "#f6e9d1" },
+      whale: { dark: "#1a4a5c", light: "#3d7a8f", belly: "#eaf6f5" }
     };
     var pal = palettes[species] || palettes.seal;
     var parts = [];
 
-    if (species === "dolphin" || species === "orca") {
+    if (species === "dolphin" || species === "orca" || species === "whale") {
       parts.push('<path d="M70 32 Q80 4 90 32 Z" fill="' + pal.dark + '"/>');
     }
     parts.push('<ellipse cx="22" cy="110" rx="14" ry="30" fill="' + pal.dark + '" transform="rotate(-25 22 110)"/>');
@@ -2022,7 +2300,7 @@
     if (species === "dolphin") {
       parts.push('<path d="M62 100 Q80 122 98 100 Q80 111 62 100 Z" fill="' + pal.light + '"/>');
       parts.push('<path d="M74 112 Q80 116 86 112" stroke="#2b3a55" stroke-width="2.4" fill="none" stroke-linecap="round"/>');
-    } else if (species === "orca") {
+    } else if (species === "orca" || species === "whale") {
       parts.push('<path d="M68 106 Q80 113 92 106" stroke="#2b3a55" stroke-width="2.6" fill="none" stroke-linecap="round"/>');
     } else {
       parts.push('<circle cx="80" cy="98" r="3.5" fill="#2b3a55"/>');
@@ -2037,6 +2315,9 @@
       parts.push('<rect x="70" y="110" width="7" height="22" rx="3.5" fill="#fffdf2"/>');
       parts.push('<rect x="83" y="110" width="7" height="22" rx="3.5" fill="#fffdf2"/>');
     }
+    if (species === "whale") {
+      parts.push('<ellipse cx="80" cy="56" rx="4" ry="2" fill="#0f2f3a"/>');
+    }
     return '<svg viewBox="0 0 160 180" class="ex-svg" aria-hidden="true">' + parts.join("") + '</svg>';
   }
 
@@ -2047,26 +2328,38 @@
 
   function renderCharSelect() {
     charSelectEl.innerHTML = "";
+    var bestStage = (state.currentPlayer && state.currentPlayer.bestStage) || 1;
     CHAR_OPTIONS.forEach(function (opt) {
+      var unlocked = bestStage >= opt.unlockStage;
       var slot = document.createElement("button");
       slot.type = "button";
-      slot.className = "char-slot" + (state.selectedSpecies === opt.species ? " selected" : "");
+      slot.className = "char-slot" + (state.selectedSpecies === opt.species ? " selected" : "") + (unlocked ? "" : " locked");
       slot.dataset.species = opt.species;
-      slot.innerHTML =
-        '<div class="mini-stage"><div class="explorer mini">' + characterSVG(opt.species) + "</div></div>" +
-        '<span class="char-name">' + opt.label + "</span>";
-      slot.addEventListener("click", function () {
-        state.selectedSpecies = opt.species;
-        if (state.currentPlayer && state.currentSlot !== null) {
-          state.currentPlayer.character = opt.species;
-          var slots = loadSlots();
-          slots[state.currentSlot] = state.currentPlayer;
-          saveSlots(slots);
-        }
-        renderCharSelect();
-        var newSlot = charSelectEl.querySelector('.char-slot[data-species="' + opt.species + '"]');
-        if (newSlot) { setKbdFocus(newSlot); }
-      });
+      if (unlocked) {
+        slot.innerHTML =
+          '<div class="mini-stage"><div class="explorer mini">' + characterSVG(opt.species) + "</div></div>" +
+          '<span class="char-name">' + opt.label + "</span>";
+        slot.addEventListener("click", function () {
+          state.selectedSpecies = opt.species;
+          if (state.currentPlayer && state.currentSlot !== null) {
+            state.currentPlayer.character = opt.species;
+            var slots = loadSlots();
+            slots[state.currentSlot] = state.currentPlayer;
+            saveSlots(slots);
+          }
+          renderCharSelect();
+          var newSlot = charSelectEl.querySelector('.char-slot[data-species="' + opt.species + '"]');
+          if (newSlot) { setKbdFocus(newSlot); }
+        });
+      } else {
+        slot.innerHTML =
+          '<div class="mini-stage locked-stage"><div class="explorer mini">' + characterSVG(opt.species) + '</div><div class="lock-badge">🔒</div></div>' +
+          '<span class="char-name">' + opt.label + "</span>" +
+          '<span class="char-unlock-hint">' + opt.unlockStage + "단 클리어 시 해금</span>";
+        slot.addEventListener("click", function () {
+          showToast(opt.unlockStage + "단을 클리어하면 " + opt.label + "를 선택할 수 있어요");
+        });
+      }
       charSelectEl.appendChild(slot);
     });
   }
@@ -2170,6 +2463,39 @@
     osc.stop(t + 0.14);
   }
 
+  function playCountdownBeep(isGo) {
+    if (!audioCtx || state.muted) return;
+    var t = audioCtx.currentTime;
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.type = isGo ? "square" : "sine";
+    osc.frequency.value = isGo ? 1200 : 700;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(isGo ? 0.3 : 0.22, t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + (isGo ? 0.35 : 0.14));
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(t);
+    osc.stop(t + (isGo ? 0.38 : 0.16));
+  }
+
+  function playBuzz() {
+    if (!audioCtx || state.muted) return;
+    var t = audioCtx.currentTime;
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(220, t);
+    osc.frequency.exponentialRampToValueAtTime(110, t + 0.28);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.22, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(t);
+    osc.stop(t + 0.32);
+  }
+
   function flashBeat(accent) {
     beatFlash.classList.toggle("accent", accent);
     beatFlash.classList.remove("on");
@@ -2200,6 +2526,25 @@
     livesPlusBtn.disabled = state.livesSetting >= LIVES_MAX;
   }
 
+  function updateMemoryAttemptsOption() {
+    var v = loadMemoryAttemptsSetting();
+    memoryAttemptsValueEl.textContent = v;
+    memoryAttemptsMinusBtn.disabled = v <= MEMORY_ATTEMPTS_MIN;
+    memoryAttemptsPlusBtn.disabled = v >= MEMORY_ATTEMPTS_MAX;
+  }
+  memoryAttemptsMinusBtn.addEventListener("click", function () {
+    requireAdmin(function () {
+      var v = loadMemoryAttemptsSetting();
+      if (v > MEMORY_ATTEMPTS_MIN) { saveMemoryAttemptsSetting(v - 1); updateMemoryAttemptsOption(); }
+    });
+  });
+  memoryAttemptsPlusBtn.addEventListener("click", function () {
+    requireAdmin(function () {
+      var v = loadMemoryAttemptsSetting();
+      if (v < MEMORY_ATTEMPTS_MAX) { saveMemoryAttemptsSetting(v + 1); updateMemoryAttemptsOption(); }
+    });
+  });
+
   function saveLivesSetting() {
     if (state.currentPlayer && state.currentSlot !== null) {
       state.currentPlayer.livesSetting = state.livesSetting;
@@ -2210,18 +2555,22 @@
   }
 
   livesMinusBtn.addEventListener("click", function () {
-    if (state.livesSetting > LIVES_MIN) {
-      state.livesSetting -= 1;
-      saveLivesSetting();
-      updateLivesOption();
-    }
+    requireAdmin(function () {
+      if (state.livesSetting > LIVES_MIN) {
+        state.livesSetting -= 1;
+        saveLivesSetting();
+        updateLivesOption();
+      }
+    });
   });
   livesPlusBtn.addEventListener("click", function () {
-    if (state.livesSetting < LIVES_MAX) {
-      state.livesSetting += 1;
-      saveLivesSetting();
-      updateLivesOption();
-    }
+    requireAdmin(function () {
+      if (state.livesSetting < LIVES_MAX) {
+        state.livesSetting += 1;
+        saveLivesSetting();
+        updateLivesOption();
+      }
+    });
   });
 
   function applyGraphicStyle() {
@@ -2243,6 +2592,7 @@
   });
 
   applyGraphicStyle();
+  updateMemoryAttemptsOption();
 
 
   function setLives(n) {
@@ -2372,7 +2722,7 @@
     state.memoryCards = cards;
     state.memoryFlipped = [];
     state.memoryMatches = 0;
-    state.memoryAttemptsLeft = MEMORY_ATTEMPTS;
+    state.memoryAttemptsLeft = loadMemoryAttemptsSetting();
     state.memoryHeartsGained = 0;
     state.memoryBusy = false;
     state.memoryActive = true;
@@ -2448,6 +2798,82 @@
     toast.classList.remove("show");
     void toast.offsetWidth;
     toast.classList.add("show");
+  }
+
+  var pinModalCtx = { expected: "", maxLen: 4, onSuccess: null };
+
+  function openPinModal(opts) {
+    pinModalCtx.expected = opts.expected || "";
+    pinModalCtx.maxLen = opts.maxLen || 4;
+    pinModalCtx.onSuccess = opts.onSuccess || null;
+    pinModalTitle.textContent = opts.title || "비밀번호 입력";
+    pinModalInput.value = "";
+    pinModalInput.maxLength = pinModalCtx.maxLen;
+    pinModalInput.style.letterSpacing = pinModalCtx.maxLen > 6 ? "0.2em" : "0.4em";
+    pinModalError.textContent = " ";
+    pinModal.classList.add("show");
+    setTimeout(function () { pinModalInput.focus(); }, 50);
+  }
+  function closePinModal() {
+    pinModal.classList.remove("show");
+    pinModalCtx.onSuccess = null;
+  }
+  function submitPinModal() {
+    if (pinModalCtx.expected && pinModalInput.value === pinModalCtx.expected) {
+      var cb = pinModalCtx.onSuccess;
+      closePinModal();
+      if (cb) { cb(); }
+    } else {
+      pinModalError.textContent = "비밀번호가 달라요.";
+      pinModalInput.value = "";
+      pinModalInput.classList.remove("shake");
+      void pinModalInput.offsetWidth;
+      pinModalInput.classList.add("shake");
+    }
+  }
+  pinModalKeypad.addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-key]");
+    if (!btn) { return; }
+    var key = btn.getAttribute("data-key");
+    if (key === "back") {
+      pinModalInput.value = pinModalInput.value.slice(0, -1);
+      pinModalError.textContent = " ";
+    } else if (key === "ok") {
+      submitPinModal();
+    } else if (pinModalInput.value.length < pinModalCtx.maxLen) {
+      pinModalInput.value += key;
+      if (pinModalInput.value.length === pinModalCtx.maxLen) { submitPinModal(); }
+    }
+  });
+  window.addEventListener("keydown", function (e) {
+    if (!pinModal.classList.contains("show")) { return; }
+    if (e.key >= "0" && e.key <= "9") {
+      if (pinModalInput.value.length < pinModalCtx.maxLen) {
+        pinModalInput.value += e.key;
+        if (pinModalInput.value.length === pinModalCtx.maxLen) { submitPinModal(); }
+      }
+    } else if (e.key === "Backspace") {
+      pinModalInput.value = pinModalInput.value.slice(0, -1);
+      e.preventDefault();
+    } else if (e.key === "Enter") {
+      submitPinModal();
+    } else if (e.key === "Escape") {
+      closePinModal();
+    }
+  });
+  pinModalCancel.addEventListener("click", closePinModal);
+
+  function requireAdmin(action) {
+    if (state.adminUnlocked) { action(); return; }
+    openPinModal({
+      title: "관리자 비밀번호",
+      expected: ADMIN_PASSWORD,
+      maxLen: ADMIN_PASSWORD.length,
+      onSuccess: function () {
+        state.adminUnlocked = true;
+        action();
+      }
+    });
   }
 
   function randInt(min, max) {
@@ -2564,6 +2990,7 @@
     state.answered = true;
     for (var ai = 0; ai < choiceBtns.length; ai++) { choiceBtns[ai].disabled = true; }
     revealAnswer();
+    playBuzz();
 
     state.combo = 0;
     comboBadge.classList.remove("show", "tier2", "tier3", "tier4");
@@ -2685,6 +3112,7 @@
     pauseTitle.classList.add("counting");
     var n = 3;
     pauseTitle.textContent = String(n);
+    playCountdownBeep(false);
     pauseOverlay.classList.add("show");
     state.resumeIntervalId = setInterval(function () {
       n -= 1;
@@ -2692,6 +3120,7 @@
         clearInterval(state.resumeIntervalId);
         state.resumeIntervalId = null;
         pauseTitle.textContent = "GO!";
+        playCountdownBeep(true);
         setTimeout(function () {
           state.counting = false;
           pauseOverlay.classList.remove("show");
@@ -2700,6 +3129,7 @@
         }, 450);
       } else {
         pauseTitle.textContent = String(n);
+        playCountdownBeep(false);
       }
     }, 700);
   }
@@ -2813,12 +3243,16 @@
     var sessionMs = Date.now() - state.sessionStartTime;
     var p = state.currentPlayer;
     var prevBest = p.bestScore;
+    var prevBestStage = p.bestStage;
     p.gamesPlayed += 1;
     p.totalPlayTimeMs += sessionMs;
     p.totalScore += state.score;
     var isPersonalBest = state.score > prevBest;
     if (state.score > p.bestScore) { p.bestScore = state.score; }
     if (state.stage > p.bestStage) { p.bestStage = state.stage; }
+    var newlyUnlocked = CHAR_OPTIONS.filter(function (o) {
+      return o.unlockStage > 0 && o.unlockStage > prevBestStage && o.unlockStage <= p.bestStage;
+    });
     var slots = loadSlots();
     slots[state.currentSlot] = p;
     saveSlots(slots);
@@ -2847,6 +3281,13 @@
       recordBanner.style.display = "";
     } else {
       recordBanner.style.display = "none";
+    }
+
+    if (newlyUnlocked.length) {
+      unlockBanner.textContent = "🎉 " + newlyUnlocked.map(function (o) { return o.label; }).join(", ") + " 캐릭터 잠금 해제!";
+      unlockBanner.style.display = "";
+    } else {
+      unlockBanner.style.display = "none";
     }
 
     renderDashboard();
