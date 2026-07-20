@@ -358,26 +358,65 @@
   .btn-stack .btn-secondary { width: 100%; max-width: 260px; }
 
   .mode-stack { display: flex; flex-direction: column; gap: 14px; align-items: center; margin-bottom: 8px; }
-  .mode-btn { width: 100%; max-width: 380px; }
+  .mode-btn { width: 100%; max-width: 380px; position: relative; letter-spacing: 0.02em; }
+
+  /* Easy — calm pastel, soft glow, no hard edges */
   .mode-easy {
-    background: linear-gradient(180deg, #8bf0c9, var(--accent-mint));
-    color: #04352c;
-    box-shadow: 0 8px 0 #1a8a72, 0 12px 20px rgba(31,122,153,0.2);
+    background: linear-gradient(135deg, #cdeffb 0%, #d9f5e6 55%, #eaf8fb 100%);
+    color: #1f7a99;
+    border: 1px solid rgba(255,255,255,0.8);
+    font-weight: 700;
+    box-shadow: 0 6px 16px rgba(46,196,166,0.2), 0 1px 0 rgba(255,255,255,0.9) inset;
   }
-  .mode-easy:active { box-shadow: 0 2px 0 #1a8a72, 0 4px 10px rgba(31,122,153,0.18); }
+  .mode-easy::after {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border-radius: inherit;
+    pointer-events: none;
+    animation: easy-glow 3.6s ease-in-out infinite;
+  }
+  @keyframes easy-glow {
+    0%, 100% { box-shadow: 0 0 8px 1px rgba(125,224,196,0.25); }
+    50% { box-shadow: 0 0 18px 4px rgba(125,224,196,0.55); }
+  }
+  .mode-easy:active { box-shadow: 0 2px 6px rgba(46,196,166,0.2), 0 1px 0 rgba(255,255,255,0.9) inset; }
+
+  /* Normal — deliberately plain, flat, no ornamentation */
   .mode-stage {
-    background: linear-gradient(180deg, #5cd0ef, var(--value));
-    color: #fff;
-    box-shadow: 0 8px 0 #145066, 0 12px 20px rgba(31,122,153,0.25);
+    background: #eef1f4;
+    color: #4a5a6b;
+    border: 1px solid rgba(43,58,85,0.14);
+    box-shadow: 0 3px 0 rgba(43,58,85,0.12);
   }
-  .mode-stage:active { box-shadow: 0 2px 0 #145066, 0 4px 10px rgba(31,122,153,0.2); }
+  .mode-stage:active { box-shadow: 0 1px 0 rgba(43,58,85,0.1); }
+
+  /* Challenge — bold, hot, pulsing */
   .mode-infinite {
-    background: linear-gradient(180deg, #ffab8f, var(--accent-coral));
-    color: #4a1608;
-    box-shadow: 0 8px 0 #c85a3a, 0 12px 20px rgba(31,122,153,0.2);
+    background: linear-gradient(160deg, #ff8a3d 0%, #e0392a 55%, #7a0f0f 100%);
+    color: #fff3da;
+    font-weight: 900;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+    box-shadow: 0 8px 0 #6b0f0f, 0 14px 26px rgba(224,57,42,0.35);
   }
-  .mode-infinite:active { box-shadow: 0 2px 0 #c85a3a, 0 4px 10px rgba(31,122,153,0.18); }
-  .mode-hint { font-size: 13px; color: var(--ink-muted); margin: 6px 0 0; }
+  .mode-infinite::after {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: inherit;
+    pointer-events: none;
+    animation: challenge-ring 1.6s ease-out infinite;
+  }
+  @keyframes challenge-ring {
+    0% { box-shadow: 0 0 0 0 rgba(255,90,40,0.45); }
+    70% { box-shadow: 0 0 0 9px rgba(255,90,40,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,90,40,0); }
+  }
+  .mode-infinite:active { box-shadow: 0 2px 0 #6b0f0f, 0 4px 12px rgba(224,57,42,0.35); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mode-easy::after, .mode-infinite::after { animation: none; }
+  }
 
   .char-select { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 28px; }
   .char-slot {
@@ -1004,9 +1043,9 @@
         <div class="stat"><span class="stat-value" id="stat-best-score">0</span><span class="stat-label">최고 점수 (<span id="stat-best-stage">1단</span>)</span></div>
       </div>
       <div class="mode-stack">
-        <button type="button" id="start-easy-btn" class="btn-primary btn-large mode-easy mode-btn">EASY MODE</button>
+        <button type="button" id="start-easy-btn" class="btn-primary btn-large mode-easy mode-btn">🍃 EASY MODE</button>
         <button type="button" id="start-record-btn" class="btn-primary btn-large mode-btn mode-stage">NORMAL MODE</button>
-        <button type="button" id="start-infinite-btn" class="btn-primary btn-large mode-infinite mode-btn">CHALLENGE MODE</button>
+        <button type="button" id="start-infinite-btn" class="btn-primary btn-large mode-infinite mode-btn">🔥 CHALLENGE MODE</button>
       </div>
       <div class="btn-stack">
         <button type="button" id="character-btn" class="btn-secondary small">바다 친구 선택</button>
