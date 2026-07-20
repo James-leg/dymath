@@ -280,37 +280,8 @@
     text-align: left;
   }
   .sync-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
-  .sync-status { font-size: 13px; color: var(--ink-muted); margin: 0 0 10px; }
+  .sync-status { font-size: 13px; color: var(--ink-muted); margin: 0; line-height: 1.5; }
   .sync-status.connected { color: #1a8a72; font-weight: 700; }
-  .sync-code-display {
-    font-size: 26px;
-    font-weight: 800;
-    letter-spacing: 0.15em;
-    color: var(--value);
-    background: var(--panel);
-    border-radius: 10px;
-    padding: 10px 14px;
-    text-align: center;
-    margin-bottom: 10px;
-    font-variant-numeric: tabular-nums;
-  }
-  .sync-row { display: flex; gap: 8px; margin-bottom: 10px; }
-  .sync-input {
-    flex: 1;
-    min-width: 0;
-    text-align: center;
-    text-transform: uppercase;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    padding: 10px;
-    border-radius: 10px;
-    border: 2px solid rgba(31,122,153,0.25);
-    background: var(--panel);
-    color: var(--ink);
-  }
-  .sync-input:focus-visible { outline: none; border-color: var(--accent-sun); }
-  .sync-hint { font-size: 12px; color: var(--ink-muted); line-height: 1.5; margin: 10px 0 0; }
 
   .stats-grid {
     display: grid;
@@ -1315,14 +1286,7 @@
       </div>
       <div class="sync-box">
         <div class="sync-title">기기 간 동기화</div>
-        <p class="sync-status" id="sync-status">아직 연결 안 됨 — 이 기기에서만 저장돼요</p>
-        <div class="sync-code-display" id="sync-code-display" style="display:none;"></div>
-        <div class="sync-row">
-          <input id="sync-code-input" class="sync-input" maxlength="6" placeholder="코드 입력" autocomplete="off" autocapitalize="characters" />
-          <button type="button" id="sync-connect-btn" class="btn-secondary small">연결</button>
-        </div>
-        <button type="button" id="sync-create-btn" class="btn-secondary small">새 코드 만들기</button>
-        <p class="sync-hint">한 기기에서 "새 코드 만들기"를 누르고, 그 코드를 다른 기기의 코드 입력창에 넣고 "연결"을 누르면 슬롯/기록이 같아져요.</p>
+        <p class="sync-status connected" id="sync-status">자동으로 동기화돼요 — 같은 비밀번호를 쓰는 모든 기기가 같은 슬롯/기록을 공유해요</p>
       </div>
       <button type="button" id="options-back-btn" class="btn-primary btn-large">뒤로가기</button>
     </div>
@@ -1796,19 +1760,10 @@
     pushCloudSync();
   }
 
-  var SYNC_CODE_KEY = "jugglemath_sync_code_v1";
-  var SYNC_CODE_CHARS = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  var AUTO_SYNC_CODE = "FAM" + PASSWORD;
 
   function loadSyncCode() {
-    try { return localStorage.getItem(SYNC_CODE_KEY) || ""; } catch (e) { return ""; }
-  }
-  function saveSyncCodeLocal(code) {
-    try { localStorage.setItem(SYNC_CODE_KEY, code); } catch (e) {}
-  }
-  function randomSyncCode() {
-    var s = "";
-    for (var i = 0; i < 6; i++) { s += SYNC_CODE_CHARS[Math.floor(Math.random() * SYNC_CODE_CHARS.length)]; }
-    return s;
+    return AUTO_SYNC_CODE;
   }
   function pushCloudSync() {
     var code = loadSyncCode();
@@ -2245,56 +2200,6 @@
 
   applyGraphicStyle();
 
-  var syncStatusEl = document.getElementById("sync-status");
-  var syncCodeDisplay = document.getElementById("sync-code-display");
-  var syncCodeInput = document.getElementById("sync-code-input");
-  var syncConnectBtn = document.getElementById("sync-connect-btn");
-  var syncCreateBtn = document.getElementById("sync-create-btn");
-
-  function updateSyncUI() {
-    var code = loadSyncCode();
-    if (code) {
-      syncStatusEl.textContent = "연결됨 — 이 기기와 같은 코드를 쓰는 기기끼리 자동으로 맞춰져요";
-      syncStatusEl.classList.add("connected");
-      syncCodeDisplay.textContent = code;
-      syncCodeDisplay.style.display = "";
-    } else {
-      syncStatusEl.textContent = "아직 연결 안 됨 — 이 기기에서만 저장돼요";
-      syncStatusEl.classList.remove("connected");
-      syncCodeDisplay.style.display = "none";
-    }
-  }
-
-  syncCreateBtn.addEventListener("click", function () {
-    var code = randomSyncCode();
-    saveSyncCodeLocal(code);
-    pushCloudSync();
-    updateSyncUI();
-    showToast("새 코드 생성! 다른 기기에 입력해 주세요");
-  });
-
-  syncConnectBtn.addEventListener("click", function () {
-    var code = syncCodeInput.value.trim().toUpperCase();
-    if (!/^[A-Z0-9]{4,6}$/.test(code)) {
-      showToast("코드를 정확히 입력해 주세요");
-      return;
-    }
-    syncConnectBtn.disabled = true;
-    pullCloudSync(code, function (ok) {
-      syncConnectBtn.disabled = false;
-      if (ok) {
-        saveSyncCodeLocal(code);
-        syncCodeInput.value = "";
-        updateSyncUI();
-        showSlotGrid();
-        showToast("동기화 연결됨!");
-      } else {
-        showToast("코드를 찾을 수 없어요. 철자를 확인해 주세요");
-      }
-    });
-  });
-
-  updateSyncUI();
 
   function setLives(n) {
     for (var i = 0; i < livesEls.length; i++) {
@@ -2906,10 +2811,7 @@
   document.getElementById("start-infinite-btn").addEventListener("click", function () { startGame("infinite"); });
   document.getElementById("retry-btn").addEventListener("click", function () { startGame(state.mode); });
 
-  var savedSyncCode = loadSyncCode();
-  if (savedSyncCode) {
-    pullCloudSync(savedSyncCode, function (ok) { if (ok) { updateSyncUI(); } });
-  }
+  pullCloudSync(loadSyncCode(), function () {});
 })();
 </script>
 
