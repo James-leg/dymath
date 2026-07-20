@@ -272,6 +272,33 @@
   }
   .style-toggle-btn:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
 
+  .op-toggle {
+    display: flex;
+    background: var(--panel);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 3px;
+    box-shadow: inset 0 1px 3px rgba(31,122,153,0.15);
+    margin: 0 auto 14px;
+    width: fit-content;
+  }
+  .op-toggle-btn {
+    border: none;
+    background: transparent;
+    color: var(--ink-muted);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 9px 20px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .op-toggle-btn.active {
+    background: linear-gradient(180deg, #ffe08a, var(--accent-sun));
+    color: #4a3200;
+    box-shadow: 0 2px 6px rgba(31,122,153,0.25);
+  }
+  .op-toggle-btn:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
+
   .sync-box {
     background: var(--panel-tint);
     border-radius: var(--radius-md);
@@ -1358,6 +1385,10 @@
         <div class="stat"><span class="stat-value" id="stat-total-score">0</span><span class="stat-label">총점수</span></div>
         <div class="stat"><span class="stat-value" id="stat-best-score">0</span><span class="stat-label">최고 점수 (<span id="stat-best-stage">1단</span>)</span></div>
       </div>
+      <div class="op-toggle" id="op-toggle">
+        <button type="button" class="op-toggle-btn" data-op="multiply">× 곱셈</button>
+        <button type="button" class="op-toggle-btn" data-op="add">+ 덧셈</button>
+      </div>
       <div class="mode-stack">
         <button type="button" id="start-easy-btn" class="btn-primary btn-large mode-easy mode-btn">🍃 EASY MODE</button>
         <button type="button" id="start-record-btn" class="btn-primary btn-large mode-btn mode-stage">NORMAL MODE</button>
@@ -1559,13 +1590,15 @@
   var BPM_STEP = 9;
   var MAX_BPM = 200;
   var EASY_TIME_MULTIPLIER = 1.5;
+  var ADD_TIME_MULTIPLIER = 1.5;
   var EASY_CHOICE_COUNT = 2;
   var NORMAL_CHOICE_COUNT = 3;
   var CHAR_OPTIONS = [
     { species: "seal", label: "물개", unlockStage: 0 },
     { species: "dolphin", label: "돌고래", unlockStage: 0 },
     { species: "orca", label: "범고래", unlockStage: 0 },
-    { species: "whale", label: "고래", unlockStage: 4 }
+    { species: "whale", label: "고래", unlockStage: 4 },
+    { species: "mackerel", label: "고등어", unlockStage: 5 }
   ];
   var SLOTS_KEY = "jugglemath_slots_v1";
   var SLOT_COUNT = 3;
@@ -1833,6 +1866,7 @@
     paused: false,
     counting: false,
     mode: "record",
+    operation: "multiply",
     currentPlayer: null,
     currentSlot: null,
     pendingSlot: null,
@@ -2109,9 +2143,11 @@
     state.currentSlot = slotIndex;
     state.selectedSpecies = p.character || "seal";
     state.livesSetting = p.livesSetting || MAX_LIVES;
+    state.operation = p.operation === "add" ? "add" : "multiply";
     renderDashboard();
     renderCharSelect();
     updateLivesOption();
+    updateOpToggle();
     showScreen("start");
   }
   function goToPlayerScreen() {
@@ -2147,17 +2183,19 @@
       playerError.textContent = "4자리 비밀번호를 입력해 주세요.";
       return;
     }
-    var p = { name: name, pin: pin, gamesPlayed: 0, totalPlayTimeMs: 0, totalScore: 0, bestScore: 0, bestStage: 1, character: "seal", livesSetting: MAX_LIVES };
+    var p = { name: name, pin: pin, gamesPlayed: 0, totalPlayTimeMs: 0, totalScore: 0, bestScore: 0, bestStage: 1, character: "seal", livesSetting: MAX_LIVES, operation: "multiply" };
     slots[idx] = p;
     saveSlots(slots);
     state.currentPlayer = p;
     state.currentSlot = idx;
     state.selectedSpecies = "seal";
     state.livesSetting = MAX_LIVES;
+    state.operation = "multiply";
     playerError.textContent = " ";
     renderDashboard();
     renderCharSelect();
     updateLivesOption();
+    updateOpToggle();
     showScreen("start");
   });
 
@@ -2168,8 +2206,8 @@
     showScreen("start");
   });
 
-  var SPECIES_EMOJI = { seal: "🦭", dolphin: "🐬", orca: "🐋", walrus: "🦣", whale: "🐳" };
-  var SPECIES_LABEL = { seal: "물개", dolphin: "돌고래", orca: "범고래", walrus: "바다코끼리", whale: "고래" };
+  var SPECIES_EMOJI = { seal: "🦭", dolphin: "🐬", orca: "🐋", walrus: "🦣", whale: "🐳", mackerel: "🐟" };
+  var SPECIES_LABEL = { seal: "물개", dolphin: "돌고래", orca: "범고래", walrus: "바다코끼리", whale: "고래", mackerel: "고등어" };
 
   function renderHallOfFame() {
     var list = loadHOF();
@@ -2218,7 +2256,8 @@
       dolphin: { dark: "#101d38", light: "#2c4468", belly: "#c7d4e8", patch: "#ffffff" },
       orca: { dark: "#0d0d12", light: "#26262f", belly: "#ffffff", patch: "#ffffff" },
       walrus: { dark: "#8a6534", light: "#c99a5f", belly: "#f2e2be", patch: "#fffdf2" },
-      whale: { dark: "#0f3540", light: "#2c5f70", belly: "#dff3f1", patch: "#ffffff" }
+      whale: { dark: "#0f3540", light: "#2c5f70", belly: "#dff3f1", patch: "#ffffff" },
+      mackerel: { dark: "#2e5266", light: "#7fa8bd", belly: "#eef6f8", patch: "#1f3f52" }
     };
     var pal = palettes[species] || palettes.seal;
     var GRID = 16;
@@ -2252,6 +2291,11 @@
     if (species === "orca") {
       [[4, 5], [5, 5], [10, 5], [11, 5]].forEach(function (p) { grid[p[1]][p[0]] = pal.patch; });
     }
+    if (species === "mackerel") {
+      [[4, 3], [6, 4], [9, 4], [11, 3], [5, 9], [10, 9]].forEach(function (p) {
+        if (grid[p[1]][p[0]]) { grid[p[1]][p[0]] = pal.patch; }
+      });
+    }
     var rects = [];
     for (var ry2 = 0; ry2 < GRID; ry2++) {
       for (var rx2 = 0; rx2 < GRID; rx2++) {
@@ -2269,12 +2313,13 @@
       dolphin: { dark: "#16264a", light: "#33507e", belly: "#c7d4e8" },
       orca: { dark: "#1c1c24", light: "#3a3a46", belly: "#ffffff" },
       walrus: { dark: "#b98a55", light: "#e0bd8d", belly: "#f6e9d1" },
-      whale: { dark: "#1a4a5c", light: "#3d7a8f", belly: "#eaf6f5" }
+      whale: { dark: "#1a4a5c", light: "#3d7a8f", belly: "#eaf6f5" },
+      mackerel: { dark: "#2e5266", light: "#8fb7cb", belly: "#f0f7f9" }
     };
     var pal = palettes[species] || palettes.seal;
     var parts = [];
 
-    if (species === "dolphin" || species === "orca" || species === "whale") {
+    if (species === "dolphin" || species === "orca" || species === "whale" || species === "mackerel") {
       parts.push('<path d="M70 32 Q80 4 90 32 Z" fill="' + pal.dark + '"/>');
     }
     parts.push('<ellipse cx="22" cy="110" rx="14" ry="30" fill="' + pal.dark + '" transform="rotate(-25 22 110)"/>');
@@ -2300,7 +2345,7 @@
     if (species === "dolphin") {
       parts.push('<path d="M62 100 Q80 122 98 100 Q80 111 62 100 Z" fill="' + pal.light + '"/>');
       parts.push('<path d="M74 112 Q80 116 86 112" stroke="#2b3a55" stroke-width="2.4" fill="none" stroke-linecap="round"/>');
-    } else if (species === "orca" || species === "whale") {
+    } else if (species === "orca" || species === "whale" || species === "mackerel") {
       parts.push('<path d="M68 106 Q80 113 92 106" stroke="#2b3a55" stroke-width="2.6" fill="none" stroke-linecap="round"/>');
     } else {
       parts.push('<circle cx="80" cy="98" r="3.5" fill="#2b3a55"/>');
@@ -2317,6 +2362,11 @@
     }
     if (species === "whale") {
       parts.push('<ellipse cx="80" cy="56" rx="4" ry="2" fill="#0f2f3a"/>');
+    }
+    if (species === "mackerel") {
+      parts.push('<g stroke="#1f3f52" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.55">' +
+        '<path d="M50 46 Q60 38 70 46"/><path d="M66 42 Q78 32 90 42"/><path d="M86 46 Q98 38 108 46"/>' +
+        '<path d="M52 60 Q64 52 76 60"/><path d="M78 58 Q92 50 104 58"/></g>');
     }
     return '<svg viewBox="0 0 160 180" class="ex-svg" aria-hidden="true">' + parts.join("") + '</svg>';
   }
@@ -2382,7 +2432,9 @@
   }
   function currentBeatSeconds() {
     var base = beatSeconds(state.stage);
-    return isEasyMode() ? base * EASY_TIME_MULTIPLIER : base;
+    if (isEasyMode()) { base *= EASY_TIME_MULTIPLIER; }
+    if (state.operation === "add") { base *= ADD_TIME_MULTIPLIER; }
+    return base;
   }
   function applyCycle() {
     // ball speed tracks the stage tempo directly, so it visibly speeds up with BPM
@@ -2525,6 +2577,25 @@
     livesMinusBtn.disabled = state.livesSetting <= LIVES_MIN;
     livesPlusBtn.disabled = state.livesSetting >= LIVES_MAX;
   }
+
+  function updateOpToggle() {
+    var btns = document.querySelectorAll(".op-toggle-btn");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle("active", btns[i].dataset.op === state.operation);
+    }
+  }
+  document.getElementById("op-toggle").addEventListener("click", function (e) {
+    var btn = e.target.closest(".op-toggle-btn");
+    if (!btn || btn.dataset.op === state.operation) { return; }
+    state.operation = btn.dataset.op;
+    updateOpToggle();
+    if (state.currentPlayer && state.currentSlot !== null) {
+      state.currentPlayer.operation = state.operation;
+      var slots = loadSlots();
+      slots[state.currentSlot] = state.currentPlayer;
+      saveSlots(slots);
+    }
+  });
 
   function updateMemoryAttemptsOption() {
     var v = loadMemoryAttemptsSetting();
@@ -2883,19 +2954,20 @@
   function newQuestion() {
     if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
 
+    var isAdd = state.operation === "add";
     var a, bb;
     do {
-      a = randInt(1, 9);
-      bb = randInt(1, 9);
+      a = isAdd ? randInt(10, 99) : randInt(1, 9);
+      bb = isAdd ? randInt(1, 9) : randInt(1, 9);
     } while (a === state.lastA && bb === state.lastB);
     state.lastA = a; state.lastB = bb;
     state.a = a; state.b = bb;
-    state.answer = a * bb;
+    state.answer = isAdd ? a + bb : a * bb;
 
-    questionEl.textContent = a + " × " + bb + " = ?";
+    questionEl.textContent = a + (isAdd ? " + " : " × ") + bb + " = ?";
     state.answered = false;
     var choiceCount = isEasyMode() ? EASY_CHOICE_COUNT : NORMAL_CHOICE_COUNT;
-    var choices = generateChoices(a, bb, state.answer, choiceCount);
+    var choices = generateChoices(a, bb, state.answer, choiceCount, isAdd);
     for (var ci = 0; ci < choiceBtns.length; ci++) {
       if (ci < choiceCount) {
         choiceBtns[ci].style.display = "";
@@ -2951,13 +3023,21 @@
     return arr;
   }
 
-  function generateChoices(a, bb, correct, count) {
+  function generateChoices(a, bb, correct, count, isAdd) {
     count = count || NORMAL_CHOICE_COUNT;
-    var candidates = [
-      a * (bb + 1), a * (bb - 1), (a + 1) * bb, (a - 1) * bb,
-      correct + a, correct - a, correct + bb, correct - bb,
-      correct + 1, correct - 1, correct + 2, correct - 2
-    ].filter(function (v) { return v > 0 && v <= 100 && v !== correct; });
+    var maxVal = isAdd ? 118 : 100;
+    var candidates = isAdd
+      ? [
+          correct + 10, correct - 10, correct + 1, correct - 1, correct + 2, correct - 2,
+          a + bb + 10, a - bb, (a + 10) + bb, (a - 10) + bb,
+          Math.floor(a / 10) * 10 + (a % 10 + bb), correct + 9, correct - 9
+        ]
+      : [
+          a * (bb + 1), a * (bb - 1), (a + 1) * bb, (a - 1) * bb,
+          correct + a, correct - a, correct + bb, correct - bb,
+          correct + 1, correct - 1, correct + 2, correct - 2
+        ];
+    candidates = candidates.filter(function (v) { return v > 0 && v <= maxVal && v !== correct; });
     shuffle(candidates);
 
     var set = [correct];
@@ -2965,7 +3045,7 @@
       if (set.indexOf(candidates[i2]) === -1) { set.push(candidates[i2]); }
     }
     while (set.length < count) {
-      var rv = randInt(1, 81);
+      var rv = randInt(1, isAdd ? maxVal : 81);
       if (set.indexOf(rv) === -1) { set.push(rv); }
     }
     return shuffle(set);
