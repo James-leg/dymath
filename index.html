@@ -149,27 +149,22 @@
     font-weight: 900;
     font-family: Georgia, "Noto Serif KR", "Times New Roman", serif;
     letter-spacing: 0.02em;
+    line-height: 1.05;
     margin: 10px 0 34px;
     text-wrap: balance;
-    background: linear-gradient(100deg,
-      #a5660c 0%, #ffe9a8 12%, #ffd54a 26%, #c9720c 40%,
-      #ffe9a8 54%, #ffd54a 68%, #a5660c 82%, #ffe9a8 100%);
-    background-size: 260% auto;
+    background: linear-gradient(180deg,
+      #ffffff 0%, #d9f2ff 16%, #8fd0f0 38%, #3a8cd0 62%, #1a5590 84%, #0d3050 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 2.2px #2b1405;
+    -webkit-text-stroke: 1px #0a2340;
     paint-order: stroke fill;
-    text-shadow: 0 4px 0 #5c2e04, 0 9px 16px rgba(0,0,0,0.6);
-    animation: title-shine 3.6s linear infinite, title-pulse 2.8s ease-in-out infinite;
-  }
-  @keyframes title-shine {
-    0% { background-position: 0% center; }
-    100% { background-position: 260% center; }
+    text-shadow: 0 3px 0 #0d3050, 0 8px 14px rgba(0,10,25,0.5);
+    animation: title-pulse 2.8s ease-in-out infinite;
   }
   @keyframes title-pulse {
-    0%, 100% { filter: drop-shadow(0 0 8px rgba(255,197,74,0.35)); }
-    50% { filter: drop-shadow(0 0 18px rgba(255,197,74,0.7)); }
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(143,208,240,0.45)); }
+    50% { filter: drop-shadow(0 0 20px rgba(190,232,255,0.8)); }
   }
   @media (prefers-reduced-motion: reduce) {
     .game-title { animation: none; }
