@@ -1491,10 +1491,25 @@
   .vocab-row-del:focus-visible { outline: 2px solid var(--accent-mint); }
 
   .word-pool { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; background: var(--panel-tint); border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px; }
-  .word-chip { padding: 7px 14px; border-radius: 999px; background: var(--panel); font-weight: 700; font-size: 14px; color: var(--ink); box-shadow: 0 2px 6px rgba(31,122,153,0.15); transition: opacity 0.2s ease; }
-  .word-chip.used { text-decoration: line-through; color: var(--ink-muted); background: transparent; box-shadow: none; opacity: 0.55; }
+  .word-chip {
+    border: none;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: var(--panel);
+    font-weight: 700;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+    box-shadow: 0 2px 6px rgba(31,122,153,0.15);
+    transition: opacity 0.2s ease, transform 0.08s ease;
+    cursor: pointer;
+  }
+  .word-chip:active { transform: translateY(2px); }
+  .word-chip:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
+  .word-chip.used { text-decoration: line-through; color: var(--ink-muted); background: transparent; box-shadow: none; opacity: 0.55; cursor: default; }
 
-  .quiz-progress { font-size: 14px; color: var(--ink-muted); font-weight: 700; margin-bottom: 8px; }
+  .quiz-nav { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 8px; }
+  .quiz-progress { font-size: 14px; color: var(--ink-muted); font-weight: 700; }
   .quiz-clue-meaning { font-size: 19px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
   .quiz-clue-korean { font-size: 24px; font-weight: 800; color: var(--value); }
   #vocab-answer-input { text-align: center; font-size: 22px; margin-bottom: 12px; }
@@ -1874,7 +1889,11 @@
       <button type="button" id="eng-quiz-quit-btn" class="mute-btn back-btn" aria-label="그만하고 단어장 목록으로">↩</button>
       <h1 class="brand small" id="eng-quiz-title">단어 퀴즈</h1>
       <div class="word-pool" id="word-pool"></div>
-      <p class="quiz-progress" id="quiz-progress">1 / 10</p>
+      <div class="quiz-nav">
+        <button type="button" id="quiz-prev-btn" class="btn-secondary small">◀ 이전</button>
+        <span class="quiz-progress" id="quiz-progress">1 / 10</span>
+        <button type="button" id="quiz-next-btn" class="btn-secondary small">다음 ▶</button>
+      </div>
       <div class="ticket">
         <div class="quiz-clue-meaning" id="quiz-clue-meaning">meaning</div>
         <div class="quiz-clue-korean" id="quiz-clue-korean">한글 뜻</div>
@@ -4309,33 +4328,58 @@
   // ---- 플레이 모드 (퀴즈) ----
   function startVocabQuiz(set) {
     var order = shuffle(set.words.map(function (_, i) { return i; }));
-    state.quiz = { set: set, order: order, pos: 0, results: [] };
+    state.quiz = { set: set, order: order, pos: 0, answers: new Array(order.length).fill(null) };
     renderQuizPool();
     showScreen("engQuiz");
-    showNextVocabQuestion();
+    showQuestionAt(0);
   }
   function renderQuizPool() {
     var el = document.getElementById("word-pool");
     el.innerHTML = "";
     state.quiz.set.words.forEach(function (w, idx) {
-      var chip = document.createElement("span");
+      var chip = document.createElement("button");
+      chip.type = "button";
       chip.className = "word-chip";
       chip.dataset.idx = idx;
       chip.textContent = w.word;
+      chip.addEventListener("click", function () {
+        if (chip.disabled) { return; }
+        var input = document.getElementById("vocab-answer-input");
+        input.value = w.word;
+        input.focus();
+      });
       el.appendChild(chip);
     });
   }
-  function showNextVocabQuestion() {
+  function showQuestionAt(pos) {
     var q = state.quiz;
-    var idx = q.order[q.pos];
+    q.pos = pos;
+    var idx = q.order[pos];
     var w = q.set.words[idx];
-    document.getElementById("quiz-progress").textContent = (q.pos + 1) + " / " + q.order.length;
+    var answer = q.answers[pos];
+    document.getElementById("quiz-progress").textContent = (pos + 1) + " / " + q.order.length;
     document.getElementById("quiz-clue-meaning").textContent = w.meaning || "(뜻 없음)";
     document.getElementById("quiz-clue-korean").textContent = w.korean || "";
     var input = document.getElementById("vocab-answer-input");
-    input.value = "";
+    input.value = answer ? answer.given : "";
     input.focus();
+    document.getElementById("quiz-prev-btn").disabled = pos <= 0;
+    document.getElementById("quiz-next-btn").disabled = pos >= q.order.length - 1;
   }
+  function markChipUsed(wordIdx) {
+    var chip = document.querySelector('#word-pool .word-chip[data-idx="' + wordIdx + '"]');
+    if (chip) { chip.classList.add("used"); chip.disabled = true; }
+  }
+  document.getElementById("quiz-prev-btn").addEventListener("click", function () {
+    var q = state.quiz;
+    if (!q || q.pos <= 0) { return; }
+    showQuestionAt(q.pos - 1);
+  });
+  document.getElementById("quiz-next-btn").addEventListener("click", function () {
+    var q = state.quiz;
+    if (!q || q.pos >= q.order.length - 1) { return; }
+    showQuestionAt(q.pos + 1);
+  });
   document.getElementById("quiz-answer-form").addEventListener("submit", function (e) {
     e.preventDefault();
     var q = state.quiz;
@@ -4345,15 +4389,19 @@
     var input = document.getElementById("vocab-answer-input");
     var given = input.value.trim();
     var correct = given.toLowerCase() === (w.word || "").trim().toLowerCase();
-    q.results.push({ idx: idx, given: given, correct: correct });
-    var chip = document.querySelector('#word-pool .word-chip[data-idx="' + idx + '"]');
-    if (chip) { chip.classList.add("used"); }
-    q.pos += 1;
-    if (q.pos < q.order.length) {
-      showNextVocabQuestion();
-    } else {
+    q.answers[q.pos] = { idx: idx, given: given, correct: correct };
+    markChipUsed(idx);
+
+    if (q.answers.every(function (a) { return a; })) {
       finishVocabQuiz();
+      return;
     }
+    var next = -1;
+    for (var step = 1; step <= q.order.length; step++) {
+      var candidate = (q.pos + step) % q.order.length;
+      if (!q.answers[candidate]) { next = candidate; break; }
+    }
+    showQuestionAt(next === -1 ? q.pos : next);
   });
   document.getElementById("eng-quiz-quit-btn").addEventListener("click", function () {
     state.quiz = null;
@@ -4362,8 +4410,9 @@
   });
   function finishVocabQuiz() {
     var q = state.quiz;
-    var correctCount = q.results.filter(function (r) { return r.correct; }).length;
-    var total = q.results.length;
+    var answered = q.answers.filter(function (a) { return a; });
+    var correctCount = answered.filter(function (a) { return a.correct; }).length;
+    var total = answered.length;
 
     var list = loadVocabSets();
     var stored = list.filter(function (s) { return s.id === q.set.id; })[0];
@@ -4375,7 +4424,7 @@
     document.getElementById("eng-result-score").textContent = correctCount + " / " + total;
     var resultList = document.getElementById("vocab-result-list");
     resultList.innerHTML = "";
-    q.results.forEach(function (r) {
+    answered.forEach(function (r) {
       var w = q.set.words[r.idx];
       var row = document.createElement("div");
       row.className = "vocab-result-row" + (r.correct ? "" : " wrong");
