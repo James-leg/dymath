@@ -1506,13 +1506,35 @@
   }
   .word-chip:active { transform: translateY(2px); }
   .word-chip:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
-  .word-chip.used { text-decoration: line-through; color: var(--ink-muted); background: transparent; box-shadow: none; opacity: 0.55; cursor: default; }
+  .word-chip.used { text-decoration: line-through; color: var(--ink-muted); background: transparent; box-shadow: none; opacity: 0.55; }
 
-  .quiz-nav { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 8px; }
-  .quiz-progress { font-size: 14px; color: var(--ink-muted); font-weight: 700; }
+  .quiz-num-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 14px; }
+  .quiz-num {
+    width: 32px; height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: #d7e6ea;
+    color: var(--ink-muted);
+    font-weight: 800;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+    transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, transform 0.08s ease;
+  }
+  .quiz-num:active { transform: translateY(2px); }
+  .quiz-num:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
+  .quiz-num.answered {
+    background: var(--accent-sun);
+    color: #4a3200;
+    box-shadow: 0 0 6px 2px rgba(255,203,71,0.6);
+  }
+  .quiz-num.current { box-shadow: 0 0 0 3px var(--accent-mint); }
+  .quiz-num.answered.current { box-shadow: 0 0 0 3px var(--accent-mint), 0 0 6px 2px rgba(255,203,71,0.6); }
+
   .quiz-clue-meaning { font-size: 19px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
   .quiz-clue-korean { font-size: 24px; font-weight: 800; color: var(--value); }
-  #vocab-answer-input { text-align: center; font-size: 22px; margin-bottom: 12px; }
+  .quiz-hint { font-size: 13px; color: var(--ink-muted); margin: 10px 0 0; }
 
   .vocab-result-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; max-height: 380px; overflow-y: auto; text-align: left; }
   .vocab-result-row { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; background: var(--panel-tint); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
@@ -1889,19 +1911,12 @@
       <button type="button" id="eng-quiz-quit-btn" class="mute-btn back-btn" aria-label="그만하고 단어장 목록으로">↩</button>
       <h1 class="brand small" id="eng-quiz-title">단어 퀴즈</h1>
       <div class="word-pool" id="word-pool"></div>
-      <div class="quiz-nav">
-        <button type="button" id="quiz-prev-btn" class="btn-secondary small">◀ 이전</button>
-        <span class="quiz-progress" id="quiz-progress">1 / 10</span>
-        <button type="button" id="quiz-next-btn" class="btn-secondary small">다음 ▶</button>
-      </div>
+      <div class="quiz-num-row" id="quiz-num-row"></div>
       <div class="ticket">
         <div class="quiz-clue-meaning" id="quiz-clue-meaning">meaning</div>
         <div class="quiz-clue-korean" id="quiz-clue-korean">한글 뜻</div>
       </div>
-      <form id="quiz-answer-form" autocomplete="off">
-        <input id="vocab-answer-input" class="vocab-input" placeholder="영어 단어를 입력하세요" autocapitalize="none" autocomplete="off" spellcheck="false" />
-        <button type="submit" class="btn-primary btn-large">제출</button>
-      </form>
+      <p class="quiz-hint">위 단어 중에서 눌러서 골라주세요</p>
     </div>
   </section>
 
@@ -4342,12 +4357,7 @@
       chip.className = "word-chip";
       chip.dataset.idx = idx;
       chip.textContent = w.word;
-      chip.addEventListener("click", function () {
-        if (chip.disabled) { return; }
-        var input = document.getElementById("vocab-answer-input");
-        input.value = w.word;
-        input.focus();
-      });
+      chip.addEventListener("click", function () { answerCurrentQuestion(idx); });
       el.appendChild(chip);
     });
   }
@@ -4356,39 +4366,34 @@
     q.pos = pos;
     var idx = q.order[pos];
     var w = q.set.words[idx];
-    var answer = q.answers[pos];
-    document.getElementById("quiz-progress").textContent = (pos + 1) + " / " + q.order.length;
     document.getElementById("quiz-clue-meaning").textContent = w.meaning || "(뜻 없음)";
     document.getElementById("quiz-clue-korean").textContent = w.korean || "";
-    var input = document.getElementById("vocab-answer-input");
-    input.value = answer ? answer.given : "";
-    input.focus();
-    document.getElementById("quiz-prev-btn").disabled = pos <= 0;
-    document.getElementById("quiz-next-btn").disabled = pos >= q.order.length - 1;
+    renderQuizNumRow();
+  }
+  function renderQuizNumRow() {
+    var q = state.quiz;
+    var el = document.getElementById("quiz-num-row");
+    el.innerHTML = "";
+    q.order.forEach(function (_, pos) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "quiz-num" + (q.answers[pos] ? " answered" : "") + (pos === q.pos ? " current" : "");
+      btn.textContent = String(pos + 1);
+      btn.setAttribute("aria-label", (pos + 1) + "번 문제로 이동");
+      btn.addEventListener("click", function () { showQuestionAt(pos); });
+      el.appendChild(btn);
+    });
   }
   function markChipUsed(wordIdx) {
     var chip = document.querySelector('#word-pool .word-chip[data-idx="' + wordIdx + '"]');
-    if (chip) { chip.classList.add("used"); chip.disabled = true; }
+    if (chip) { chip.classList.add("used"); }
   }
-  document.getElementById("quiz-prev-btn").addEventListener("click", function () {
-    var q = state.quiz;
-    if (!q || q.pos <= 0) { return; }
-    showQuestionAt(q.pos - 1);
-  });
-  document.getElementById("quiz-next-btn").addEventListener("click", function () {
-    var q = state.quiz;
-    if (!q || q.pos >= q.order.length - 1) { return; }
-    showQuestionAt(q.pos + 1);
-  });
-  document.getElementById("quiz-answer-form").addEventListener("submit", function (e) {
-    e.preventDefault();
+  function answerCurrentQuestion(wordIdx) {
     var q = state.quiz;
     if (!q) { return; }
     var idx = q.order[q.pos];
-    var w = q.set.words[idx];
-    var input = document.getElementById("vocab-answer-input");
-    var given = input.value.trim();
-    var correct = given.toLowerCase() === (w.word || "").trim().toLowerCase();
+    var given = q.set.words[wordIdx].word;
+    var correct = wordIdx === idx;
     q.answers[q.pos] = { idx: idx, given: given, correct: correct };
     markChipUsed(idx);
 
@@ -4402,7 +4407,7 @@
       if (!q.answers[candidate]) { next = candidate; break; }
     }
     showQuestionAt(next === -1 ? q.pos : next);
-  });
+  }
   document.getElementById("eng-quiz-quit-btn").addEventListener("click", function () {
     state.quiz = null;
     showScreen("engHome");
