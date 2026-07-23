@@ -1557,10 +1557,53 @@
   .quiz-hint { font-size: 13px; color: var(--ink-muted); margin: 10px 0 0; }
 
   .vocab-result-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; max-height: 380px; overflow-y: auto; text-align: left; }
-  .vocab-result-row { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; background: var(--panel-tint); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+  .vocab-result-row { background: var(--panel-tint); border-radius: 12px; padding: 12px 14px; font-size: 14px; }
   .vocab-result-row.wrong { background: rgba(217,72,46,0.08); }
-  .vocab-result-word { font-weight: 800; color: var(--ink); }
-  .vocab-result-given { font-size: 12px; color: var(--ink-muted); }
+  .vocab-result-top { display: flex; align-items: baseline; gap: 8px; }
+  .vocab-result-status { flex: none; font-size: 15px; }
+  .vocab-result-word { font-weight: 800; color: var(--ink); flex: none; white-space: nowrap; }
+  .vocab-result-sep { color: var(--ink-muted); flex: none; }
+  .vocab-result-meaning { color: var(--ink); flex: 1; }
+  .vocab-result-sub { margin-top: 4px; padding-left: 23px; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--ink-muted); }
+  .vocab-result-given { color: var(--danger-text); font-weight: 700; }
+
+  /* ---------- Result screen: clipboard + ruled paper ---------- */
+  #eng-result-screen .stage-card {
+    background: #f7edd0;
+    box-shadow: 0 20px 45px rgba(31,122,153,0.18), 0 0 0 9px #b98a55, 0 0 0 13px #8b6f47, 0 1px 0 rgba(255,255,255,0.6) inset;
+    position: relative;
+    padding-top: 54px;
+  }
+  #eng-result-screen .stage-card::before {
+    content: "";
+    position: absolute;
+    top: -18px; left: 50%;
+    transform: translateX(-50%);
+    width: 92px; height: 30px;
+    background: linear-gradient(180deg, #dcdcdc, #999);
+    border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.35), inset 0 2px 2px rgba(255,255,255,0.55), inset 0 -2px 3px rgba(0,0,0,0.25);
+    z-index: 1;
+  }
+  #eng-result-screen .stage-card::after {
+    content: "";
+    position: absolute;
+    top: -3px; left: 50%;
+    transform: translateX(-50%);
+    width: 42px; height: 15px;
+    background: linear-gradient(180deg, #b5b5b5, #6e6e6e);
+    border-radius: 0 0 5px 5px;
+    z-index: 1;
+  }
+  #eng-result-screen .vocab-result-list { background: transparent; gap: 0; }
+  #eng-result-screen .vocab-result-row {
+    background: transparent;
+    border-bottom: 1px dashed rgba(139,111,71,0.4);
+    border-radius: 0;
+    padding: 12px 4px;
+  }
+  #eng-result-screen .vocab-result-row:last-child { border-bottom: none; }
+  #eng-result-screen .vocab-result-row.wrong { background: rgba(217,72,46,0.07); }
 </style>
 
 <div id="app">
@@ -4548,10 +4591,17 @@
       var w = q.set.words[r.idx];
       var row = document.createElement("div");
       row.className = "vocab-result-row" + (r.correct ? "" : " wrong");
+      var subParts = [];
+      if (w.korean) { subParts.push("<span class=\"vocab-result-korean\">" + escapeHtml(w.korean) + "</span>"); }
+      if (!r.correct) { subParts.push("<span class=\"vocab-result-given\">내가 고른 답: " + escapeHtml(r.given || "(빈칸)") + "</span>"); }
       row.innerHTML =
-        "<span>" + (r.correct ? "✅" : "❌") + "</span>" +
+        "<div class=\"vocab-result-top\">" +
+        "<span class=\"vocab-result-status\">" + (r.correct ? "✅" : "❌") + "</span>" +
         "<span class=\"vocab-result-word\">" + escapeHtml(w.word) + "</span>" +
-        "<span class=\"vocab-result-given\">" + (r.correct ? "" : escapeHtml(r.given || "(빈칸)")) + "</span>";
+        "<span class=\"vocab-result-sep\">:</span>" +
+        "<span class=\"vocab-result-meaning\">" + escapeHtml(w.meaning || "(뜻 없음)") + "</span>" +
+        "</div>" +
+        (subParts.length ? "<div class=\"vocab-result-sub\">" + subParts.join("") + "</div>" : "");
       resultList.appendChild(row);
     });
 
