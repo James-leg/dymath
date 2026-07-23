@@ -4433,19 +4433,13 @@
       el.appendChild(chip);
     });
   }
-  function isWordUsedElsewhere(wordIdx, currentPos) {
-    var q = state.quiz;
-    for (var p = 0; p < q.answers.length; p++) {
-      if (p !== currentPos && q.answers[p] && q.answers[p].pickedIdx === wordIdx) { return true; }
-    }
-    return false;
-  }
   function pickWord(wordIdx) {
     var q = state.quiz;
     if (!q || q.locked) { return; }
-    if (isWordUsedElsewhere(wordIdx, q.pos)) {
-      showToast("이미 다른 문제에 쓴 단어예요");
-      return;
+    for (var p = 0; p < q.answers.length; p++) {
+      if (p !== q.pos && q.answers[p] && q.answers[p].pickedIdx === wordIdx) {
+        q.answers[p] = null;
+      }
     }
     q.locked = true;
     var pos = q.pos;
@@ -4458,7 +4452,7 @@
     scheduleFlow(function () {
       q.locked = false;
       advanceAfterAnswer(pos);
-    }, 550);
+    }, 200);
   }
   function advanceAfterAnswer(answeredPos) {
     var q = state.quiz;
