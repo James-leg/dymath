@@ -4415,7 +4415,7 @@
   // ---- 플레이 모드 (퀴즈) ----
   function startVocabQuiz(set) {
     var order = shuffle(set.words.map(function (_, i) { return i; }));
-    state.quiz = { set: set, order: order, pos: 0, answers: new Array(order.length).fill(null), locked: false };
+    state.quiz = { set: set, order: order, pos: 0, answers: new Array(order.length).fill(null), locked: false, cursorIdx: null };
     renderQuizPool();
     showScreen("engQuiz");
     showQuestionAt(0);
@@ -4509,12 +4509,15 @@
     renderQuizNumRow();
   }
   function moveWordCursor(delta) {
+    var q = state.quiz;
     var chips = Array.prototype.slice.call(document.querySelectorAll("#word-pool .word-chip"));
     if (!chips.length) { return; }
-    var idx = chips.indexOf(document.activeElement);
-    if (idx === -1) { chips[0].focus(); return; }
-    var next = (idx + delta + chips.length) % chips.length;
-    chips[next].focus();
+    if (q.cursorIdx == null) {
+      q.cursorIdx = 0;
+    } else {
+      q.cursorIdx = (q.cursorIdx + delta + chips.length) % chips.length;
+    }
+    setKbdFocus(chips[q.cursorIdx]);
   }
   document.getElementById("quiz-prev-btn").addEventListener("click", function () {
     var q = state.quiz;
