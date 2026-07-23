@@ -1526,10 +1526,33 @@
   }
   .vocab-input:focus-visible { outline: none; border-color: var(--accent-sun); box-shadow: 0 0 0 4px rgba(255,203,71,0.3); }
 
-  .vocab-table { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; max-height: 42vh; overflow-y: auto; }
-  .vocab-table-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 6px; align-items: center; }
-  .vocab-table-row .vocab-input { padding: 9px 10px; font-size: 14px; }
+  .vocab-table { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; max-height: 60vh; overflow-y: auto; }
+  .vocab-table-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    background: var(--panel-tint);
+    border: 2px solid rgba(31,122,153,0.18);
+    border-radius: var(--radius-md);
+    padding: 12px 44px 12px 12px;
+  }
+  .vocab-table-row .vocab-row-field-label { font-size: 11px; font-weight: 700; color: var(--ink-muted); margin-bottom: 2px; }
+  .vocab-table-row .vocab-input { width: 100%; padding: 12px 14px; font-size: 17px; }
+  .vocab-table-row textarea.vocab-input[data-field="meaning"],
+  .vocab-table-row textarea.vocab-input[data-field="korean"] {
+    font-size: 19px;
+    font-weight: 600;
+    font-family: inherit;
+    line-height: 1.4;
+    resize: none;
+    overflow: hidden;
+    min-height: 52px;
+  }
   .vocab-row-del {
+    position: absolute;
+    top: 10px;
+    right: 10px;
     border: none;
     background: rgba(217,72,46,0.12);
     color: var(--danger-text);
@@ -4566,9 +4589,9 @@
       photoEl.innerHTML = "";
       photoEl.style.display = "none";
     }
-    renderVocabTable();
     document.getElementById("vocab-review-error").textContent = " ";
     showScreen("engReview");
+    renderVocabTable();
   }
 
   function renderVocabTable() {
@@ -4578,20 +4601,25 @@
       var rowEl = document.createElement("div");
       rowEl.className = "vocab-table-row";
       rowEl.innerHTML =
-        "<input class=\"vocab-input\" data-field=\"word\" placeholder=\"word\" value=\"" + escapeHtml(row.word) + "\">" +
-        "<input class=\"vocab-input\" data-field=\"meaning\" placeholder=\"meaning\" value=\"" + escapeHtml(row.meaning) + "\">" +
-        "<input class=\"vocab-input\" data-field=\"korean\" placeholder=\"한글 뜻\" value=\"" + escapeHtml(row.korean) + "\">" +
+        "<div><div class=\"vocab-row-field-label\">단어</div><input class=\"vocab-input\" data-field=\"word\" placeholder=\"word\" value=\"" + escapeHtml(row.word) + "\"></div>" +
+        "<div><div class=\"vocab-row-field-label\">뜻 (영어)</div><textarea class=\"vocab-input\" data-field=\"meaning\" placeholder=\"meaning\" rows=\"1\">" + escapeHtml(row.meaning) + "</textarea></div>" +
+        "<div><div class=\"vocab-row-field-label\">한글 뜻</div><textarea class=\"vocab-input\" data-field=\"korean\" placeholder=\"한글 뜻\" rows=\"1\">" + escapeHtml(row.korean) + "</textarea></div>" +
         "<button type=\"button\" class=\"vocab-row-del\" aria-label=\"행 삭제\">✕</button>";
+      el.appendChild(rowEl);
+      function autoGrow(el) { el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; }
       ["word", "meaning", "korean"].forEach(function (field) {
-        var input = rowEl.querySelector('input[data-field="' + field + '"]');
-        input.addEventListener("input", function () { row[field] = input.value; });
+        var input = rowEl.querySelector('[data-field="' + field + '"]');
+        if (input.tagName === "TEXTAREA") { autoGrow(input); }
+        input.addEventListener("input", function () {
+          row[field] = input.value;
+          if (input.tagName === "TEXTAREA") { autoGrow(input); }
+        });
       });
       rowEl.querySelector(".vocab-row-del").addEventListener("click", function () {
         state.reviewRows.splice(idx, 1);
         if (!state.reviewRows.length) { state.reviewRows.push({ word: "", meaning: "", korean: "" }); }
         renderVocabTable();
       });
-      el.appendChild(rowEl);
     });
   }
   document.getElementById("vocab-row-add-btn").addEventListener("click", function () {
