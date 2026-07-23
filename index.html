@@ -4387,9 +4387,11 @@
     q.pos = pos;
     var idx = q.order[pos];
     var w = q.set.words[idx];
+    var answer = q.answers[pos];
     document.getElementById("quiz-clue-meaning").textContent = w.meaning || "(뜻 없음)";
     document.getElementById("quiz-clue-korean").textContent = w.korean || "";
-    document.getElementById("quiz-picked").innerHTML = "&nbsp;";
+    var pickedEl = document.getElementById("quiz-picked");
+    if (answer) { pickedEl.textContent = "선택: " + answer.given; } else { pickedEl.innerHTML = "&nbsp;"; }
     document.getElementById("quiz-prev-btn").disabled = pos <= 0;
     document.getElementById("quiz-next-btn").disabled = pos >= q.order.length - 1;
     renderQuizNumRow();
