@@ -1508,7 +1508,9 @@
   .word-chip:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
   .word-chip.used { text-decoration: line-through; color: var(--ink-muted); background: transparent; box-shadow: none; opacity: 0.55; }
 
-  .quiz-num-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 14px; }
+  .quiz-nav-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .quiz-nav-row .stepper-btn { flex: none; }
+  .quiz-num-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; flex: 1; margin-bottom: 0; }
   .quiz-num {
     width: 32px; height: 32px;
     border: none;
@@ -1911,7 +1913,11 @@
       <button type="button" id="eng-quiz-quit-btn" class="mute-btn back-btn" aria-label="그만하고 단어장 목록으로">↩</button>
       <h1 class="brand small" id="eng-quiz-title">단어 퀴즈</h1>
       <div class="word-pool" id="word-pool"></div>
-      <div class="quiz-num-row" id="quiz-num-row"></div>
+      <div class="quiz-nav-row">
+        <button type="button" id="quiz-prev-btn" class="stepper-btn" aria-label="이전 문제">◀</button>
+        <div class="quiz-num-row" id="quiz-num-row"></div>
+        <button type="button" id="quiz-next-btn" class="stepper-btn" aria-label="다음 문제">▶</button>
+      </div>
       <div class="ticket">
         <div class="quiz-clue-meaning" id="quiz-clue-meaning">meaning</div>
         <div class="quiz-clue-korean" id="quiz-clue-korean">한글 뜻</div>
@@ -4368,8 +4374,20 @@
     var w = q.set.words[idx];
     document.getElementById("quiz-clue-meaning").textContent = w.meaning || "(뜻 없음)";
     document.getElementById("quiz-clue-korean").textContent = w.korean || "";
+    document.getElementById("quiz-prev-btn").disabled = pos <= 0;
+    document.getElementById("quiz-next-btn").disabled = pos >= q.order.length - 1;
     renderQuizNumRow();
   }
+  document.getElementById("quiz-prev-btn").addEventListener("click", function () {
+    var q = state.quiz;
+    if (!q || q.pos <= 0) { return; }
+    showQuestionAt(q.pos - 1);
+  });
+  document.getElementById("quiz-next-btn").addEventListener("click", function () {
+    var q = state.quiz;
+    if (!q || q.pos >= q.order.length - 1) { return; }
+    showQuestionAt(q.pos + 1);
+  });
   function renderQuizNumRow() {
     var q = state.quiz;
     var el = document.getElementById("quiz-num-row");
