@@ -1507,6 +1507,7 @@
   .word-chip:active { transform: translateY(2px); }
   .word-chip:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
   .word-chip.used { text-decoration: line-through; color: var(--ink-muted); background: transparent; box-shadow: none; opacity: 0.55; }
+  .word-chip.picked { box-shadow: 0 0 0 3px var(--accent-mint), 0 2px 6px rgba(31,122,153,0.15); }
 
   .quiz-nav-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
   .quiz-nav-row .stepper-btn { flex: none; }
@@ -1536,6 +1537,7 @@
 
   .quiz-clue-meaning { font-size: 19px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
   .quiz-clue-korean { font-size: 24px; font-weight: 800; color: var(--value); }
+  .quiz-picked { margin-top: 10px; font-size: 15px; font-weight: 700; color: var(--ink-muted); min-height: 20px; }
   .quiz-hint { font-size: 13px; color: var(--ink-muted); margin: 10px 0 0; }
 
   .vocab-result-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; max-height: 380px; overflow-y: auto; text-align: left; }
@@ -1921,6 +1923,7 @@
       <div class="ticket">
         <div class="quiz-clue-meaning" id="quiz-clue-meaning">meaning</div>
         <div class="quiz-clue-korean" id="quiz-clue-korean">한글 뜻</div>
+        <div class="quiz-picked" id="quiz-picked">&nbsp;</div>
       </div>
       <p class="quiz-hint">위 단어 중에서 눌러서 골라주세요</p>
     </div>
@@ -4349,7 +4352,7 @@
   // ---- 플레이 모드 (퀴즈) ----
   function startVocabQuiz(set) {
     var order = shuffle(set.words.map(function (_, i) { return i; }));
-    state.quiz = { set: set, order: order, pos: 0, answers: new Array(order.length).fill(null) };
+    state.quiz = { set: set, order: order, pos: 0, answers: new Array(order.length).fill(null), locked: false };
     renderQuizPool();
     showScreen("engQuiz");
     showQuestionAt(0);
@@ -4363,9 +4366,21 @@
       chip.className = "word-chip";
       chip.dataset.idx = idx;
       chip.textContent = w.word;
-      chip.addEventListener("click", function () { answerCurrentQuestion(idx); });
+      chip.addEventListener("click", function () { pickWord(idx, chip); });
       el.appendChild(chip);
     });
+  }
+  function pickWord(wordIdx, chipEl) {
+    var q = state.quiz;
+    if (!q || q.locked) { return; }
+    q.locked = true;
+    document.getElementById("quiz-picked").textContent = "선택: " + q.set.words[wordIdx].word;
+    if (chipEl) { chipEl.classList.add("picked"); }
+    scheduleFlow(function () {
+      if (chipEl) { chipEl.classList.remove("picked"); }
+      q.locked = false;
+      answerCurrentQuestion(wordIdx);
+    }, 550);
   }
   function showQuestionAt(pos) {
     var q = state.quiz;
@@ -4374,18 +4389,19 @@
     var w = q.set.words[idx];
     document.getElementById("quiz-clue-meaning").textContent = w.meaning || "(뜻 없음)";
     document.getElementById("quiz-clue-korean").textContent = w.korean || "";
+    document.getElementById("quiz-picked").innerHTML = "&nbsp;";
     document.getElementById("quiz-prev-btn").disabled = pos <= 0;
     document.getElementById("quiz-next-btn").disabled = pos >= q.order.length - 1;
     renderQuizNumRow();
   }
   document.getElementById("quiz-prev-btn").addEventListener("click", function () {
     var q = state.quiz;
-    if (!q || q.pos <= 0) { return; }
+    if (!q || q.locked || q.pos <= 0) { return; }
     showQuestionAt(q.pos - 1);
   });
   document.getElementById("quiz-next-btn").addEventListener("click", function () {
     var q = state.quiz;
-    if (!q || q.pos >= q.order.length - 1) { return; }
+    if (!q || q.locked || q.pos >= q.order.length - 1) { return; }
     showQuestionAt(q.pos + 1);
   });
   function renderQuizNumRow() {
@@ -4398,7 +4414,10 @@
       btn.className = "quiz-num" + (q.answers[pos] ? " answered" : "") + (pos === q.pos ? " current" : "");
       btn.textContent = String(pos + 1);
       btn.setAttribute("aria-label", (pos + 1) + "번 문제로 이동");
-      btn.addEventListener("click", function () { showQuestionAt(pos); });
+      btn.addEventListener("click", function () {
+        if (q.locked) { return; }
+        showQuestionAt(pos);
+      });
       el.appendChild(btn);
     });
   }
