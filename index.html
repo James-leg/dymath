@@ -4505,8 +4505,6 @@
     renderAnswerSlot();
     updateChipStates();
     updateCompletionUi();
-    document.getElementById("quiz-prev-btn").disabled = pos <= 0;
-    document.getElementById("quiz-next-btn").disabled = pos >= q.order.length - 1;
     renderQuizNumRow();
   }
   function moveWordCursor(delta) {
@@ -4522,13 +4520,13 @@
   }
   document.getElementById("quiz-prev-btn").addEventListener("click", function () {
     var q = state.quiz;
-    if (!q || q.locked || q.pos <= 0) { return; }
-    showQuestionAt(q.pos - 1);
+    if (!q || q.locked) { return; }
+    showQuestionAt((q.pos - 1 + q.order.length) % q.order.length);
   });
   document.getElementById("quiz-next-btn").addEventListener("click", function () {
     var q = state.quiz;
-    if (!q || q.locked || q.pos >= q.order.length - 1) { return; }
-    showQuestionAt(q.pos + 1);
+    if (!q || q.locked) { return; }
+    showQuestionAt((q.pos + 1) % q.order.length);
   });
   document.getElementById("quiz-submit-btn").addEventListener("click", function () {
     var q = state.quiz;
@@ -4541,10 +4539,10 @@
     if (!q) { return; }
     if (e.key === "ArrowLeft") {
       e.preventDefault();
-      if (!q.locked && q.pos > 0) { showQuestionAt(q.pos - 1); }
+      if (!q.locked) { showQuestionAt((q.pos - 1 + q.order.length) % q.order.length); }
     } else if (e.key === "ArrowRight") {
       e.preventDefault();
-      if (!q.locked && q.pos < q.order.length - 1) { showQuestionAt(q.pos + 1); }
+      if (!q.locked) { showQuestionAt((q.pos + 1) % q.order.length); }
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       moveWordCursor(-1);
