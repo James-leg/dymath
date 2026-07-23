@@ -1429,6 +1429,81 @@
     .title-btn-start { padding: 16px; font-size: 20px; }
     .title-btn-options { padding: 10px; font-size: 15px; }
   }
+
+  /* ---------- English vocabulary module ---------- */
+  .subject-math {
+    background: linear-gradient(160deg, #5cd0ef 0%, var(--value) 100%);
+    color: #fff;
+    font-weight: 800;
+    box-shadow: 0 8px 0 #145066, 0 12px 20px rgba(31,122,153,0.25);
+  }
+  .subject-math:active { box-shadow: 0 2px 0 #145066, 0 4px 10px rgba(31,122,153,0.2); }
+  .subject-eng {
+    background: linear-gradient(160deg, #ffb37a 0%, var(--accent-coral) 60%, #d9502e 100%);
+    color: #fff;
+    font-weight: 800;
+    box-shadow: 0 8px 0 #a8371c, 0 12px 20px rgba(217,80,46,0.3);
+  }
+  .subject-eng:active { box-shadow: 0 2px 0 #a8371c, 0 4px 10px rgba(217,80,46,0.25); }
+
+  .vocab-empty { color: var(--ink-muted); padding: 20px; text-align: center; }
+
+  .eng-photo-frame {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto 16px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--panel-tint);
+    min-height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .eng-photo-frame img { width: 100%; display: block; }
+  .eng-photo-placeholder { color: var(--ink-muted); font-size: 14px; padding: 30px 20px; }
+
+  .vocab-field { text-align: left; margin-bottom: 14px; }
+  .vocab-field label { display: block; font-size: 13px; font-weight: 700; color: var(--ink-muted); margin-bottom: 6px; }
+  .vocab-input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    border: 2px solid rgba(31,122,153,0.25);
+    background: var(--panel-tint);
+    color: var(--ink);
+    font-size: 16px;
+  }
+  .vocab-input:focus-visible { outline: none; border-color: var(--accent-sun); box-shadow: 0 0 0 4px rgba(255,203,71,0.3); }
+
+  .vocab-table { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; max-height: 42vh; overflow-y: auto; }
+  .vocab-table-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 6px; align-items: center; }
+  .vocab-table-row .vocab-input { padding: 9px 10px; font-size: 14px; }
+  .vocab-row-del {
+    border: none;
+    background: rgba(217,72,46,0.12);
+    color: var(--danger-text);
+    border-radius: 10px;
+    width: 32px; height: 32px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .vocab-row-del:focus-visible { outline: 2px solid var(--accent-mint); }
+
+  .word-pool { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; background: var(--panel-tint); border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px; }
+  .word-chip { padding: 7px 14px; border-radius: 999px; background: var(--panel); font-weight: 700; font-size: 14px; color: var(--ink); box-shadow: 0 2px 6px rgba(31,122,153,0.15); transition: opacity 0.2s ease; }
+  .word-chip.used { text-decoration: line-through; color: var(--ink-muted); background: transparent; box-shadow: none; opacity: 0.55; }
+
+  .quiz-progress { font-size: 14px; color: var(--ink-muted); font-weight: 700; margin-bottom: 8px; }
+  .quiz-clue-meaning { font-size: 19px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .quiz-clue-korean { font-size: 24px; font-weight: 800; color: var(--value); }
+  #vocab-answer-input { text-align: center; font-size: 22px; margin-bottom: 12px; }
+
+  .vocab-result-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; max-height: 380px; overflow-y: auto; text-align: left; }
+  .vocab-result-row { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; background: var(--panel-tint); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+  .vocab-result-row.wrong { background: rgba(217,72,46,0.08); }
+  .vocab-result-word { font-weight: 800; color: var(--ink); }
+  .vocab-result-given { font-size: 12px; color: var(--ink-muted); }
 </style>
 
 <div id="app">
@@ -1442,6 +1517,7 @@
 
   <section id="title-screen" class="screen">
     <div class="stage-card">
+      <button type="button" id="title-subject-back-btn" class="mute-btn back-btn" aria-label="과목 선택으로 돌아가기">↩</button>
       <h1 class="game-title-wrap">
         <svg class="game-title-svg" viewBox="0 0 360 80" role="img" aria-label="도윤이의 모험" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -1506,6 +1582,16 @@
         </div>
       </form>
       <p id="lock-error" class="error" role="alert" aria-live="polite">&nbsp;</p>
+    </div>
+  </section>
+
+  <section id="subject-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand">무엇을 배워볼까요?</h1>
+      <div class="mode-stack">
+        <button type="button" id="subject-math-btn" class="btn-primary btn-large mode-btn subject-math">📐 수학</button>
+        <button type="button" id="subject-eng-btn" class="btn-primary btn-large mode-btn subject-eng">🔤 영어</button>
+      </div>
     </div>
   </section>
 
@@ -1735,6 +1821,86 @@
     </div>
   </section>
 
+  <section id="eng-home-screen" class="screen">
+    <div class="stage-card">
+      <button type="button" id="eng-home-back-btn" class="mute-btn back-btn" aria-label="과목 선택으로 돌아가기">↩</button>
+      <h1 class="brand small">영어 단어장</h1>
+      <p class="desc">단어장을 골라 플레이하거나, 사진을 찍어 새로 만들어보세요.</p>
+      <div class="slot-grid" id="vocab-list"></div>
+      <button type="button" id="eng-new-set-btn" class="btn-primary btn-large">📷 사진으로 새 단어장 만들기</button>
+    </div>
+  </section>
+
+  <section id="eng-capture-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand small">단어 페이지 촬영</h1>
+      <p class="desc">교재의 단어 페이지(책 제목·Vocabulary·챕터·단어 박스·표)를 사진으로 찍으면 AI가 단어를 읽어줘요.</p>
+      <div class="eng-photo-frame" id="eng-photo-frame">
+        <span class="eng-photo-placeholder">아직 사진이 없어요</span>
+      </div>
+      <input type="file" accept="image/*" capture="environment" id="eng-photo-input" style="display:none;" />
+      <div class="btn-stack">
+        <button type="button" id="eng-photo-pick-btn" class="btn-secondary">사진 촬영/선택</button>
+        <button type="button" id="eng-photo-analyze-btn" class="btn-primary btn-large" disabled>분석하기</button>
+      </div>
+      <p id="eng-capture-status" class="error" role="status" aria-live="polite">&nbsp;</p>
+      <button type="button" id="eng-capture-cancel-btn" class="btn-secondary small">취소</button>
+    </div>
+  </section>
+
+  <section id="eng-review-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand small">단어장 확인/수정</h1>
+      <div class="vocab-field">
+        <label for="vocab-book-input">책 이름</label>
+        <input id="vocab-book-input" class="vocab-input" maxlength="60" placeholder="예: Reading Explorer 3" />
+      </div>
+      <div class="vocab-field">
+        <label for="vocab-chapter-input">챕터</label>
+        <input id="vocab-chapter-input" class="vocab-input" maxlength="40" placeholder="예: Chapter 5" />
+      </div>
+      <div class="vocab-table" id="vocab-table"></div>
+      <button type="button" id="vocab-row-add-btn" class="btn-secondary small">+ 단어 추가</button>
+      <div class="btn-row">
+        <button type="button" id="vocab-save-btn" class="btn-primary btn-large">저장하기</button>
+        <button type="button" id="vocab-review-cancel-btn" class="btn-secondary">취소</button>
+      </div>
+      <p id="vocab-review-error" class="error" role="alert" aria-live="polite">&nbsp;</p>
+    </div>
+  </section>
+
+  <section id="eng-quiz-screen" class="screen">
+    <div class="stage-card">
+      <button type="button" id="eng-quiz-quit-btn" class="mute-btn back-btn" aria-label="그만하고 단어장 목록으로">↩</button>
+      <h1 class="brand small" id="eng-quiz-title">단어 퀴즈</h1>
+      <div class="word-pool" id="word-pool"></div>
+      <p class="quiz-progress" id="quiz-progress">1 / 10</p>
+      <div class="ticket">
+        <div class="quiz-clue-meaning" id="quiz-clue-meaning">meaning</div>
+        <div class="quiz-clue-korean" id="quiz-clue-korean">한글 뜻</div>
+      </div>
+      <form id="quiz-answer-form" autocomplete="off">
+        <input id="vocab-answer-input" class="vocab-input" placeholder="영어 단어를 입력하세요" autocapitalize="none" autocomplete="off" spellcheck="false" />
+        <button type="submit" class="btn-primary btn-large">제출</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="eng-result-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand small">학습 결과</h1>
+      <div class="headline-stat">
+        <span class="hud-label">맞은 개수</span><br />
+        <span id="eng-result-score" class="hud-value">0 / 0</span>
+      </div>
+      <div class="vocab-result-list" id="vocab-result-list"></div>
+      <div class="btn-row">
+        <button type="button" id="eng-retry-btn" class="btn-primary btn-large">다시 플레이하기</button>
+        <button type="button" id="eng-result-home-btn" class="btn-secondary">단어장 목록으로</button>
+      </div>
+    </div>
+  </section>
+
   <div id="toast" class="toast"></div>
 
   <div class="pin-modal" id="pin-modal">
@@ -1822,6 +1988,7 @@
   ];
   var SLOTS_KEY = "jugglemath_slots_v1";
   var SLOT_COUNT = 3;
+  var ENG_VOCAB_KEY = "jugglemath_eng_vocab_v1";
   var HOF_KEY = "jugglemath_hall_of_fame_v1";
   var STYLE_KEY = "jugglemath_graphic_style_v1";
   var HOF_MAX = 10;
@@ -1837,6 +2004,7 @@
 
   var screens = {
     splash: document.getElementById("splash-screen"),
+    subject: document.getElementById("subject-screen"),
     title: document.getElementById("title-screen"),
     lock: document.getElementById("lock-screen"),
     player: document.getElementById("player-screen"),
@@ -1847,7 +2015,12 @@
     over: document.getElementById("gameover-screen"),
     hof: document.getElementById("hof-screen"),
     shop: document.getElementById("shop-screen"),
-    badges: document.getElementById("badges-screen")
+    badges: document.getElementById("badges-screen"),
+    engHome: document.getElementById("eng-home-screen"),
+    engCapture: document.getElementById("eng-capture-screen"),
+    engReview: document.getElementById("eng-review-screen"),
+    engQuiz: document.getElementById("eng-quiz-screen"),
+    engResult: document.getElementById("eng-result-screen")
   };
 
   function showScreen(name) {
@@ -1994,6 +2167,15 @@
     if (isMobileDevice()) { requestAppFullscreen(); }
     goToPlayerScreen();
   });
+  document.getElementById("title-subject-back-btn").addEventListener("click", function () {
+    showScreen("subject");
+  });
+  document.getElementById("subject-math-btn").addEventListener("click", function () {
+    showScreen("title");
+  });
+  document.getElementById("subject-eng-btn").addEventListener("click", function () {
+    enterEnglishHome();
+  });
   document.getElementById("title-options-btn").addEventListener("click", function () {
     state.optionsFrom = "title";
     showScreen("options");
@@ -2048,7 +2230,7 @@
     e.preventDefault();
     if (lockInput.value === PASSWORD) {
       lockError.textContent = " ";
-      showScreen("title");
+      showScreen("subject");
     } else {
       lockError.textContent = "비밀번호가 달라요. 다시 입력해 주세요.";
       lockInput.classList.remove("shake");
@@ -2101,7 +2283,13 @@
     selectedSpecies: "seal",
     sessionStartTime: 0,
     optionsFrom: "start",
-    graphicStyle: loadGraphicStyle()
+    graphicStyle: loadGraphicStyle(),
+    quiz: null,
+    pendingPhotoDataUrl: null,
+    pendingPhotoMediaType: null,
+    pendingExtraction: null,
+    reviewRows: null,
+    lastQuizSet: null
   };
 
   var ring = document.getElementById("ring");
@@ -2198,6 +2386,20 @@
     try { localStorage.setItem(HOF_KEY, JSON.stringify(list)); } catch (e) {}
     pushCloudSync();
   }
+  function loadVocabSets() {
+    var list;
+    try { list = JSON.parse(localStorage.getItem(ENG_VOCAB_KEY) || "null"); } catch (e) { list = null; }
+    return Array.isArray(list) ? list : [];
+  }
+  function saveVocabSets(list) {
+    try { localStorage.setItem(ENG_VOCAB_KEY, JSON.stringify(list)); } catch (e) {}
+    pushCloudSync();
+  }
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c];
+    });
+  }
 
   var AUTO_SYNC_CODE = "FAM" + PASSWORD;
 
@@ -2207,7 +2409,7 @@
   function pushCloudSync() {
     var code = loadSyncCode();
     if (!code) { return; }
-    var payload = { slots: loadSlots(), hof: loadHOF(), memoryAttempts: loadMemoryAttemptsSetting(), rewards: loadRewards() };
+    var payload = { slots: loadSlots(), hof: loadHOF(), memoryAttempts: loadMemoryAttemptsSetting(), rewards: loadRewards(), vocabSets: loadVocabSets() };
     fetch("/api/sync?code=" + encodeURIComponent(code), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -2227,6 +2429,9 @@
         }
         if (data && data.memoryAttempts >= MEMORY_ATTEMPTS_MIN && data.memoryAttempts <= MEMORY_ATTEMPTS_MAX) {
           try { localStorage.setItem(MEMORY_ATTEMPTS_KEY, String(data.memoryAttempts)); } catch (e) {}
+        }
+        if (data && Array.isArray(data.vocabSets)) {
+          try { localStorage.setItem(ENG_VOCAB_KEY, JSON.stringify(data.vocabSets)); } catch (e) {}
         }
         if (data && Array.isArray(data.rewards)) {
           try { localStorage.setItem(REWARDS_KEY, JSON.stringify(data.rewards)); } catch (e) {}
@@ -3890,6 +4095,308 @@
   document.getElementById("start-infinite-btn").addEventListener("click", function () { startGame("infinite"); });
   document.getElementById("start-practice-btn").addEventListener("click", function () { startGame("practice"); });
   document.getElementById("retry-btn").addEventListener("click", function () { startGame(state.mode); });
+
+  // ---------- English vocabulary module ----------
+  var engPhotoInput = document.getElementById("eng-photo-input");
+  var engPhotoFrame = document.getElementById("eng-photo-frame");
+  var engPhotoAnalyzeBtn = document.getElementById("eng-photo-analyze-btn");
+  var engCaptureStatus = document.getElementById("eng-capture-status");
+
+  function enterEnglishHome() {
+    showScreen("engHome");
+    renderVocabList();
+    pullCloudSync(loadSyncCode(), function () { renderVocabList(); });
+  }
+  document.getElementById("eng-home-back-btn").addEventListener("click", function () {
+    showScreen("subject");
+  });
+
+  function renderVocabList() {
+    var list = loadVocabSets();
+    var el = document.getElementById("vocab-list");
+    el.innerHTML = "";
+    if (!list.length) {
+      el.innerHTML = "<div class=\"vocab-empty\">아직 단어장이 없어요. 사진을 찍어 첫 단어장을 만들어보세요!</div>";
+      return;
+    }
+    list.forEach(function (set) {
+      var wrap = document.createElement("div");
+      wrap.className = "slot-card";
+      var main = document.createElement("button");
+      main.type = "button";
+      main.className = "slot-main";
+      var name = escapeHtml(set.book || "책 이름 없음") + (set.chapter ? " · " + escapeHtml(set.chapter) : "");
+      var resultTag = set.lastResult ? ("최근 " + set.lastResult.correct + " / " + set.lastResult.total) : "아직 플레이 전";
+      main.innerHTML =
+        "<div><div class=\"slot-label\">단어장</div>" +
+        "<div class=\"slot-name\">" + name + "</div>" +
+        "<div class=\"slot-meta\">단어 " + set.words.length + "개 · " + resultTag + "</div></div>" +
+        "<div class=\"slot-action\">▶ 플레이 →</div>";
+      main.addEventListener("click", function () { startVocabQuiz(set); });
+      wrap.appendChild(main);
+
+      var actions = document.createElement("div");
+      actions.className = "slot-actions";
+      var delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "slot-mini-btn danger";
+      delBtn.textContent = "삭제";
+      delBtn.addEventListener("click", function () {
+        if (!confirm("\"" + (set.book || "이 단어장") + (set.chapter ? " · " + set.chapter : "") + "\"을(를) 삭제할까요?")) { return; }
+        saveVocabSets(loadVocabSets().filter(function (s) { return s.id !== set.id; }));
+        renderVocabList();
+        showToast("단어장이 삭제됐어요");
+      });
+      actions.appendChild(delBtn);
+      wrap.appendChild(actions);
+
+      el.appendChild(wrap);
+    });
+  }
+
+  // ---- 촬영 모드 (단어장 만들기) ----
+  function resetCaptureScreen() {
+    state.pendingPhotoDataUrl = null;
+    state.pendingPhotoMediaType = null;
+    engPhotoFrame.innerHTML = "<span class=\"eng-photo-placeholder\">아직 사진이 없어요</span>";
+    engPhotoAnalyzeBtn.disabled = true;
+    engPhotoAnalyzeBtn.textContent = "분석하기";
+    engCaptureStatus.textContent = " ";
+    engPhotoInput.value = "";
+  }
+  document.getElementById("eng-new-set-btn").addEventListener("click", function () {
+    resetCaptureScreen();
+    showScreen("engCapture");
+  });
+  document.getElementById("eng-photo-pick-btn").addEventListener("click", function () {
+    engPhotoInput.click();
+  });
+  document.getElementById("eng-capture-cancel-btn").addEventListener("click", function () {
+    showScreen("engHome");
+  });
+
+  function downscaleImage(srcDataUrl, maxSize, quality, cb) {
+    var img = new Image();
+    img.onload = function () {
+      var w = img.width, h = img.height;
+      var scale = Math.min(1, maxSize / Math.max(w, h));
+      var cw = Math.max(1, Math.round(w * scale));
+      var ch = Math.max(1, Math.round(h * scale));
+      var canvas = document.createElement("canvas");
+      canvas.width = cw; canvas.height = ch;
+      canvas.getContext("2d").drawImage(img, 0, 0, cw, ch);
+      cb(canvas.toDataURL("image/jpeg", quality));
+    };
+    img.src = srcDataUrl;
+  }
+
+  engPhotoInput.addEventListener("change", function () {
+    var file = engPhotoInput.files && engPhotoInput.files[0];
+    if (!file) { return; }
+    var reader = new FileReader();
+    reader.onload = function () {
+      downscaleImage(reader.result, 1600, 0.82, function (dataUrl) {
+        state.pendingPhotoDataUrl = dataUrl;
+        state.pendingPhotoMediaType = "image/jpeg";
+        engPhotoFrame.innerHTML = "";
+        var img = document.createElement("img");
+        img.src = dataUrl;
+        engPhotoFrame.appendChild(img);
+        engPhotoAnalyzeBtn.disabled = false;
+        engCaptureStatus.textContent = " ";
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+
+  engPhotoAnalyzeBtn.addEventListener("click", function () {
+    if (!state.pendingPhotoDataUrl) { return; }
+    engPhotoAnalyzeBtn.disabled = true;
+    engPhotoAnalyzeBtn.textContent = "분석 중...";
+    engCaptureStatus.textContent = "사진에서 단어를 읽고 있어요...";
+    var base64 = state.pendingPhotoDataUrl.split(",")[1];
+    fetch("/api/vocab-extract", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image: base64, mediaType: state.pendingPhotoMediaType || "image/jpeg" })
+    })
+      .then(function (r) { return r.json().then(function (json) { return { ok: r.ok, json: json }; }); })
+      .then(function (res) {
+        if (res.ok && res.json && Array.isArray(res.json.words) && res.json.words.length) {
+          state.pendingExtraction = { book: res.json.book || "", chapter: res.json.chapter || "", words: res.json.words };
+        } else {
+          state.pendingExtraction = { book: "", chapter: "", words: [] };
+          showToast("자동 인식에 실패했어요. 직접 입력해 주세요.");
+        }
+        openVocabReview();
+      })
+      .catch(function () {
+        state.pendingExtraction = { book: "", chapter: "", words: [] };
+        showToast("자동 인식에 실패했어요. 직접 입력해 주세요.");
+        openVocabReview();
+      });
+  });
+
+  // ---- 확인/수정 화면 ----
+  function openVocabReview() {
+    var ext = state.pendingExtraction || { book: "", chapter: "", words: [] };
+    document.getElementById("vocab-book-input").value = ext.book || "";
+    document.getElementById("vocab-chapter-input").value = ext.chapter || "";
+    state.reviewRows = (ext.words.length ? ext.words : [{ word: "", meaning: "", korean: "" }]).map(function (w) {
+      return { word: w.word || "", meaning: w.meaning || "", korean: w.korean || "" };
+    });
+    renderVocabTable();
+    document.getElementById("vocab-review-error").textContent = " ";
+    showScreen("engReview");
+  }
+
+  function renderVocabTable() {
+    var el = document.getElementById("vocab-table");
+    el.innerHTML = "";
+    state.reviewRows.forEach(function (row, idx) {
+      var rowEl = document.createElement("div");
+      rowEl.className = "vocab-table-row";
+      rowEl.innerHTML =
+        "<input class=\"vocab-input\" data-field=\"word\" placeholder=\"word\" value=\"" + escapeHtml(row.word) + "\">" +
+        "<input class=\"vocab-input\" data-field=\"meaning\" placeholder=\"meaning\" value=\"" + escapeHtml(row.meaning) + "\">" +
+        "<input class=\"vocab-input\" data-field=\"korean\" placeholder=\"한글 뜻\" value=\"" + escapeHtml(row.korean) + "\">" +
+        "<button type=\"button\" class=\"vocab-row-del\" aria-label=\"행 삭제\">✕</button>";
+      ["word", "meaning", "korean"].forEach(function (field) {
+        var input = rowEl.querySelector('input[data-field="' + field + '"]');
+        input.addEventListener("input", function () { row[field] = input.value; });
+      });
+      rowEl.querySelector(".vocab-row-del").addEventListener("click", function () {
+        state.reviewRows.splice(idx, 1);
+        if (!state.reviewRows.length) { state.reviewRows.push({ word: "", meaning: "", korean: "" }); }
+        renderVocabTable();
+      });
+      el.appendChild(rowEl);
+    });
+  }
+  document.getElementById("vocab-row-add-btn").addEventListener("click", function () {
+    state.reviewRows.push({ word: "", meaning: "", korean: "" });
+    renderVocabTable();
+  });
+  document.getElementById("vocab-review-cancel-btn").addEventListener("click", function () {
+    showScreen("engHome");
+  });
+  document.getElementById("vocab-save-btn").addEventListener("click", function () {
+    var book = document.getElementById("vocab-book-input").value.trim();
+    var chapter = document.getElementById("vocab-chapter-input").value.trim();
+    var words = state.reviewRows
+      .map(function (r) { return { word: r.word.trim(), meaning: r.meaning.trim(), korean: r.korean.trim() }; })
+      .filter(function (r) { return r.word; });
+    if (!words.length) {
+      document.getElementById("vocab-review-error").textContent = "단어를 1개 이상 입력해 주세요.";
+      return;
+    }
+    var set = {
+      id: "v" + Date.now() + Math.random().toString(36).slice(2, 7),
+      book: book,
+      chapter: chapter,
+      words: words,
+      createdAt: Date.now(),
+      lastResult: null
+    };
+    var list = loadVocabSets();
+    list.push(set);
+    saveVocabSets(list);
+    showToast("단어장이 저장됐어요");
+    renderVocabList();
+    showScreen("engHome");
+  });
+
+  // ---- 플레이 모드 (퀴즈) ----
+  function startVocabQuiz(set) {
+    var order = shuffle(set.words.map(function (_, i) { return i; }));
+    state.quiz = { set: set, order: order, pos: 0, results: [] };
+    renderQuizPool();
+    showScreen("engQuiz");
+    showNextVocabQuestion();
+  }
+  function renderQuizPool() {
+    var el = document.getElementById("word-pool");
+    el.innerHTML = "";
+    state.quiz.set.words.forEach(function (w, idx) {
+      var chip = document.createElement("span");
+      chip.className = "word-chip";
+      chip.dataset.idx = idx;
+      chip.textContent = w.word;
+      el.appendChild(chip);
+    });
+  }
+  function showNextVocabQuestion() {
+    var q = state.quiz;
+    var idx = q.order[q.pos];
+    var w = q.set.words[idx];
+    document.getElementById("quiz-progress").textContent = (q.pos + 1) + " / " + q.order.length;
+    document.getElementById("quiz-clue-meaning").textContent = w.meaning || "(뜻 없음)";
+    document.getElementById("quiz-clue-korean").textContent = w.korean || "";
+    var input = document.getElementById("vocab-answer-input");
+    input.value = "";
+    input.focus();
+  }
+  document.getElementById("quiz-answer-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var q = state.quiz;
+    if (!q) { return; }
+    var idx = q.order[q.pos];
+    var w = q.set.words[idx];
+    var input = document.getElementById("vocab-answer-input");
+    var given = input.value.trim();
+    var correct = given.toLowerCase() === (w.word || "").trim().toLowerCase();
+    q.results.push({ idx: idx, given: given, correct: correct });
+    var chip = document.querySelector('#word-pool .word-chip[data-idx="' + idx + '"]');
+    if (chip) { chip.classList.add("used"); }
+    q.pos += 1;
+    if (q.pos < q.order.length) {
+      showNextVocabQuestion();
+    } else {
+      finishVocabQuiz();
+    }
+  });
+  document.getElementById("eng-quiz-quit-btn").addEventListener("click", function () {
+    state.quiz = null;
+    showScreen("engHome");
+    renderVocabList();
+  });
+  function finishVocabQuiz() {
+    var q = state.quiz;
+    var correctCount = q.results.filter(function (r) { return r.correct; }).length;
+    var total = q.results.length;
+
+    var list = loadVocabSets();
+    var stored = list.filter(function (s) { return s.id === q.set.id; })[0];
+    if (stored) {
+      stored.lastResult = { correct: correctCount, total: total, at: Date.now() };
+      saveVocabSets(list);
+    }
+
+    document.getElementById("eng-result-score").textContent = correctCount + " / " + total;
+    var resultList = document.getElementById("vocab-result-list");
+    resultList.innerHTML = "";
+    q.results.forEach(function (r) {
+      var w = q.set.words[r.idx];
+      var row = document.createElement("div");
+      row.className = "vocab-result-row" + (r.correct ? "" : " wrong");
+      row.innerHTML =
+        "<span>" + (r.correct ? "✅" : "❌") + "</span>" +
+        "<span class=\"vocab-result-word\">" + escapeHtml(w.word) + "</span>" +
+        "<span class=\"vocab-result-given\">" + (r.correct ? "" : escapeHtml(r.given || "(빈칸)")) + "</span>";
+      resultList.appendChild(row);
+    });
+
+    state.lastQuizSet = q.set;
+    state.quiz = null;
+    showScreen("engResult");
+  }
+  document.getElementById("eng-retry-btn").addEventListener("click", function () {
+    if (state.lastQuizSet) { startVocabQuiz(state.lastQuizSet); }
+  });
+  document.getElementById("eng-result-home-btn").addEventListener("click", function () {
+    renderVocabList();
+    showScreen("engHome");
+  });
 
   pullCloudSync(loadSyncCode(), function () {});
 })();
