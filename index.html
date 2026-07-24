@@ -1760,6 +1760,7 @@
 
   <section id="subject-screen" class="screen">
     <div class="stage-card">
+      <button type="button" id="subject-back-btn" class="mute-btn back-btn" aria-label="슬롯 선택으로 돌아가기">↩</button>
       <h1 class="brand">무엇을 배워볼까요?</h1>
       <div class="mode-stack">
         <button type="button" id="subject-math-btn" class="btn-primary btn-large mode-btn subject-math">📐 수학</button>
@@ -1974,7 +1975,7 @@
 
   <section id="activity-log-screen" class="screen">
     <div class="stage-card">
-      <h1 class="brand small">📊 학습 현황판</h1>
+      <h1 class="brand small" id="activity-log-title">📊 학습 현황판</h1>
       <div class="activity-summary" id="activity-summary"></div>
       <div class="activity-log-list" id="activity-log-list"></div>
       <button type="button" id="activity-log-back-btn" class="btn-primary btn-large">뒤로가기</button>
@@ -2362,10 +2363,18 @@
 
   document.getElementById("title-start-btn").addEventListener("click", function () {
     if (isMobileDevice()) { requestAppFullscreen(); }
-    goToPlayerScreen();
+    if (state.currentPlayer) {
+      renderDashboard();
+      showScreen("start");
+    } else {
+      goToPlayerScreen();
+    }
   });
   document.getElementById("title-subject-back-btn").addEventListener("click", function () {
     showScreen("subject");
+  });
+  document.getElementById("subject-back-btn").addEventListener("click", function () {
+    goToPlayerScreen();
   });
   document.getElementById("subject-math-btn").addEventListener("click", function () {
     showScreen("title");
@@ -2385,11 +2394,12 @@
   });
   var characterBackBtn = document.getElementById("character-back-btn");
   document.getElementById("character-btn").addEventListener("click", function () {
+    state.charFlowNext = "start";
     characterBackBtn.textContent = "뒤로가기";
     showScreen("character");
   });
   characterBackBtn.addEventListener("click", function () {
-    showScreen("start");
+    showScreen(state.charFlowNext || "start");
   });
   document.getElementById("options-back-btn").addEventListener("click", function () {
     state.adminUnlocked = false;
@@ -2429,7 +2439,7 @@
     e.preventDefault();
     if (lockInput.value === PASSWORD) {
       lockError.textContent = " ";
-      showScreen("subject");
+      goToPlayerScreen();
     } else {
       lockError.textContent = "비밀번호가 달라요. 다시 입력해 주세요.";
       lockInput.classList.remove("shake");
@@ -2847,6 +2857,7 @@
     renderCharSelect();
     updateLivesOption();
     updateOpToggle();
+    state.charFlowNext = "subject";
     characterBackBtn.textContent = "시작하기 →";
     showScreen("character");
   }
@@ -2897,6 +2908,7 @@
     renderCharSelect();
     updateLivesOption();
     updateOpToggle();
+    state.charFlowNext = "subject";
     characterBackBtn.textContent = "시작하기 →";
     showScreen("character");
   });
@@ -2949,9 +2961,12 @@
   });
 
   function renderActivityLog() {
-    var list = loadActivityLog();
+    var player = state.currentPlayer;
+    var list = loadActivityLog().filter(function (e) { return !player || !e.playerName || e.playerName === player.name; });
     var summaryEl = document.getElementById("activity-summary");
     var listEl = document.getElementById("activity-log-list");
+    var titleEl = document.getElementById("activity-log-title");
+    if (titleEl) { titleEl.textContent = "📊 " + (player ? player.name + "님의 " : "") + "학습 현황판"; }
 
     var mathEntries = list.filter(function (e) { return e.type === "math"; });
     var vocabEntries = list.filter(function (e) { return e.type === "vocab"; });
@@ -4856,6 +4871,7 @@
       type: "vocab",
       endedAt: Date.now(),
       durationMs: Date.now() - (q.startedAt || Date.now()),
+      playerName: state.currentPlayer ? state.currentPlayer.name : "",
       book: q.set.book || "",
       chapter: q.set.chapter || "",
       correct: correctCount,
