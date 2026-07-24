@@ -1765,6 +1765,9 @@
         <button type="button" id="subject-math-btn" class="btn-primary btn-large mode-btn subject-math">📐 수학</button>
         <button type="button" id="subject-eng-btn" class="btn-primary btn-large mode-btn subject-eng">🔤 영어</button>
       </div>
+      <div class="btn-stack">
+        <button type="button" id="subject-activity-btn" class="btn-secondary small">📊 학습 현황판</button>
+      </div>
     </div>
   </section>
 
@@ -2380,10 +2383,12 @@
     showScreen("options");
     refreshLiveDataFromCloud(function () { updateLivesOption(); updateMemoryAttemptsOption(); });
   });
+  var characterBackBtn = document.getElementById("character-back-btn");
   document.getElementById("character-btn").addEventListener("click", function () {
+    characterBackBtn.textContent = "뒤로가기";
     showScreen("character");
   });
-  document.getElementById("character-back-btn").addEventListener("click", function () {
+  characterBackBtn.addEventListener("click", function () {
     showScreen("start");
   });
   document.getElementById("options-back-btn").addEventListener("click", function () {
@@ -2842,7 +2847,8 @@
     renderCharSelect();
     updateLivesOption();
     updateOpToggle();
-    showScreen("start");
+    characterBackBtn.textContent = "시작하기 →";
+    showScreen("character");
   }
   function goToPlayerScreen() {
     showSlotGrid();
@@ -2891,7 +2897,8 @@
     renderCharSelect();
     updateLivesOption();
     updateOpToggle();
-    showScreen("start");
+    characterBackBtn.textContent = "시작하기 →";
+    showScreen("character");
   });
 
   document.getElementById("slot-back-btn").addEventListener("click", showSlotGrid);
@@ -3014,8 +3021,21 @@
       listEl.appendChild(groupEl);
     });
   }
-  document.getElementById("activity-log-btn").addEventListener("click", function () { renderActivityLog(); showScreen("activityLog"); });
+  document.getElementById("activity-log-btn").addEventListener("click", function () {
+    state.activityLogFrom = "start";
+    renderActivityLog();
+    showScreen("activityLog");
+  });
+  document.getElementById("subject-activity-btn").addEventListener("click", function () {
+    state.activityLogFrom = "subject";
+    renderActivityLog();
+    showScreen("activityLog");
+  });
   document.getElementById("activity-log-back-btn").addEventListener("click", function () {
+    if (state.activityLogFrom === "subject") {
+      showScreen("subject");
+      return;
+    }
     renderDashboard();
     showScreen("start");
   });
