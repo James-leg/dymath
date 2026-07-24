@@ -274,13 +274,16 @@
 
   .op-toggle {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     background: var(--panel);
-    border-radius: 999px;
-    padding: 3px;
-    gap: 3px;
+    border-radius: 18px;
+    padding: 4px;
+    gap: 4px;
     box-shadow: inset 0 1px 3px rgba(31,122,153,0.15);
     margin: 0 auto 14px;
     width: fit-content;
+    max-width: 100%;
   }
   .op-toggle-btn {
     border: none;
@@ -288,9 +291,14 @@
     color: var(--ink-muted);
     font-weight: 700;
     font-size: 14px;
-    padding: 9px 20px;
-    border-radius: 999px;
+    padding: 9px 16px;
+    border-radius: 14px;
     cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  .op-toggle-btn.active {
+    opacity: 1;
   }
   .op-toggle-btn[data-op="multiply"].active {
     background: linear-gradient(180deg, #7ec8e8, var(--value));
@@ -301,6 +309,16 @@
     background: linear-gradient(180deg, #ffab8f, var(--accent-coral));
     color: #4a1608;
     box-shadow: 0 2px 6px rgba(224,57,42,0.3);
+  }
+  .op-toggle-btn[data-op="subtract"].active {
+    background: linear-gradient(180deg, #7de8cd, var(--accent-mint));
+    color: #04352c;
+    box-shadow: 0 2px 6px rgba(46,196,166,0.3);
+  }
+  .op-toggle-btn[data-op="divide"].active {
+    background: linear-gradient(180deg, #ffe08a, var(--accent-sun));
+    color: #4a3200;
+    box-shadow: 0 2px 6px rgba(255,203,71,0.35);
   }
   .op-toggle-btn:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
 
@@ -1036,6 +1054,11 @@
     max-width: 420px;
     margin: 0 auto;
   }
+  .choices.four-choice {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 420px;
+    margin: 0 auto;
+  }
   .choice-btn {
     border: none;
     border-radius: var(--radius-md);
@@ -1148,6 +1171,56 @@
   .hof-sub { display: block; color: var(--ink-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
   .hof-empty { color: var(--ink-muted); padding: 20px; text-align: center; }
   #hof-reset-btn { margin-top: 14px; }
+
+  .activity-summary {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .activity-summary-item {
+    background: var(--panel-tint);
+    border-radius: 12px;
+    padding: 10px 16px;
+    text-align: center;
+    min-width: 96px;
+  }
+  .activity-summary-value { display: block; font-size: 20px; font-weight: 800; color: var(--value); font-variant-numeric: tabular-nums; }
+  .activity-summary-label { display: block; font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+
+  .activity-log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 22px;
+    max-height: 440px;
+    overflow-y: auto;
+    text-align: left;
+  }
+  .activity-date-group { display: flex; flex-direction: column; gap: 8px; }
+  .activity-date-heading {
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--ink-muted);
+    padding-left: 4px;
+  }
+  .activity-row {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    align-items: center;
+    gap: 12px;
+    background: var(--panel-tint);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+  .activity-row-icon { font-size: 22px; text-align: center; }
+  .activity-row-time { display: block; font-size: 12px; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+  .activity-row-main { display: block; font-weight: 700; }
+  .activity-row-sub { display: block; color: var(--ink-muted); font-size: 12px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .activity-log-empty { color: var(--ink-muted); padding: 20px; text-align: center; }
+  #activity-log-reset-btn { margin-top: 14px; }
 
   .points-balance {
     background: linear-gradient(180deg, rgba(255,203,71,0.25), rgba(255,203,71,0.06));
@@ -1400,11 +1473,210 @@
     .question { font-size: clamp(22px, 5vw, 30px); margin-bottom: 8px; }
     .choices { gap: 8px; }
     .choice-btn { padding: 12px 6px; font-size: 22px; }
+    .op-toggle-btn { padding: 8px 11px; font-size: 12px; }
     .game-title-svg { max-width: 300px; }
     .title-menu { gap: 8px; }
     .title-btn-start { padding: 16px; font-size: 20px; }
     .title-btn-options { padding: 10px; font-size: 15px; }
   }
+
+  /* ---------- English vocabulary module ---------- */
+  .subject-math {
+    background: linear-gradient(160deg, #5cd0ef 0%, var(--value) 100%);
+    color: #fff;
+    font-weight: 800;
+    box-shadow: 0 8px 0 #145066, 0 12px 20px rgba(31,122,153,0.25);
+  }
+  .subject-math:active { box-shadow: 0 2px 0 #145066, 0 4px 10px rgba(31,122,153,0.2); }
+  .subject-eng {
+    background: linear-gradient(160deg, #ffb37a 0%, var(--accent-coral) 60%, #d9502e 100%);
+    color: #fff;
+    font-weight: 800;
+    box-shadow: 0 8px 0 #a8371c, 0 12px 20px rgba(217,80,46,0.3);
+  }
+  .subject-eng:active { box-shadow: 0 2px 0 #a8371c, 0 4px 10px rgba(217,80,46,0.25); }
+
+  .vocab-empty { color: var(--ink-muted); padding: 20px; text-align: center; }
+
+  .eng-photo-frame {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto 16px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--panel-tint);
+    min-height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .eng-photo-frame img { width: 100%; display: block; }
+  .eng-photo-placeholder { color: var(--ink-muted); font-size: 14px; padding: 30px 20px; }
+
+  .vocab-field { text-align: left; margin-bottom: 14px; }
+  .vocab-field label { display: block; font-size: 13px; font-weight: 700; color: var(--ink-muted); margin-bottom: 6px; }
+  .vocab-input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    border: 2px solid rgba(31,122,153,0.25);
+    background: var(--panel-tint);
+    color: var(--ink);
+    font-size: 16px;
+  }
+  .vocab-input:focus-visible { outline: none; border-color: var(--accent-sun); box-shadow: 0 0 0 4px rgba(255,203,71,0.3); }
+
+  .vocab-table { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; max-height: 60vh; overflow-y: auto; }
+  .vocab-table-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    background: var(--panel-tint);
+    border: 2px solid rgba(31,122,153,0.18);
+    border-radius: var(--radius-md);
+    padding: 12px 44px 12px 12px;
+  }
+  .vocab-table-row .vocab-row-field-label { font-size: 11px; font-weight: 700; color: var(--ink-muted); margin-bottom: 2px; }
+  .vocab-table-row .vocab-input { width: 100%; padding: 12px 14px; font-size: 17px; }
+  .vocab-table-row textarea.vocab-input[data-field="meaning"],
+  .vocab-table-row textarea.vocab-input[data-field="korean"] {
+    font-size: 19px;
+    font-weight: 600;
+    font-family: inherit;
+    line-height: 1.4;
+    resize: none;
+    overflow: hidden;
+    min-height: 52px;
+  }
+  .vocab-row-del {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: none;
+    background: rgba(217,72,46,0.12);
+    color: var(--danger-text);
+    border-radius: 10px;
+    width: 32px; height: 32px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .vocab-row-del:focus-visible { outline: 2px solid var(--accent-mint); }
+
+  .word-pool { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; background: var(--panel-tint); border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px; }
+  .word-chip {
+    border: none;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: var(--panel);
+    font-weight: 700;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+    box-shadow: 0 2px 6px rgba(31,122,153,0.15);
+    transition: opacity 0.2s ease, transform 0.08s ease;
+    cursor: pointer;
+  }
+  .word-chip:active { transform: translateY(2px); }
+  .word-chip:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
+  .word-chip.used { text-decoration: line-through; color: var(--ink-muted); background: transparent; box-shadow: none; opacity: 0.55; }
+
+  .quiz-nav-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .quiz-nav-row .stepper-btn { flex: none; }
+  .quiz-num-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; flex: 1; margin-bottom: 0; }
+  .quiz-num {
+    width: 32px; height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: #d7e6ea;
+    color: var(--ink-muted);
+    font-weight: 800;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+    transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, transform 0.08s ease;
+  }
+  .quiz-num:active { transform: translateY(2px); }
+  .quiz-num:focus-visible { outline: 3px solid var(--accent-mint); outline-offset: 2px; }
+  .quiz-num.answered {
+    background: var(--accent-sun);
+    color: #4a3200;
+    box-shadow: 0 0 6px 2px rgba(255,203,71,0.6);
+  }
+  .quiz-num.current { box-shadow: 0 0 0 3px var(--accent-mint); }
+  .quiz-num.answered.current { box-shadow: 0 0 0 3px var(--accent-mint), 0 0 6px 2px rgba(255,203,71,0.6); }
+
+  .quiz-clue-meaning { font-size: 19px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .quiz-clue-korean { font-size: 24px; font-weight: 800; color: var(--value); }
+  .quiz-answer-slot { display: flex; align-items: center; justify-content: center; margin-top: 12px; min-height: 44px; }
+  .quiz-answer-chip {
+    padding: 9px 20px;
+    border-radius: 999px;
+    background: var(--accent-mint);
+    color: #04352c;
+    font-weight: 800;
+    font-size: 17px;
+    box-shadow: 0 4px 10px rgba(46,196,166,0.35);
+  }
+  .quiz-answer-placeholder {
+    padding: 9px 20px;
+    border-radius: 999px;
+    border: 2px dashed rgba(107,128,152,0.4);
+    color: var(--ink-muted);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .quiz-hint { font-size: 13px; color: var(--ink-muted); margin: 10px 0 0; }
+
+  .vocab-result-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; max-height: 380px; overflow-y: auto; text-align: left; }
+  .vocab-result-row { background: var(--panel-tint); border-radius: 12px; padding: 12px 14px; font-size: 14px; }
+  .vocab-result-row.wrong { background: rgba(217,72,46,0.08); }
+  .vocab-result-top { display: flex; align-items: baseline; gap: 8px; }
+  .vocab-result-status { flex: none; font-size: 15px; }
+  .vocab-result-word { font-weight: 800; color: var(--ink); flex: none; white-space: nowrap; }
+  .vocab-result-sep { color: var(--ink-muted); flex: none; }
+  .vocab-result-meaning { color: var(--ink); flex: 1; }
+  .vocab-result-sub { margin-top: 4px; padding-left: 23px; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--ink-muted); }
+  .vocab-result-given { color: var(--danger-text); font-weight: 700; }
+
+  /* ---------- Result screen: clipboard + ruled paper ---------- */
+  #eng-result-screen .stage-card {
+    background: #f7edd0;
+    box-shadow: 0 20px 45px rgba(31,122,153,0.18), 0 0 0 9px #b98a55, 0 0 0 13px #8b6f47, 0 1px 0 rgba(255,255,255,0.6) inset;
+    position: relative;
+    padding-top: 54px;
+  }
+  #eng-result-screen .stage-card::before {
+    content: "";
+    position: absolute;
+    top: -18px; left: 50%;
+    transform: translateX(-50%);
+    width: 92px; height: 30px;
+    background: linear-gradient(180deg, #dcdcdc, #999);
+    border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.35), inset 0 2px 2px rgba(255,255,255,0.55), inset 0 -2px 3px rgba(0,0,0,0.25);
+    z-index: 1;
+  }
+  #eng-result-screen .stage-card::after {
+    content: "";
+    position: absolute;
+    top: -3px; left: 50%;
+    transform: translateX(-50%);
+    width: 42px; height: 15px;
+    background: linear-gradient(180deg, #b5b5b5, #6e6e6e);
+    border-radius: 0 0 5px 5px;
+    z-index: 1;
+  }
+  #eng-result-screen .vocab-result-list { background: transparent; gap: 0; }
+  #eng-result-screen .vocab-result-row {
+    background: transparent;
+    border-bottom: 1px dashed rgba(139,111,71,0.4);
+    border-radius: 0;
+    padding: 12px 4px;
+  }
+  #eng-result-screen .vocab-result-row:last-child { border-bottom: none; }
+  #eng-result-screen .vocab-result-row.wrong { background: rgba(217,72,46,0.07); }
 </style>
 
 <div id="app">
@@ -1418,6 +1690,7 @@
 
   <section id="title-screen" class="screen">
     <div class="stage-card">
+      <button type="button" id="title-subject-back-btn" class="mute-btn back-btn" aria-label="과목 선택으로 돌아가기">↩</button>
       <h1 class="game-title-wrap">
         <svg class="game-title-svg" viewBox="0 0 360 80" role="img" aria-label="도윤이의 모험" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -1485,6 +1758,19 @@
     </div>
   </section>
 
+  <section id="subject-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand">무엇을 배워볼까요?</h1>
+      <div class="mode-stack">
+        <button type="button" id="subject-math-btn" class="btn-primary btn-large mode-btn subject-math">📐 수학</button>
+        <button type="button" id="subject-eng-btn" class="btn-primary btn-large mode-btn subject-eng">🔤 영어</button>
+      </div>
+      <div class="btn-stack">
+        <button type="button" id="subject-activity-btn" class="btn-secondary small">📊 학습 현황판</button>
+      </div>
+    </div>
+  </section>
+
   <section id="player-screen" class="screen">
     <div class="stage-card">
       <div class="slot-grid" id="slot-grid"></div>
@@ -1513,8 +1799,10 @@
         <div class="stat"><span class="stat-value" id="stat-best-score">0</span><span class="stat-label">최고 점수 (<span id="stat-best-stage">1단</span>)</span></div>
       </div>
       <div class="op-toggle" id="op-toggle">
-        <button type="button" class="op-toggle-btn" data-op="multiply">× 곱셈</button>
         <button type="button" class="op-toggle-btn" data-op="add">+ 덧셈</button>
+        <button type="button" class="op-toggle-btn" data-op="subtract">− 뺄셈</button>
+        <button type="button" class="op-toggle-btn" data-op="multiply">× 곱셈</button>
+        <button type="button" class="op-toggle-btn" data-op="divide">÷ 나눗셈</button>
       </div>
       <div class="mode-stack">
         <button type="button" id="start-easy-btn" class="btn-primary btn-large mode-easy mode-btn">🍃 EASY MODE</button>
@@ -1529,6 +1817,7 @@
         <button type="button" id="badges-btn" class="btn-secondary small">업적</button>
         <button type="button" id="options-btn" class="btn-secondary small">옵션</button>
         <button type="button" id="hof-btn" class="btn-secondary small">명예의 전당</button>
+        <button type="button" id="activity-log-btn" class="btn-secondary small">📊 학습 현황판</button>
       </div>
     </div>
   </section>
@@ -1615,6 +1904,7 @@
         <button type="button" class="choice-btn" data-idx="0"><span class="choice-label">1</span><span class="choice-value">-</span></button>
         <button type="button" class="choice-btn" data-idx="1"><span class="choice-label">2</span><span class="choice-value">-</span></button>
         <button type="button" class="choice-btn" data-idx="2"><span class="choice-label">3</span><span class="choice-value">-</span></button>
+        <button type="button" class="choice-btn" data-idx="3"><span class="choice-label">4</span><span class="choice-value">-</span></button>
       </div>
 
       <div class="pause-overlay" id="pause-overlay">
@@ -1682,6 +1972,16 @@
     </div>
   </section>
 
+  <section id="activity-log-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand small">📊 학습 현황판</h1>
+      <div class="activity-summary" id="activity-summary"></div>
+      <div class="activity-log-list" id="activity-log-list"></div>
+      <button type="button" id="activity-log-back-btn" class="btn-primary btn-large">뒤로가기</button>
+      <button type="button" id="activity-log-reset-btn" class="btn-secondary small">기록 초기화 (관리자)</button>
+    </div>
+  </section>
+
   <section id="shop-screen" class="screen">
     <div class="stage-card">
       <h1 class="brand small">포인트 상점</h1>
@@ -1705,6 +2005,92 @@
       <h1 class="brand small">업적</h1>
       <div class="badge-grid" id="badge-grid"></div>
       <button type="button" id="badges-back-btn" class="btn-primary btn-large">뒤로가기</button>
+    </div>
+  </section>
+
+  <section id="eng-home-screen" class="screen">
+    <div class="stage-card">
+      <button type="button" id="eng-home-back-btn" class="mute-btn back-btn" aria-label="과목 선택으로 돌아가기">↩</button>
+      <h1 class="brand small">영어 단어장</h1>
+      <p class="desc">단어장을 골라 플레이하거나, 사진을 찍어 새로 만들어보세요.</p>
+      <div class="slot-grid" id="vocab-list"></div>
+      <button type="button" id="eng-new-set-btn" class="btn-primary btn-large">📷 사진으로 새 단어장 만들기</button>
+    </div>
+  </section>
+
+  <section id="eng-capture-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand small">단어 페이지 촬영</h1>
+      <p class="desc">교재의 단어 페이지(책 제목·Vocabulary·챕터·단어 박스·표)를 사진으로 찍으면 AI가 단어를 읽어줘요.</p>
+      <div class="eng-photo-frame" id="eng-photo-frame">
+        <span class="eng-photo-placeholder">아직 사진이 없어요</span>
+      </div>
+      <input type="file" accept="image/*" capture="environment" id="eng-photo-input" style="display:none;" />
+      <div class="btn-stack">
+        <button type="button" id="eng-photo-pick-btn" class="btn-secondary">사진 촬영/선택</button>
+        <button type="button" id="eng-photo-analyze-btn" class="btn-primary btn-large" disabled>분석하기</button>
+      </div>
+      <p id="eng-capture-status" class="error" role="status" aria-live="polite">&nbsp;</p>
+      <button type="button" id="eng-capture-cancel-btn" class="btn-secondary small">취소</button>
+    </div>
+  </section>
+
+  <section id="eng-review-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand small">단어장 확인/수정</h1>
+      <div class="eng-photo-frame" id="vocab-review-photo" style="display:none;"></div>
+      <div class="vocab-field">
+        <label for="vocab-book-input">책 이름</label>
+        <input id="vocab-book-input" class="vocab-input" maxlength="60" placeholder="예: Reading Explorer 3" />
+      </div>
+      <div class="vocab-field">
+        <label for="vocab-chapter-input">챕터</label>
+        <input id="vocab-chapter-input" class="vocab-input" maxlength="40" placeholder="예: Chapter 5" />
+      </div>
+      <div class="vocab-table" id="vocab-table"></div>
+      <button type="button" id="vocab-row-add-btn" class="btn-secondary small">+ 단어 추가</button>
+      <div class="btn-row">
+        <button type="button" id="vocab-save-btn" class="btn-primary btn-large">저장하기</button>
+        <button type="button" id="vocab-review-cancel-btn" class="btn-secondary">취소</button>
+      </div>
+      <p id="vocab-review-error" class="error" role="alert" aria-live="polite">&nbsp;</p>
+    </div>
+  </section>
+
+  <section id="eng-quiz-screen" class="screen">
+    <div class="stage-card">
+      <button type="button" id="eng-quiz-quit-btn" class="mute-btn back-btn" aria-label="그만하고 단어장 목록으로">↩</button>
+      <h1 class="brand small" id="eng-quiz-title">단어 퀴즈</h1>
+      <div class="word-pool" id="word-pool"></div>
+      <div class="quiz-nav-row">
+        <button type="button" id="quiz-prev-btn" class="stepper-btn" aria-label="이전 문제">◀</button>
+        <div class="quiz-num-row" id="quiz-num-row"></div>
+        <button type="button" id="quiz-next-btn" class="stepper-btn" aria-label="다음 문제">▶</button>
+      </div>
+      <div class="ticket">
+        <div class="quiz-clue-meaning" id="quiz-clue-meaning">meaning</div>
+        <div class="quiz-clue-korean" id="quiz-clue-korean">한글 뜻</div>
+        <div class="quiz-answer-slot" id="quiz-answer-slot">
+          <span class="quiz-answer-placeholder">단어를 선택하세요</span>
+        </div>
+      </div>
+      <button type="button" id="quiz-submit-btn" class="btn-primary btn-large" disabled>제출하고 결과 보기</button>
+      <p class="quiz-hint" id="quiz-hint">위 단어 중에서 눌러 답을 골라주세요</p>
+    </div>
+  </section>
+
+  <section id="eng-result-screen" class="screen">
+    <div class="stage-card">
+      <h1 class="brand small">학습 결과</h1>
+      <div class="headline-stat">
+        <span class="hud-label">맞은 개수</span><br />
+        <span id="eng-result-score" class="hud-value">0 / 0</span>
+      </div>
+      <div class="vocab-result-list" id="vocab-result-list"></div>
+      <div class="btn-row">
+        <button type="button" id="eng-retry-btn" class="btn-primary btn-large">다시 플레이하기</button>
+        <button type="button" id="eng-result-home-btn" class="btn-secondary">단어장 목록으로</button>
+      </div>
     </div>
   </section>
 
@@ -1756,7 +2142,13 @@
   var ADD_A_MIN = 10;
   var ADD_A_MAX = 49;
   var ADD_MAX_SUM = 50;
-  var POINTS_PER_CORRECT = 10;
+  var SUB_A_MIN = 10;
+  var SUB_A_MAX = 49;
+  var DIV_MIN = 1;
+  var DIV_MAX = 9;
+  var ALL_OPS = ["add", "subtract", "multiply", "divide"];
+  var OP_SYMBOL = { add: "+", subtract: "−", multiply: "×", divide: "÷" };
+  var POINTS_PER_CORRECT = 1;
   var REWARDS_KEY = "jugglemath_rewards_v1";
   var DEFAULT_REWARDS = [{ id: "tv30", name: "TV 30분", cost: 100 }];
   var BADGE_DEFS = [
@@ -1779,6 +2171,7 @@
   ];
   var EASY_CHOICE_COUNT = 2;
   var NORMAL_CHOICE_COUNT = 3;
+  var PRACTICE_CHOICE_COUNT = 4;
   var CHAR_OPTIONS = [
     { species: "seal", label: "물개", unlockStage: 0 },
     { species: "dolphin", label: "돌고래", unlockStage: 0 },
@@ -1788,7 +2181,10 @@
   ];
   var SLOTS_KEY = "jugglemath_slots_v1";
   var SLOT_COUNT = 3;
+  var ENG_VOCAB_KEY = "jugglemath_eng_vocab_v1";
   var HOF_KEY = "jugglemath_hall_of_fame_v1";
+  var ACTIVITY_LOG_KEY = "jugglemath_activity_log_v1";
+  var ACTIVITY_LOG_MAX = 500;
   var STYLE_KEY = "jugglemath_graphic_style_v1";
   var HOF_MAX = 10;
   var MEMORY_EVERY_N_STAGES = 3;
@@ -1803,6 +2199,7 @@
 
   var screens = {
     splash: document.getElementById("splash-screen"),
+    subject: document.getElementById("subject-screen"),
     title: document.getElementById("title-screen"),
     lock: document.getElementById("lock-screen"),
     player: document.getElementById("player-screen"),
@@ -1812,8 +2209,14 @@
     game: document.getElementById("game-screen"),
     over: document.getElementById("gameover-screen"),
     hof: document.getElementById("hof-screen"),
+    activityLog: document.getElementById("activity-log-screen"),
     shop: document.getElementById("shop-screen"),
-    badges: document.getElementById("badges-screen")
+    badges: document.getElementById("badges-screen"),
+    engHome: document.getElementById("eng-home-screen"),
+    engCapture: document.getElementById("eng-capture-screen"),
+    engReview: document.getElementById("eng-review-screen"),
+    engQuiz: document.getElementById("eng-quiz-screen"),
+    engResult: document.getElementById("eng-result-screen")
   };
 
   function showScreen(name) {
@@ -1866,6 +2269,7 @@
 
   window.addEventListener("keydown", function (e) {
     if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    if (screens.engQuiz.classList.contains("active")) return;
     var scope = getActiveFocusScope();
     if (!scope) return;
     var focusables = getFocusableInScope(scope);
@@ -1960,6 +2364,15 @@
     if (isMobileDevice()) { requestAppFullscreen(); }
     goToPlayerScreen();
   });
+  document.getElementById("title-subject-back-btn").addEventListener("click", function () {
+    showScreen("subject");
+  });
+  document.getElementById("subject-math-btn").addEventListener("click", function () {
+    showScreen("title");
+  });
+  document.getElementById("subject-eng-btn").addEventListener("click", function () {
+    enterEnglishHome();
+  });
   document.getElementById("title-options-btn").addEventListener("click", function () {
     state.optionsFrom = "title";
     showScreen("options");
@@ -1970,10 +2383,12 @@
     showScreen("options");
     refreshLiveDataFromCloud(function () { updateLivesOption(); updateMemoryAttemptsOption(); });
   });
+  var characterBackBtn = document.getElementById("character-back-btn");
   document.getElementById("character-btn").addEventListener("click", function () {
+    characterBackBtn.textContent = "뒤로가기";
     showScreen("character");
   });
-  document.getElementById("character-back-btn").addEventListener("click", function () {
+  characterBackBtn.addEventListener("click", function () {
     showScreen("start");
   });
   document.getElementById("options-back-btn").addEventListener("click", function () {
@@ -2014,7 +2429,7 @@
     e.preventDefault();
     if (lockInput.value === PASSWORD) {
       lockError.textContent = " ";
-      showScreen("title");
+      showScreen("subject");
     } else {
       lockError.textContent = "비밀번호가 달라요. 다시 입력해 주세요.";
       lockInput.classList.remove("shake");
@@ -2042,7 +2457,7 @@
     memoryOnDone: null,
     correctInStage: 0,
     a: 0, b: 0, answer: 0,
-    lastA: -1, lastB: -1,
+    lastA: -1, lastB: -1, lastOp: null,
     beatIndex: 0,
     beatTimeoutId: null,
     flowTimeoutId: null,
@@ -2056,7 +2471,8 @@
     paused: false,
     counting: false,
     mode: "record",
-    operation: "multiply",
+    operations: ["multiply"],
+    currentOp: "multiply",
     practicePoints: 0,
     currentPlayer: null,
     currentSlot: null,
@@ -2066,7 +2482,14 @@
     selectedSpecies: "seal",
     sessionStartTime: 0,
     optionsFrom: "start",
-    graphicStyle: loadGraphicStyle()
+    graphicStyle: loadGraphicStyle(),
+    quiz: null,
+    editingSetId: null,
+    pendingPhotoDataUrl: null,
+    pendingPhotoMediaType: null,
+    pendingExtraction: null,
+    reviewRows: null,
+    lastQuizSet: null
   };
 
   var ring = document.getElementById("ring");
@@ -2146,12 +2569,53 @@
     try { localStorage.setItem(SLOTS_KEY, JSON.stringify(slots)); } catch (e) {}
     pushCloudSync();
   }
+  function normalizeOperations(p) {
+    if (p && Array.isArray(p.operations)) {
+      var filtered = p.operations.filter(function (o) { return ALL_OPS.indexOf(o) !== -1; });
+      if (filtered.length) { return filtered; }
+    }
+    if (p && typeof p.operation === "string" && ALL_OPS.indexOf(p.operation) !== -1) {
+      return [p.operation];
+    }
+    return ["multiply"];
+  }
   function loadHOF() {
     try { return JSON.parse(localStorage.getItem(HOF_KEY) || "[]"); } catch (e) { return []; }
   }
   function saveHOF(list) {
     try { localStorage.setItem(HOF_KEY, JSON.stringify(list)); } catch (e) {}
     pushCloudSync();
+  }
+  function loadActivityLog() {
+    var list;
+    try { list = JSON.parse(localStorage.getItem(ACTIVITY_LOG_KEY) || "null"); } catch (e) { list = null; }
+    return Array.isArray(list) ? list : [];
+  }
+  function saveActivityLog(list) {
+    try { localStorage.setItem(ACTIVITY_LOG_KEY, JSON.stringify(list)); } catch (e) {}
+    pushCloudSync();
+  }
+  function logActivity(entry) {
+    var list = loadActivityLog();
+    entry.id = "a" + Date.now() + Math.random().toString(36).slice(2, 7);
+    list.push(entry);
+    list.sort(function (a, b) { return b.endedAt - a.endedAt; });
+    if (list.length > ACTIVITY_LOG_MAX) { list = list.slice(0, ACTIVITY_LOG_MAX); }
+    saveActivityLog(list);
+  }
+  function loadVocabSets() {
+    var list;
+    try { list = JSON.parse(localStorage.getItem(ENG_VOCAB_KEY) || "null"); } catch (e) { list = null; }
+    return Array.isArray(list) ? list : [];
+  }
+  function saveVocabSets(list) {
+    try { localStorage.setItem(ENG_VOCAB_KEY, JSON.stringify(list)); } catch (e) {}
+    pushCloudSync();
+  }
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c];
+    });
   }
 
   var AUTO_SYNC_CODE = "FAM" + PASSWORD;
@@ -2162,7 +2626,7 @@
   function pushCloudSync() {
     var code = loadSyncCode();
     if (!code) { return; }
-    var payload = { slots: loadSlots(), hof: loadHOF(), memoryAttempts: loadMemoryAttemptsSetting(), rewards: loadRewards() };
+    var payload = { slots: loadSlots(), hof: loadHOF(), memoryAttempts: loadMemoryAttemptsSetting(), rewards: loadRewards(), vocabSets: loadVocabSets(), activityLog: loadActivityLog() };
     fetch("/api/sync?code=" + encodeURIComponent(code), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -2183,6 +2647,12 @@
         if (data && data.memoryAttempts >= MEMORY_ATTEMPTS_MIN && data.memoryAttempts <= MEMORY_ATTEMPTS_MAX) {
           try { localStorage.setItem(MEMORY_ATTEMPTS_KEY, String(data.memoryAttempts)); } catch (e) {}
         }
+        if (data && Array.isArray(data.vocabSets)) {
+          try { localStorage.setItem(ENG_VOCAB_KEY, JSON.stringify(data.vocabSets)); } catch (e) {}
+        }
+        if (data && Array.isArray(data.activityLog)) {
+          try { localStorage.setItem(ACTIVITY_LOG_KEY, JSON.stringify(data.activityLog)); } catch (e) {}
+        }
         if (data && Array.isArray(data.rewards)) {
           try { localStorage.setItem(REWARDS_KEY, JSON.stringify(data.rewards)); } catch (e) {}
         }
@@ -2199,7 +2669,7 @@
           state.currentPlayer = fresh;
           state.livesSetting = fresh.livesSetting || MAX_LIVES;
           state.selectedSpecies = fresh.character || "seal";
-          state.operation = fresh.operation === "add" ? "add" : "multiply";
+          state.operations = normalizeOperations(fresh);
         }
       }
       if (onDone) { onDone(ok); }
@@ -2372,12 +2842,13 @@
     state.currentSlot = slotIndex;
     state.selectedSpecies = p.character || "seal";
     state.livesSetting = p.livesSetting || MAX_LIVES;
-    state.operation = p.operation === "add" ? "add" : "multiply";
+    state.operations = normalizeOperations(p);
     renderDashboard();
     renderCharSelect();
     updateLivesOption();
     updateOpToggle();
-    showScreen("start");
+    characterBackBtn.textContent = "시작하기 →";
+    showScreen("character");
   }
   function goToPlayerScreen() {
     showSlotGrid();
@@ -2413,20 +2884,21 @@
       playerError.textContent = "4자리 비밀번호를 입력해 주세요.";
       return;
     }
-    var p = { name: name, pin: pin, gamesPlayed: 0, totalPlayTimeMs: 0, totalScore: 0, bestScore: 0, bestStage: 1, character: "seal", livesSetting: MAX_LIVES, operation: "multiply" };
+    var p = { name: name, pin: pin, gamesPlayed: 0, totalPlayTimeMs: 0, totalScore: 0, bestScore: 0, bestStage: 1, character: "seal", livesSetting: MAX_LIVES, operations: ["multiply"] };
     slots[idx] = p;
     saveSlots(slots);
     state.currentPlayer = p;
     state.currentSlot = idx;
     state.selectedSpecies = "seal";
     state.livesSetting = MAX_LIVES;
-    state.operation = "multiply";
+    state.operations = ["multiply"];
     playerError.textContent = " ";
     renderDashboard();
     renderCharSelect();
     updateLivesOption();
     updateOpToggle();
-    showScreen("start");
+    characterBackBtn.textContent = "시작하기 →";
+    showScreen("character");
   });
 
   document.getElementById("slot-back-btn").addEventListener("click", showSlotGrid);
@@ -2473,6 +2945,105 @@
       saveHOF([]);
       renderHallOfFame();
       showToast("명예의 전당이 초기화됐어요");
+    });
+  });
+
+  function renderActivityLog() {
+    var list = loadActivityLog();
+    var summaryEl = document.getElementById("activity-summary");
+    var listEl = document.getElementById("activity-log-list");
+
+    var mathEntries = list.filter(function (e) { return e.type === "math"; });
+    var vocabEntries = list.filter(function (e) { return e.type === "vocab"; });
+    var mathPlayMs = mathEntries.reduce(function (sum, e) { return sum + (e.durationMs || 0); }, 0);
+    var vocabCorrectSum = vocabEntries.reduce(function (sum, e) { return sum + (e.correct || 0); }, 0);
+    var vocabTotalSum = vocabEntries.reduce(function (sum, e) { return sum + (e.total || 0); }, 0);
+    var vocabAccuracy = vocabTotalSum ? Math.round((vocabCorrectSum / vocabTotalSum) * 100) : 0;
+
+    summaryEl.innerHTML =
+      "<div class=\"activity-summary-item\"><span class=\"activity-summary-value\">" + mathEntries.length + "</span><span class=\"activity-summary-label\">수학 플레이</span></div>" +
+      "<div class=\"activity-summary-item\"><span class=\"activity-summary-value\">" + formatDuration(mathPlayMs) + "</span><span class=\"activity-summary-label\">수학 총 시간</span></div>" +
+      "<div class=\"activity-summary-item\"><span class=\"activity-summary-value\">" + vocabEntries.length + "</span><span class=\"activity-summary-label\">단어 시험 응시</span></div>" +
+      "<div class=\"activity-summary-item\"><span class=\"activity-summary-value\">" + vocabAccuracy + "%</span><span class=\"activity-summary-label\">단어 시험 평균 정답률</span></div>";
+
+    listEl.innerHTML = "";
+    if (!list.length) {
+      listEl.innerHTML = "<div class=\"activity-log-empty\">아직 기록이 없어요. 게임을 플레이하거나 단어 시험을 봐보세요!</div>";
+      return;
+    }
+
+    var groups = [];
+    var groupsByKey = {};
+    list.forEach(function (entry) {
+      var d = new Date(entry.endedAt);
+      var key = d.toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" });
+      if (!groupsByKey[key]) {
+        groupsByKey[key] = { key: key, entries: [] };
+        groups.push(groupsByKey[key]);
+      }
+      groupsByKey[key].entries.push(entry);
+    });
+
+    groups.forEach(function (group) {
+      var groupEl = document.createElement("div");
+      groupEl.className = "activity-date-group";
+      var heading = document.createElement("div");
+      heading.className = "activity-date-heading";
+      heading.textContent = group.key;
+      groupEl.appendChild(heading);
+
+      group.entries.forEach(function (entry) {
+        var row = document.createElement("div");
+        row.className = "activity-row";
+        var time = new Date(entry.endedAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+        var mainText, subText, icon;
+        if (entry.type === "math") {
+          icon = "🔢";
+          var modeLabel = entry.mode === "infinite" ? "CHALLENGE" : (entry.mode === "easy" ? "EASY" : "NORMAL");
+          mainText = modeLabel + " · " + entry.stage + "단 도달 · " + entry.score + "점";
+          subText = "문제 " + entry.questions + "개 (정답 " + entry.correct + "개) · " + formatDuration(entry.durationMs);
+        } else {
+          icon = "🔤";
+          var titleParts = [];
+          if (entry.book) { titleParts.push(entry.book); }
+          if (entry.chapter) { titleParts.push(entry.chapter); }
+          mainText = (titleParts.length ? titleParts.join(" · ") : "단어장") + " · " + entry.correct + "/" + entry.total + " 정답";
+          subText = formatDuration(entry.durationMs);
+        }
+        row.innerHTML =
+          "<span class=\"activity-row-icon\">" + icon + "</span>" +
+          "<span><span class=\"activity-row-time\">" + time + "</span>" +
+          "<span class=\"activity-row-main\">" + escapeHtml(mainText) + "</span>" +
+          "<span class=\"activity-row-sub\">" + escapeHtml(subText) + "</span></span>";
+        groupEl.appendChild(row);
+      });
+
+      listEl.appendChild(groupEl);
+    });
+  }
+  document.getElementById("activity-log-btn").addEventListener("click", function () {
+    state.activityLogFrom = "start";
+    renderActivityLog();
+    showScreen("activityLog");
+  });
+  document.getElementById("subject-activity-btn").addEventListener("click", function () {
+    state.activityLogFrom = "subject";
+    renderActivityLog();
+    showScreen("activityLog");
+  });
+  document.getElementById("activity-log-back-btn").addEventListener("click", function () {
+    if (state.activityLogFrom === "subject") {
+      showScreen("subject");
+      return;
+    }
+    renderDashboard();
+    showScreen("start");
+  });
+  document.getElementById("activity-log-reset-btn").addEventListener("click", function () {
+    requireAdmin(function () {
+      saveActivityLog([]);
+      renderActivityLog();
+      showToast("학습 현황 기록이 초기화됐어요");
     });
   });
 
@@ -2796,7 +3367,8 @@
   function currentBeatSeconds() {
     var base = beatSeconds(state.stage);
     if (isEasyMode()) { base *= EASY_TIME_MULTIPLIER; }
-    if (state.operation === "add") { base *= ADD_TIME_MULTIPLIER; }
+    var op = state.currentOp || (state.operations && state.operations[0]) || "multiply";
+    if (op !== "multiply") { base *= ADD_TIME_MULTIPLIER; }
     return base;
   }
   function applyCycle() {
@@ -2945,16 +3517,24 @@
   function updateOpToggle() {
     var btns = document.querySelectorAll(".op-toggle-btn");
     for (var i = 0; i < btns.length; i++) {
-      btns[i].classList.toggle("active", btns[i].dataset.op === state.operation);
+      btns[i].classList.toggle("active", state.operations.indexOf(btns[i].dataset.op) !== -1);
     }
   }
   document.getElementById("op-toggle").addEventListener("click", function (e) {
     var btn = e.target.closest(".op-toggle-btn");
-    if (!btn || btn.dataset.op === state.operation) { return; }
-    state.operation = btn.dataset.op;
+    if (!btn) { return; }
+    var op = btn.dataset.op;
+    var idx = state.operations.indexOf(op);
+    if (idx !== -1) {
+      if (state.operations.length === 1) { showToast("최소 1개는 선택해야 해요"); return; }
+      state.operations.splice(idx, 1);
+    } else {
+      state.operations.push(op);
+    }
     updateOpToggle();
     if (state.currentPlayer && state.currentSlot !== null) {
-      state.currentPlayer.operation = state.operation;
+      state.currentPlayer.operations = state.operations.slice();
+      delete state.currentPlayer.operation;
       var slots = loadSlots();
       slots[state.currentSlot] = state.currentPlayer;
       saveSlots(slots);
@@ -3321,25 +3901,38 @@
   function newQuestion() {
     if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
 
-    var isAdd = state.operation === "add";
-    var a, bb;
+    var ops = state.operations && state.operations.length ? state.operations : ["multiply"];
+    var op = ops[randInt(0, ops.length - 1)];
+    var a, bb, answer;
     do {
-      if (isAdd) {
+      if (op === "add") {
         a = randInt(ADD_A_MIN, ADD_A_MAX);
         bb = randInt(1, Math.min(9, ADD_MAX_SUM - a));
+        answer = a + bb;
+      } else if (op === "subtract") {
+        a = randInt(SUB_A_MIN, SUB_A_MAX);
+        bb = randInt(1, 9);
+        answer = a - bb;
+      } else if (op === "divide") {
+        bb = randInt(DIV_MIN, DIV_MAX);
+        var q = randInt(DIV_MIN, DIV_MAX);
+        a = bb * q;
+        answer = q;
       } else {
         a = randInt(1, 9);
         bb = randInt(1, 9);
+        answer = a * bb;
       }
-    } while (a === state.lastA && bb === state.lastB);
-    state.lastA = a; state.lastB = bb;
+    } while (a === state.lastA && bb === state.lastB && op === state.lastOp);
+    state.lastA = a; state.lastB = bb; state.lastOp = op;
     state.a = a; state.b = bb;
-    state.answer = isAdd ? a + bb : a * bb;
+    state.answer = answer;
+    state.currentOp = op;
 
-    questionEl.textContent = a + (isAdd ? " + " : " × ") + bb + " = ?";
+    questionEl.textContent = a + " " + OP_SYMBOL[op] + " " + bb + " = ?";
     state.answered = false;
-    var choiceCount = isEasyMode() ? EASY_CHOICE_COUNT : NORMAL_CHOICE_COUNT;
-    var choices = generateChoices(a, bb, state.answer, choiceCount, isAdd);
+    var choiceCount = isPracticeMode() ? PRACTICE_CHOICE_COUNT : (isEasyMode() ? EASY_CHOICE_COUNT : NORMAL_CHOICE_COUNT);
+    var choices = generateChoices(a, bb, state.answer, choiceCount, op);
     for (var ci = 0; ci < choiceBtns.length; ci++) {
       if (ci < choiceCount) {
         choiceBtns[ci].style.display = "";
@@ -3353,6 +3946,7 @@
       }
     }
     choicesEl.classList.toggle("two-choice", choiceCount === 2);
+    choicesEl.classList.toggle("four-choice", choiceCount === 4);
 
     for (var i = 0; i < bulbEls.length; i++) {
       bulbEls[i].classList.remove("off");
@@ -3400,20 +3994,40 @@
     return arr;
   }
 
-  function generateChoices(a, bb, correct, count, isAdd) {
+  function generateChoices(a, bb, correct, count, opType) {
     count = count || NORMAL_CHOICE_COUNT;
-    var maxVal = isAdd ? (ADD_MAX_SUM + 15) : 100;
-    var candidates = isAdd
-      ? [
-          correct + 10, correct - 10, correct + 1, correct - 1, correct + 2, correct - 2,
-          a + bb + 10, a - bb, (a + 10) + bb, (a - 10) + bb,
-          Math.floor(a / 10) * 10 + (a % 10 + bb), correct + 9, correct - 9
-        ]
-      : [
-          a * (bb + 1), a * (bb - 1), (a + 1) * bb, (a - 1) * bb,
-          correct + a, correct - a, correct + bb, correct - bb,
-          correct + 1, correct - 1, correct + 2, correct - 2
-        ];
+    var maxVal, fallbackMax, candidates;
+    if (opType === "add") {
+      maxVal = ADD_MAX_SUM + 15;
+      fallbackMax = maxVal;
+      candidates = [
+        correct + 10, correct - 10, correct + 1, correct - 1, correct + 2, correct - 2,
+        a + bb + 10, a - bb, (a + 10) + bb, (a - 10) + bb,
+        Math.floor(a / 10) * 10 + (a % 10 + bb), correct + 9, correct - 9
+      ];
+    } else if (opType === "subtract") {
+      maxVal = SUB_A_MAX;
+      fallbackMax = maxVal;
+      candidates = [
+        a + bb, correct + 1, correct - 1, correct + 2, correct - 2,
+        correct + 10, correct - 10, correct + 9, correct - 9, bb - a
+      ];
+    } else if (opType === "divide") {
+      maxVal = DIV_MAX + 10;
+      fallbackMax = maxVal;
+      candidates = [
+        correct + 1, correct - 1, correct + 2, correct - 2, correct + 3, correct - 3,
+        bb, a, correct * 2, Math.floor(correct / 2)
+      ];
+    } else {
+      maxVal = 100;
+      fallbackMax = 81;
+      candidates = [
+        a * (bb + 1), a * (bb - 1), (a + 1) * bb, (a - 1) * bb,
+        correct + a, correct - a, correct + bb, correct - bb,
+        correct + 1, correct - 1, correct + 2, correct - 2
+      ];
+    }
     candidates = candidates.filter(function (v) { return v > 0 && v <= maxVal && v !== correct; });
     shuffle(candidates);
 
@@ -3422,7 +4036,7 @@
       if (set.indexOf(candidates[i2]) === -1) { set.push(candidates[i2]); }
     }
     while (set.length < count) {
-      var rv = randInt(1, isAdd ? maxVal : 81);
+      var rv = randInt(1, fallbackMax);
       if (set.indexOf(rv) === -1) { set.push(rv); }
     }
     return shuffle(set);
@@ -3444,6 +4058,7 @@
 
   function onMiss(isTimeout) {
     if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
+    state.questionsThisSession += 1;
     state.answered = true;
     for (var ai = 0; ai < choiceBtns.length; ai++) { choiceBtns[ai].disabled = true; }
     revealAnswer();
@@ -3490,6 +4105,8 @@
   function onCorrect() {
     if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
 
+    state.questionsThisSession += 1;
+    state.correctThisSession += 1;
     state.combo += 1;
     if (state.currentPlayer && state.combo > (state.currentPlayer.maxCombo || 0)) {
       state.currentPlayer.maxCombo = state.combo;
@@ -3699,6 +4316,8 @@
     comboBadge.classList.remove("show", "tier2", "tier3", "tier4");
     state.lives = state.livesSetting;
     state.correctInStage = 0;
+    state.questionsThisSession = 0;
+    state.correctThisSession = 0;
     state.lastA = -1; state.lastB = -1;
     state.paused = false;
     state.counting = false;
@@ -3736,6 +4355,17 @@
     if (state.beatTimeoutId) { clearTimeout(state.beatTimeoutId); state.beatTimeoutId = null; }
 
     var sessionMs = Date.now() - state.sessionStartTime;
+    logActivity({
+      type: "math",
+      endedAt: Date.now(),
+      durationMs: sessionMs,
+      playerName: state.currentPlayer ? state.currentPlayer.name : "",
+      mode: state.mode,
+      stage: state.stage,
+      score: state.score,
+      questions: state.questionsThisSession || 0,
+      correct: state.correctThisSession || 0
+    });
     var p = state.currentPlayer;
     var prevBest = p.bestScore;
     var prevBestStage = p.bestStage;
@@ -3802,6 +4432,468 @@
   document.getElementById("start-infinite-btn").addEventListener("click", function () { startGame("infinite"); });
   document.getElementById("start-practice-btn").addEventListener("click", function () { startGame("practice"); });
   document.getElementById("retry-btn").addEventListener("click", function () { startGame(state.mode); });
+
+  // ---------- English vocabulary module ----------
+  var engPhotoInput = document.getElementById("eng-photo-input");
+  var engPhotoFrame = document.getElementById("eng-photo-frame");
+  var engPhotoAnalyzeBtn = document.getElementById("eng-photo-analyze-btn");
+  var engCaptureStatus = document.getElementById("eng-capture-status");
+
+  function enterEnglishHome() {
+    showScreen("engHome");
+    renderVocabList();
+    pullCloudSync(loadSyncCode(), function () { renderVocabList(); });
+  }
+  document.getElementById("eng-home-back-btn").addEventListener("click", function () {
+    showScreen("subject");
+  });
+
+  function renderVocabList() {
+    var list = loadVocabSets();
+    var el = document.getElementById("vocab-list");
+    el.innerHTML = "";
+    if (!list.length) {
+      el.innerHTML = "<div class=\"vocab-empty\">아직 단어장이 없어요. 사진을 찍어 첫 단어장을 만들어보세요!</div>";
+      return;
+    }
+    list.forEach(function (set) {
+      var wrap = document.createElement("div");
+      wrap.className = "slot-card";
+      var main = document.createElement("button");
+      main.type = "button";
+      main.className = "slot-main";
+      var name = escapeHtml(set.book || "책 이름 없음") + (set.chapter ? " · " + escapeHtml(set.chapter) : "");
+      var resultTag = set.lastResult ? ("최근 " + set.lastResult.correct + " / " + set.lastResult.total) : "아직 플레이 전";
+      main.innerHTML =
+        "<div><div class=\"slot-label\">단어장</div>" +
+        "<div class=\"slot-name\">" + name + "</div>" +
+        "<div class=\"slot-meta\">단어 " + set.words.length + "개 · " + resultTag + "</div></div>" +
+        "<div class=\"slot-action\">▶ 플레이 →</div>";
+      main.addEventListener("click", function () { startVocabQuiz(set); });
+      wrap.appendChild(main);
+
+      var actions = document.createElement("div");
+      actions.className = "slot-actions";
+      var editBtn = document.createElement("button");
+      editBtn.type = "button";
+      editBtn.className = "slot-mini-btn";
+      editBtn.textContent = "수정";
+      editBtn.addEventListener("click", function () { openVocabReview(set); });
+      actions.appendChild(editBtn);
+      var delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "slot-mini-btn danger";
+      delBtn.textContent = "삭제";
+      delBtn.addEventListener("click", function () {
+        if (!confirm("\"" + (set.book || "이 단어장") + (set.chapter ? " · " + set.chapter : "") + "\"을(를) 삭제할까요?")) { return; }
+        saveVocabSets(loadVocabSets().filter(function (s) { return s.id !== set.id; }));
+        renderVocabList();
+        showToast("단어장이 삭제됐어요");
+      });
+      actions.appendChild(delBtn);
+      wrap.appendChild(actions);
+
+      el.appendChild(wrap);
+    });
+  }
+
+  // ---- 촬영 모드 (단어장 만들기) ----
+  function resetCaptureScreen() {
+    state.pendingPhotoDataUrl = null;
+    state.pendingPhotoMediaType = null;
+    engPhotoFrame.innerHTML = "<span class=\"eng-photo-placeholder\">아직 사진이 없어요</span>";
+    engPhotoAnalyzeBtn.disabled = true;
+    engPhotoAnalyzeBtn.textContent = "분석하기";
+    engCaptureStatus.textContent = " ";
+    engPhotoInput.value = "";
+  }
+  document.getElementById("eng-new-set-btn").addEventListener("click", function () {
+    resetCaptureScreen();
+    showScreen("engCapture");
+  });
+  document.getElementById("eng-photo-pick-btn").addEventListener("click", function () {
+    engPhotoInput.click();
+  });
+  document.getElementById("eng-capture-cancel-btn").addEventListener("click", function () {
+    showScreen("engHome");
+  });
+
+  function downscaleImage(srcDataUrl, maxSize, quality, cb) {
+    var img = new Image();
+    img.onload = function () {
+      var w = img.width, h = img.height;
+      var scale = Math.min(1, maxSize / Math.max(w, h));
+      var cw = Math.max(1, Math.round(w * scale));
+      var ch = Math.max(1, Math.round(h * scale));
+      var canvas = document.createElement("canvas");
+      canvas.width = cw; canvas.height = ch;
+      canvas.getContext("2d").drawImage(img, 0, 0, cw, ch);
+      cb(canvas.toDataURL("image/jpeg", quality));
+    };
+    img.src = srcDataUrl;
+  }
+
+  engPhotoInput.addEventListener("change", function () {
+    var file = engPhotoInput.files && engPhotoInput.files[0];
+    if (!file) { return; }
+    var reader = new FileReader();
+    reader.onload = function () {
+      downscaleImage(reader.result, 1600, 0.82, function (dataUrl) {
+        state.pendingPhotoDataUrl = dataUrl;
+        state.pendingPhotoMediaType = "image/jpeg";
+        engPhotoFrame.innerHTML = "";
+        var img = document.createElement("img");
+        img.src = dataUrl;
+        engPhotoFrame.appendChild(img);
+        engPhotoAnalyzeBtn.disabled = false;
+        engCaptureStatus.textContent = " ";
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+
+  engPhotoAnalyzeBtn.addEventListener("click", function () {
+    if (!state.pendingPhotoDataUrl) { return; }
+    engPhotoAnalyzeBtn.disabled = true;
+    engPhotoAnalyzeBtn.textContent = "분석 중...";
+    engCaptureStatus.textContent = "사진에서 단어를 읽고 있어요...";
+    var base64 = state.pendingPhotoDataUrl.split(",")[1];
+    fetch("/api/vocab-extract", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image: base64, mediaType: state.pendingPhotoMediaType || "image/jpeg" })
+    })
+      .then(function (r) { return r.json().then(function (json) { return { ok: r.ok, json: json }; }); })
+      .then(function (res) {
+        if (res.ok && res.json && Array.isArray(res.json.words) && res.json.words.length) {
+          state.pendingExtraction = { book: res.json.book || "", chapter: res.json.chapter || "", words: res.json.words };
+        } else {
+          state.pendingExtraction = { book: "", chapter: "", words: [] };
+          showToast("자동 인식에 실패했어요. 직접 입력해 주세요.");
+        }
+        openVocabReview();
+      })
+      .catch(function () {
+        state.pendingExtraction = { book: "", chapter: "", words: [] };
+        showToast("자동 인식에 실패했어요. 직접 입력해 주세요.");
+        openVocabReview();
+      });
+  });
+
+  // ---- 확인/수정 화면 ----
+  function openVocabReview(existingSet) {
+    var photoUrl;
+    if (existingSet) {
+      state.editingSetId = existingSet.id;
+      document.getElementById("vocab-book-input").value = existingSet.book || "";
+      document.getElementById("vocab-chapter-input").value = existingSet.chapter || "";
+      state.reviewRows = (existingSet.words.length ? existingSet.words : [{ word: "", meaning: "", korean: "" }]).map(function (w) {
+        return { word: w.word || "", meaning: w.meaning || "", korean: w.korean || "" };
+      });
+      photoUrl = existingSet.photo || null;
+    } else {
+      state.editingSetId = null;
+      var ext = state.pendingExtraction || { book: "", chapter: "", words: [] };
+      document.getElementById("vocab-book-input").value = ext.book || "";
+      document.getElementById("vocab-chapter-input").value = ext.chapter || "";
+      state.reviewRows = (ext.words.length ? ext.words : [{ word: "", meaning: "", korean: "" }]).map(function (w) {
+        return { word: w.word || "", meaning: w.meaning || "", korean: w.korean || "" };
+      });
+      photoUrl = state.pendingPhotoDataUrl || null;
+    }
+    var photoEl = document.getElementById("vocab-review-photo");
+    if (photoUrl) {
+      photoEl.innerHTML = "<img src=\"" + photoUrl + "\" alt=\"단어장 사진\">";
+      photoEl.style.display = "";
+    } else {
+      photoEl.innerHTML = "";
+      photoEl.style.display = "none";
+    }
+    document.getElementById("vocab-review-error").textContent = " ";
+    showScreen("engReview");
+    renderVocabTable();
+  }
+
+  function renderVocabTable() {
+    var el = document.getElementById("vocab-table");
+    el.innerHTML = "";
+    state.reviewRows.forEach(function (row, idx) {
+      var rowEl = document.createElement("div");
+      rowEl.className = "vocab-table-row";
+      rowEl.innerHTML =
+        "<div><div class=\"vocab-row-field-label\">단어</div><input class=\"vocab-input\" data-field=\"word\" placeholder=\"word\" value=\"" + escapeHtml(row.word) + "\"></div>" +
+        "<div><div class=\"vocab-row-field-label\">뜻 (영어)</div><textarea class=\"vocab-input\" data-field=\"meaning\" placeholder=\"meaning\" rows=\"1\">" + escapeHtml(row.meaning) + "</textarea></div>" +
+        "<div><div class=\"vocab-row-field-label\">한글 뜻</div><textarea class=\"vocab-input\" data-field=\"korean\" placeholder=\"한글 뜻\" rows=\"1\">" + escapeHtml(row.korean) + "</textarea></div>" +
+        "<button type=\"button\" class=\"vocab-row-del\" aria-label=\"행 삭제\">✕</button>";
+      el.appendChild(rowEl);
+      function autoGrow(el) { el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; }
+      ["word", "meaning", "korean"].forEach(function (field) {
+        var input = rowEl.querySelector('[data-field="' + field + '"]');
+        if (input.tagName === "TEXTAREA") { autoGrow(input); }
+        input.addEventListener("input", function () {
+          row[field] = input.value;
+          if (input.tagName === "TEXTAREA") { autoGrow(input); }
+        });
+      });
+      rowEl.querySelector(".vocab-row-del").addEventListener("click", function () {
+        state.reviewRows.splice(idx, 1);
+        if (!state.reviewRows.length) { state.reviewRows.push({ word: "", meaning: "", korean: "" }); }
+        renderVocabTable();
+      });
+    });
+  }
+  document.getElementById("vocab-row-add-btn").addEventListener("click", function () {
+    state.reviewRows.push({ word: "", meaning: "", korean: "" });
+    renderVocabTable();
+  });
+  document.getElementById("vocab-review-cancel-btn").addEventListener("click", function () {
+    showScreen("engHome");
+  });
+  document.getElementById("vocab-save-btn").addEventListener("click", function () {
+    var book = document.getElementById("vocab-book-input").value.trim();
+    var chapter = document.getElementById("vocab-chapter-input").value.trim();
+    var words = state.reviewRows
+      .map(function (r) { return { word: r.word.trim(), meaning: r.meaning.trim(), korean: r.korean.trim() }; })
+      .filter(function (r) { return r.word; });
+    if (!words.length) {
+      document.getElementById("vocab-review-error").textContent = "단어를 1개 이상 입력해 주세요.";
+      return;
+    }
+    var list = loadVocabSets();
+    if (state.editingSetId) {
+      var existing = list.filter(function (s) { return s.id === state.editingSetId; })[0];
+      if (existing) {
+        existing.book = book;
+        existing.chapter = chapter;
+        existing.words = words;
+      }
+    } else {
+      list.push({
+        id: "v" + Date.now() + Math.random().toString(36).slice(2, 7),
+        book: book,
+        chapter: chapter,
+        words: words,
+        photo: state.pendingPhotoDataUrl || null,
+        createdAt: Date.now(),
+        lastResult: null
+      });
+    }
+    saveVocabSets(list);
+    state.editingSetId = null;
+    showToast("단어장이 저장됐어요");
+    renderVocabList();
+    showScreen("engHome");
+  });
+
+  // ---- 플레이 모드 (퀴즈) ----
+  function startVocabQuiz(set) {
+    var order = shuffle(set.words.map(function (_, i) { return i; }));
+    state.quiz = { set: set, order: order, pos: 0, answers: new Array(order.length).fill(null), locked: false, cursorIdx: null, startedAt: Date.now() };
+    renderQuizPool();
+    showScreen("engQuiz");
+    showQuestionAt(0);
+  }
+  function renderQuizPool() {
+    var el = document.getElementById("word-pool");
+    el.innerHTML = "";
+    state.quiz.set.words.forEach(function (w, idx) {
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "word-chip";
+      chip.dataset.idx = idx;
+      chip.textContent = w.word;
+      chip.addEventListener("click", function () { pickWord(idx); });
+      el.appendChild(chip);
+    });
+  }
+  function pickWord(wordIdx) {
+    var q = state.quiz;
+    if (!q || q.locked) { return; }
+    for (var p = 0; p < q.answers.length; p++) {
+      if (p !== q.pos && q.answers[p] && q.answers[p].pickedIdx === wordIdx) {
+        q.answers[p] = null;
+      }
+    }
+    q.locked = true;
+    var pos = q.pos;
+    var idx = q.order[pos];
+    q.answers[pos] = { idx: idx, pickedIdx: wordIdx, given: q.set.words[wordIdx].word, correct: wordIdx === idx };
+    renderAnswerSlot();
+    updateChipStates();
+    updateCompletionUi();
+    renderQuizNumRow();
+    scheduleFlow(function () {
+      q.locked = false;
+      advanceAfterAnswer(pos);
+    }, 200);
+  }
+  function advanceAfterAnswer(answeredPos) {
+    var q = state.quiz;
+    var next = -1;
+    for (var step = 1; step <= q.order.length; step++) {
+      var candidate = (answeredPos + step) % q.order.length;
+      if (!q.answers[candidate]) { next = candidate; break; }
+    }
+    if (next !== -1) { showQuestionAt(next); }
+  }
+  function renderAnswerSlot() {
+    var q = state.quiz;
+    var slot = document.getElementById("quiz-answer-slot");
+    var answer = q.answers[q.pos];
+    if (answer) {
+      slot.innerHTML = "<span class=\"quiz-answer-chip\">" + escapeHtml(q.set.words[answer.pickedIdx].word) + "</span>";
+    } else {
+      slot.innerHTML = "<span class=\"quiz-answer-placeholder\">단어를 선택하세요</span>";
+    }
+  }
+  function updateChipStates() {
+    var q = state.quiz;
+    document.querySelectorAll("#word-pool .word-chip").forEach(function (chip) {
+      var wIdx = Number(chip.dataset.idx);
+      var usedAnywhere = q.answers.some(function (a) { return a && a.pickedIdx === wIdx; });
+      chip.classList.toggle("used", usedAnywhere);
+    });
+  }
+  function updateCompletionUi() {
+    var q = state.quiz;
+    var allAnswered = q.answers.every(function (a) { return a; });
+    document.getElementById("quiz-submit-btn").disabled = !allAnswered;
+    document.getElementById("quiz-hint").textContent = allAnswered
+      ? "다 골랐어요! 제출을 눌러 결과를 확인하세요"
+      : "위 단어 중에서 눌러 답을 골라주세요";
+  }
+  function showQuestionAt(pos) {
+    var q = state.quiz;
+    q.pos = pos;
+    var idx = q.order[pos];
+    var w = q.set.words[idx];
+    document.getElementById("quiz-clue-meaning").textContent = w.meaning || "(뜻 없음)";
+    document.getElementById("quiz-clue-korean").textContent = w.korean || "";
+    renderAnswerSlot();
+    updateChipStates();
+    updateCompletionUi();
+    renderQuizNumRow();
+  }
+  function moveWordCursor(delta) {
+    var q = state.quiz;
+    var chips = Array.prototype.slice.call(document.querySelectorAll("#word-pool .word-chip"));
+    if (!chips.length) { return; }
+    if (q.cursorIdx == null) {
+      q.cursorIdx = 0;
+    } else {
+      q.cursorIdx = (q.cursorIdx + delta + chips.length) % chips.length;
+    }
+    setKbdFocus(chips[q.cursorIdx]);
+  }
+  document.getElementById("quiz-prev-btn").addEventListener("click", function () {
+    var q = state.quiz;
+    if (!q || q.locked) { return; }
+    showQuestionAt((q.pos - 1 + q.order.length) % q.order.length);
+  });
+  document.getElementById("quiz-next-btn").addEventListener("click", function () {
+    var q = state.quiz;
+    if (!q || q.locked) { return; }
+    showQuestionAt((q.pos + 1) % q.order.length);
+  });
+  document.getElementById("quiz-submit-btn").addEventListener("click", function () {
+    var q = state.quiz;
+    if (!q || !q.answers.every(function (a) { return a; })) { return; }
+    finishVocabQuiz();
+  });
+  window.addEventListener("keydown", function (e) {
+    if (!screens.engQuiz.classList.contains("active")) { return; }
+    var q = state.quiz;
+    if (!q) { return; }
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      if (!q.locked) { showQuestionAt((q.pos - 1 + q.order.length) % q.order.length); }
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      if (!q.locked) { showQuestionAt((q.pos + 1) % q.order.length); }
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      moveWordCursor(-1);
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      moveWordCursor(1);
+    }
+  });
+  function renderQuizNumRow() {
+    var q = state.quiz;
+    var el = document.getElementById("quiz-num-row");
+    el.innerHTML = "";
+    q.order.forEach(function (_, pos) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "quiz-num" + (q.answers[pos] ? " answered" : "") + (pos === q.pos ? " current" : "");
+      btn.textContent = String(pos + 1);
+      btn.setAttribute("aria-label", (pos + 1) + "번 문제로 이동");
+      btn.addEventListener("click", function () {
+        if (q.locked) { return; }
+        showQuestionAt(pos);
+      });
+      el.appendChild(btn);
+    });
+  }
+  document.getElementById("eng-quiz-quit-btn").addEventListener("click", function () {
+    state.quiz = null;
+    showScreen("engHome");
+    renderVocabList();
+  });
+  function finishVocabQuiz() {
+    var q = state.quiz;
+    var answered = q.answers.filter(function (a) { return a; });
+    var correctCount = answered.filter(function (a) { return a.correct; }).length;
+    var total = answered.length;
+
+    var list = loadVocabSets();
+    var stored = list.filter(function (s) { return s.id === q.set.id; })[0];
+    if (stored) {
+      stored.lastResult = { correct: correctCount, total: total, at: Date.now() };
+      saveVocabSets(list);
+    }
+    logActivity({
+      type: "vocab",
+      endedAt: Date.now(),
+      durationMs: Date.now() - (q.startedAt || Date.now()),
+      book: q.set.book || "",
+      chapter: q.set.chapter || "",
+      correct: correctCount,
+      total: total
+    });
+
+    document.getElementById("eng-result-score").textContent = correctCount + " / " + total;
+    var resultList = document.getElementById("vocab-result-list");
+    resultList.innerHTML = "";
+    answered.forEach(function (r) {
+      var w = q.set.words[r.idx];
+      var row = document.createElement("div");
+      row.className = "vocab-result-row" + (r.correct ? "" : " wrong");
+      var subParts = [];
+      if (w.korean) { subParts.push("<span class=\"vocab-result-korean\">" + escapeHtml(w.korean) + "</span>"); }
+      if (!r.correct) { subParts.push("<span class=\"vocab-result-given\">내가 고른 답: " + escapeHtml(r.given || "(빈칸)") + "</span>"); }
+      row.innerHTML =
+        "<div class=\"vocab-result-top\">" +
+        "<span class=\"vocab-result-status\">" + (r.correct ? "✅" : "❌") + "</span>" +
+        "<span class=\"vocab-result-word\">" + escapeHtml(w.word) + "</span>" +
+        "<span class=\"vocab-result-sep\">:</span>" +
+        "<span class=\"vocab-result-meaning\">" + escapeHtml(w.meaning || "(뜻 없음)") + "</span>" +
+        "</div>" +
+        (subParts.length ? "<div class=\"vocab-result-sub\">" + subParts.join("") + "</div>" : "");
+      resultList.appendChild(row);
+    });
+
+    state.lastQuizSet = q.set;
+    state.quiz = null;
+    showScreen("engResult");
+  }
+  document.getElementById("eng-retry-btn").addEventListener("click", function () {
+    if (state.lastQuizSet) { startVocabQuiz(state.lastQuizSet); }
+  });
+  document.getElementById("eng-result-home-btn").addEventListener("click", function () {
+    renderVocabList();
+    showScreen("engHome");
+  });
 
   pullCloudSync(loadSyncCode(), function () {});
 })();

@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/vocab-extract.js": {
+      "maxDuration": 30
+    }
+  }
+}

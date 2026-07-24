@@ -1,7 +1,7 @@
 const { put, list, del } = require('@vercel/blob');
 
 const CODE_RE = /^[A-Z0-9]{4,12}$/;
-const MAX_BYTES = 300000;
+const MAX_BYTES = 1500000;
 
 // Vercel Blob's public CDN caches by pathname regardless of query string, so
 // overwriting the same pathname (even with cacheControlMaxAge:0 and a
