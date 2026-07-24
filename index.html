@@ -1790,7 +1790,7 @@
 
   <section id="start-screen" class="screen">
     <div class="stage-card">
-      <button type="button" id="dash-back-btn" class="mute-btn back-btn" aria-label="슬롯 선택으로 돌아가기">↩</button>
+      <button type="button" id="dash-back-btn" class="mute-btn back-btn" aria-label="수학/영어 선택으로 돌아가기">↩</button>
       <button type="button" id="dash-fullscreen-btn" class="mute-btn" aria-label="전체화면">⛶</button>
       <h1 class="brand"><span id="dash-name">도윤</span>님, 환영합니다!</h1>
       <div class="stats-grid">
@@ -2914,7 +2914,9 @@
   });
 
   document.getElementById("slot-back-btn").addEventListener("click", showSlotGrid);
-  document.getElementById("dash-back-btn").addEventListener("click", goToPlayerScreen);
+  document.getElementById("dash-back-btn").addEventListener("click", function () {
+    showScreen("subject");
+  });
   document.getElementById("mode-select-btn2").addEventListener("click", function () {
     renderDashboard();
     showScreen("start");
